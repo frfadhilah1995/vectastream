@@ -2,10 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
+import { PWAProvider } from './context/PWAContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <App />
+        <PWAProvider>
+            <App />
+        </PWAProvider>
     </React.StrictMode>
 );
 
@@ -23,33 +26,3 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
-
-// Handle PWA install prompt
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    console.log('[PWA] Install prompt ready');
-
-    // Auto-show install prompt after 5 seconds
-    setTimeout(() => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('[PWA] User accepted install');
-                } else {
-                    console.log('[PWA] User dismissed install');
-                }
-                deferredPrompt = null;
-            });
-        }
-    }, 5000);
-});
-
-// Log when app is installed
-window.addEventListener('appinstalled', () => {
-    console.log('[PWA] VectaStream installed successfully!');
-    deferredPrompt = null;
-});
