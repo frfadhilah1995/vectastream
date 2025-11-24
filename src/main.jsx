@@ -12,7 +12,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        // Use relative path for GitHub Pages compatibility
+        const swPath = new URL('./sw.js', window.location.href).href;
+        navigator.serviceWorker.register(swPath)
             .then((registration) => {
                 console.log('[PWA] Service Worker registered:', registration.scope);
             })
@@ -26,14 +28,11 @@ if ('serviceWorker' in navigator) {
 let deferredPrompt;
 
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Prevent the mini-infobar from appearing on mobile
     e.preventDefault();
-    // Stash the event so it can be triggered later
     deferredPrompt = e;
     console.log('[PWA] Install prompt ready');
 
-    // Show custom install UI (you can add a button to trigger this)
-    // For now, automatically show prompt after 5 seconds
+    // Auto-show install prompt after 5 seconds
     setTimeout(() => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
@@ -46,7 +45,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
                 deferredPrompt = null;
             });
         }
-    }, 5000); // Show prompt after 5 seconds
+    }, 5000);
 });
 
 // Log when app is installed

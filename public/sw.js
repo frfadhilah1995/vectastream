@@ -1,11 +1,11 @@
 // VectaStream Service Worker for PWA
 const CACHE_NAME = 'vectastream-v1';
 const STATIC_ASSETS = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/icon-192.png',
-    '/icon-512.png'
+    './',
+    './index.html',
+    './manifest.json',
+    './icon-192.png',
+    './icon-512.png'
 ];
 
 // Install event - cache static assets
@@ -17,7 +17,8 @@ self.addEventListener('install', (event) => {
                 console.log('[SW] Caching static assets');
                 return cache.addAll(STATIC_ASSETS);
             })
-            .then(() => self.skipWaiting())
+            .then(() => self.skipWaiting()
+            )
     );
 });
 
