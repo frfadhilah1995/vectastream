@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link } from 'lucide-react';
+import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X } from 'lucide-react';
 import ChannelItem from './ChannelItem';
 
 const CHANNELS_PER_PAGE = 50;
@@ -86,15 +86,25 @@ const Sidebar = ({
             {/* Input Area */}
             <div className="px-4 pb-4 border-b border-glass-border space-y-3">
                 {sourceMode === 'custom' ? (
-                    <div className="relative">
+                    <div className="relative group">
                         <input
                             type="url"
                             value={playlistUrl}
                             onChange={(e) => setPlaylistUrl(e.target.value)}
                             placeholder="Paste M3U URL..."
-                            className="w-full bg-black/40 border border-glass-border rounded-lg py-2 pl-3 pr-10 text-sm text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all"
+                            className="w-full bg-black/40 border border-glass-border rounded-lg py-2 pl-3 pr-9 text-sm text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all placeholder:text-gray-600"
                         />
-                        <Satellite className="absolute right-3 top-2.5 text-gray-500" size={16} />
+                        {playlistUrl ? (
+                            <button
+                                onClick={() => setPlaylistUrl('')}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all"
+                                title="Clear URL"
+                            >
+                                <X size={14} />
+                            </button>
+                        ) : (
+                            <Link className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none" size={16} />
+                        )}
                     </div>
                 ) : (
                     <select
