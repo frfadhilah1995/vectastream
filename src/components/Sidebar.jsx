@@ -20,7 +20,6 @@ const Sidebar = ({
     isLoading,
     playlistUrl,
     setPlaylistUrl,
-    setPlaylistUrl,
     getChannelStatus,
     onRefreshChannel,
     onClearChannels
