@@ -35,6 +35,9 @@ function App() {
 
         console.log(`[App] 🔄 Loading playlist from: ${urlToLoad}`);
         setIsLoading(true);
+        setChannels([]); // Clear existing channels immediately to avoid confusion
+        setCurrentChannel(null); // Stop playing current channel
+
 
         try {
             // Check cache first for instant load
@@ -124,6 +127,10 @@ function App() {
                             setPlaylistUrl={setPlaylistUrl}
                             getChannelStatus={getStatus}
                             onRefreshChannel={handleRefreshChannel}
+                            onClearChannels={() => {
+                                setChannels([]);
+                                setCurrentChannel(null);
+                            }}
                         />
 
                         {/* Footer */}

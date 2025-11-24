@@ -20,8 +20,10 @@ const Sidebar = ({
     isLoading,
     playlistUrl,
     setPlaylistUrl,
+    setPlaylistUrl,
     getChannelStatus,
-    onRefreshChannel
+    onRefreshChannel,
+    onClearChannels
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -60,14 +62,20 @@ const Sidebar = ({
             <div className="p-4 pb-0">
                 <div className="flex gap-2 mb-3">
                     <button
-                        onClick={() => setSourceMode('default')}
+                        onClick={() => {
+                            setSourceMode('default');
+                            onClearChannels(); // Clear channels when switching mode
+                        }}
                         className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'default' ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
                     >
                         <Globe size={14} />
                         Default
                     </button>
                     <button
-                        onClick={() => setSourceMode('custom')}
+                        onClick={() => {
+                            setSourceMode('custom');
+                            onClearChannels(); // Clear channels when switching mode
+                        }}
                         className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'custom' ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
                     >
                         <Link size={14} />
