@@ -1,0 +1,232 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link } from 'lucide-react';
+import ChannelItem from './ChannelItem';
+
+const CHANNELS_PER_PAGE = 50;
+
+// IPTV.org repository URLs - Validated from official repo
+const DEFAULT_PLAYLISTS = {
+    all: 'https://iptv-org.github.io/iptv/index.m3u',
+    categories: 'https://iptv-org.github.io/iptv/index.category.m3u',
+    languages: 'https://iptv-org.github.io/iptv/index.language.m3u',
+    countries: 'https://iptv-org.github.io/iptv/index.country.m3u',
+};
+
+const Sidebar = ({
+    channels,
+    currentChannel,
+    onChannelSelect,
+    onLoadPlaylist,
+    isLoading,
+    playlistUrl,
+    setPlaylistUrl,
+    getChannelStatus,
+    onRefreshChannel
+}) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [sourceMode, setSourceMode] = useState('default');
+    const [selectedDefault, setSelectedDefault] = useState('all');
+
+    const categories = useMemo(() => {
+        const uniqueGroups = [...new Set(channels.map(c => c.group || 'Uncategorized'))];
+        return ['All', ...uniqueGroups.sort()];
+    }, [channels]);
+
+    const filteredChannels = useMemo(() => {
+        const filtered = channels.filter(c => {
+            const matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                c.group.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesCategory = selectedCategory === 'All' || c.group === selectedCategory;
+            return matchesSearch && matchesCategory;
+        });
+        return filtered;
+    }, [channels, searchTerm, selectedCategory]);
+
+    // Reset to first page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, selectedCategory]);
+
+    const totalPages = Math.ceil(filteredChannels.length / CHANNELS_PER_PAGE);
+    const startIndex = (currentPage - 1) * CHANNELS_PER_PAGE;
+    const endIndex = startIndex + CHANNELS_PER_PAGE;
+    const paginatedChannels = filteredChannels.slice(startIndex, endIndex);
+
+    return (
+        <aside className="w-full h-full flex flex-col overflow-hidden bg-glass-bg backdrop-blur-xl">
+            {/* Source Mode Tabs */}
+            <div className="p-4 pb-0">
+                <div className="flex gap-2 mb-3">
+                    <button
+                        onClick={() => setSourceMode('default')}
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'default' ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
+                    >
+                        <Globe size={14} />
+                        Default
+                    </button>
+                    <button
+                        onClick={() => setSourceMode('custom')}
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'custom' ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
+                    >
+                        <Link size={14} />
+                        Custom
+                    </button>
+                </div>
+            </div>
+
+            {/* Input Area */}
+            <div className="px-4 pb-4 border-b border-glass-border space-y-3">
+                {sourceMode === 'custom' ? (
+                    <div className="relative">
+                        <input
+                            type="url"
+                            value={playlistUrl}
+                            onChange={(e) => setPlaylistUrl(e.target.value)}
+                            placeholder="Paste M3U URL..."
+                            className="w-full bg-black/40 border border-glass-border rounded-lg py-2 pl-3 pr-10 text-sm text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all"
+                        />
+                        <Satellite className="absolute right-3 top-2.5 text-gray-500" size={16} />
+                    </div>
+                ) : (
+                    <select
+                        value={selectedDefault}
+                        onChange={(e) => setSelectedDefault(e.target.value)}
+                        className="w-full bg-black/40 border border-glass-border rounded-lg py-2 px-3 text-sm text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all cursor-pointer"
+                    >
+                        <option value="all">🌍 All Channels (9000+ global)</option>
+                        <option value="categories">📂 By Category (News, Sports, etc.)</option>
+                        <option value="languages">🗣️ By Language</option>
+                        <option value="countries">🗺️ By Country</option>
+                    </select>
+                )}
+
+                <button
+                    onClick={() => sourceMode === 'custom' ? onLoadPlaylist() : onLoadPlaylist(DEFAULT_PLAYLISTS[selectedDefault])}
+                    disabled={isLoading || (sourceMode === 'custom' && !playlistUrl)}
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium py-2 rounded-lg text-sm transition-all shadow-lg shadow-cyan-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                    {isLoading ? <Loader2 className="animate-spin" size={16} /> : <List size={16} />}
+                    {sourceMode === 'default' ? 'Load Default Channels' : 'Load Playlist'}
+                </button>
+
+                {sourceMode === 'default' && (
+                    <p className="text-[10px] text-gray-500 text-center">
+                        <a href="https://github.com/iptv-org/iptv" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Powered by IPTV.org</a> • Free & Open Source
+                    </p>
+                )}
+            </div>
+
+            {/* Category Tabs */}
+            {channels.length > 0 && categories.length > 1 && (
+                <div className="px-4 pt-3 border-b border-glass-border">
+                    <div className="flex gap-1 overflow-x-auto pb-3 scrollbar-thin">
+                        {categories.map((category) => (
+                            <button
+                                key={category}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex-shrink-0 ${selectedCategory === category ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
+                            >
+                                {category}
+                                {category !== 'All' && (
+                                    <span className="ml-1.5 opacity-60">
+                                        ({channels.filter(c => c.group === category).length})
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Search */}
+            {channels.length > 0 && (
+                <div className="px-4 py-3">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-2.5 text-gray-500" size={16} />
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder="Search channels..."
+                            className="w-full bg-white/5 border border-transparent rounded-lg py-2 pl-9 pr-3 text-sm text-white focus:bg-black/40 focus:border-glass-border outline-none transition-all"
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Channel List */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 overflow-y-auto p-2 custom-scrollbar">
+                    {channels.length === 0 ? (
+                        <div className="h-full flex flex-col items-center justify-center text-gray-500 p-6 text-center">
+                            <Satellite size={48} className="mb-4 opacity-20" />
+                            <p className="text-sm">Choose a source above to start watching</p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="px-2 pb-2 text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center justify-between">
+                                <span>{filteredChannels.length} Channels</span>
+                                {selectedCategory !== 'All' && (
+                                    <span className="text-accent font-normal normal-case">in {selectedCategory}</span>
+                                )}
+                            </div>
+                            {paginatedChannels.map((channel, idx) => (
+                                <ChannelItem
+                                    key={`${channel.url}-${startIndex + idx}`}
+                                    channel={channel}
+                                    isActive={currentChannel === channel}
+                                    onClick={() => onChannelSelect(channel)}
+                                    status={getChannelStatus ? getChannelStatus(`${channel.url}-${channels.indexOf(channel)}`) : null}
+                                    onRefresh={onRefreshChannel}
+                                />
+                            ))}
+                            {filteredChannels.length === 0 && (
+                                <div className="text-center py-10 text-gray-500 text-sm">
+                                    {searchTerm ? `No channels match "${searchTerm}"` : `No channels in "${selectedCategory}"`}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="px-4 py-2.5 border-t border-glass-border bg-black/20">
+                        <div className="flex items-center justify-between text-xs">
+                            <button
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
+                            >
+                                <ChevronLeft size={14} />
+                                Prev
+                            </button>
+
+                            <div className="flex flex-col items-center gap-0.5">
+                                <span className="text-gray-400">
+                                    Page <span className="text-accent font-medium">{currentPage}</span> / {totalPages}
+                                </span>
+                                <span className="text-gray-600 text-[10px]">
+                                    {startIndex + 1}-{Math.min(endIndex, filteredChannels.length)} of {filteredChannels.length}
+                                </span>
+                            </div>
+
+                            <button
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
+                            >
+                                Next
+                                <ChevronRight size={14} />
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </aside>
+    );
+};
+
+export default Sidebar;
