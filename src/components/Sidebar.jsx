@@ -27,8 +27,32 @@ const Sidebar = ({
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [currentPage, setCurrentPage] = useState(1);
-    const [sourceMode, setSourceMode] = useState('default');
-    const [selectedDefault, setSelectedDefault] = useState('all');
+
+    // Initialize state from localStorage
+    const [sourceMode, setSourceMode] = useState(() => localStorage.getItem('vectastream_source_mode') || 'default');
+    const [selectedDefault, setSelectedDefault] = useState(() => localStorage.getItem('vectastream_selected_default') || 'all');
+
+    // Persist state changes
+    useEffect(() => {
+        localStorage.setItem('vectastream_source_mode', sourceMode);
+    }, [sourceMode]);
+
+    useEffect(() => {
+        localStorage.setItem('vectastream_selected_default', selectedDefault);
+    }, [selectedDefault]);
+
+    // Auto-load default playlist on mount if in default mode
+    useEffect(() => {
+        if (sourceMode === 'default') {
+            // Small delay to ensure App is ready
+            const timer = setTimeout(() => {
+                onLoadPlaylist(DEFAULT_PLAYLISTS[selectedDefault]);
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+        // Note: Custom mode auto-load is handled by App.jsx using playlistUrl
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Run once on mount
 
     const categories = useMemo(() => {
         const uniqueGroups = [...new Set(channels.map(c => c.group || 'Uncategorized'))];

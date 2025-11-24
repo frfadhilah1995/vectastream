@@ -19,13 +19,20 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    // Load last URL from localStorage
+    // Load last URL and Channel from localStorage
     useEffect(() => {
         const lastUrl = localStorage.getItem('vectastream_last_url');
         if (lastUrl) {
             setPlaylistUrl(lastUrl);
         }
     }, []);
+
+    // Save current channel to localStorage
+    useEffect(() => {
+        if (currentChannel) {
+            localStorage.setItem('vectastream_last_channel', JSON.stringify(currentChannel));
+        }
+    }, [currentChannel]);
 
     const handleLoadPlaylist = useCallback(async (urlToLoad = playlistUrl) => {
         if (!urlToLoad) {
@@ -38,39 +45,54 @@ function App() {
         setChannels([]); // Clear existing channels immediately to avoid confusion
         setCurrentChannel(null); // Stop playing current channel
 
-
         try {
+            let loadedChannels = [];
             // Check cache first for instant load
             const cached = await getCachedPlaylist(urlToLoad);
 
             if (cached && cached.channels) {
                 // Cache hit - instant load!
                 console.log(`[App] ⚡ Using cached playlist (${cached.channels.length} channels)`);
-                setChannels(cached.channels);
-                localStorage.setItem('vectastream_last_url', urlToLoad);
-                setIsLoading(false);
-                return;
+                loadedChannels = cached.channels;
+            } else {
+                // Cache miss - fetch fresh data
+                console.log('[App] 🌐 Fetching fresh playlist...');
+                const text = await fetchWithCorsProxy(urlToLoad);
+                console.log(`[App] ✅ Fetched playlist, size: ${text.length} characters`);
+
+                const parsedChannels = parseM3U(text);
+                console.log(`[App] 📺 Parsed ${parsedChannels.length} channels`);
+
+                if (parsedChannels.length === 0) {
+                    alert("No channels found in playlist.");
+                    setIsLoading(false);
+                    return;
+                }
+
+                // Save to cache for next time (1-hour TTL)
+                await cachePlaylist(urlToLoad, parsedChannels);
+                loadedChannels = parsedChannels;
             }
 
-            // Cache miss - fetch fresh data
-            console.log('[App] 🌐 Fetching fresh playlist...');
-            const text = await fetchWithCorsProxy(urlToLoad);
-            console.log(`[App] ✅ Fetched playlist, size: ${text.length} characters`);
-
-            const parsedChannels = parseM3U(text);
-            console.log(`[App] 📺 Parsed ${parsedChannels.length} channels`);
-
-            if (parsedChannels.length === 0) {
-                alert("No channels found in playlist.");
-                return;
-            }
-
-            // Save to cache for next time (1-hour TTL)
-            await cachePlaylist(urlToLoad, parsedChannels);
-
-            setChannels(parsedChannels);
+            setChannels(loadedChannels);
             localStorage.setItem('vectastream_last_url', urlToLoad);
-            console.log(`[App] ✅ Successfully loaded ${parsedChannels.length} channels!`);
+            console.log(`[App] ✅ Successfully loaded ${loadedChannels.length} channels!`);
+
+            // Auto-resume last played channel if it exists in the new list
+            const lastChannelJson = localStorage.getItem('vectastream_last_channel');
+            if (lastChannelJson) {
+                try {
+                    const lastChannel = JSON.parse(lastChannelJson);
+                    // Find matching channel in new list (by URL or Name)
+                    const foundChannel = loadedChannels.find(c => c.url === lastChannel.url || c.name === lastChannel.name);
+                    if (foundChannel) {
+                        console.log(`[App] ▶️ Auto-resuming channel: ${foundChannel.name}`);
+                        setCurrentChannel(foundChannel);
+                    }
+                } catch (e) {
+                    console.error("[App] Failed to parse last channel", e);
+                }
+            }
 
         } catch (error) {
             console.error("[App] ❌ Error loading playlist:", error);
