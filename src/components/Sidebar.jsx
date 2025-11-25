@@ -23,6 +23,7 @@ const Sidebar = ({
     playlistUrl,
     setPlaylistUrl,
     getChannelStatus,
+    checkStreamStatus, // Received from App
     onRefreshChannel,
     onClearChannels
 }) => {
@@ -59,9 +60,7 @@ const Sidebar = ({
             }, 100);
             return () => clearTimeout(timer);
         }
-        // Note: Custom mode auto-load is handled by App.jsx using playlistUrl
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Run once on mount
+    }, [sourceMode, selectedDefault]);
 
     // BACKGROUND REFRESH: Start service when channels load
     const [, setRefreshTrigger] = useState(0);

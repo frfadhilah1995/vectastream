@@ -10,6 +10,8 @@ import { Menu, X } from 'lucide-react';
 import useDevice from './hooks/useDevice';
 import useStreamStatus from './hooks/useStreamStatus';
 
+import { statusRefreshService } from './utils/statusRefresh';
+
 function App() {
     const { isMobile, isTablet } = useDevice();
     const { checkStreamStatus, getStatus } = useStreamStatus();
@@ -102,22 +104,18 @@ function App() {
         }
     }, [playlistUrl]);
 
-    const handleRefreshChannel = useCallback((channel) => {
+    const handleRefreshChannel = useCallback(async (channel) => {
         const channelId = `${channel.url}-${channels.indexOf(channel)}`;
+
+        // 1. Perform actual network check (updates localStorage)
+        await statusRefreshService.refreshChannel(channel);
+
+        // 2. Update UI state from the newly updated cache
         checkStreamStatus(channel.url, channelId);
     }, [channels, checkStreamStatus]);
 
-    // Auto-populate status badges from cache when channels load
-    // This ONLY reads from localStorage cache (no network requests!)
-    // Shows green/red badges immediately based on previous playback attempts
-    useEffect(() => {
-        if (channels.length > 0) {
-            channels.forEach((ch, idx) => {
-                const channelId = `${ch.url}-${idx}`;
-                checkStreamStatus(ch.url, channelId);
-            });
-        }
-    }, [channels, checkStreamStatus]);
+    // NOTE: Removed global status check loop to prevent lag on large playlists (9000+ items)
+    // Status checking is now handled in Sidebar.jsx for visible items only (Pagination Scoped)
 
     return (
         <div className="flex flex-col h-full bg-background text-white font-sans overflow-hidden">
@@ -155,6 +153,7 @@ function App() {
                             playlistUrl={playlistUrl}
                             setPlaylistUrl={setPlaylistUrl}
                             getChannelStatus={getStatus}
+                            checkStreamStatus={checkStreamStatus} // Pass this for scoped checking
                             onRefreshChannel={handleRefreshChannel}
                             onClearChannels={() => {
                                 setChannels([]);
