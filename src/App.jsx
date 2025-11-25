@@ -123,7 +123,7 @@ function App() {
         <div className="flex flex-col h-full bg-background text-white font-sans overflow-hidden">
             {/* Mobile/Tablet Header Overlay for Menu Toggle */}
             {(isMobile || isTablet) && (
-                <div className="fixed top-4 right-4 z-50">
+                <div className="fixed top-4 left-4 z-50">
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         className="p-2 bg-black/50 backdrop-blur-md border border-glass-border rounded-lg text-white shadow-lg active:scale-95 transition-transform"
