@@ -127,18 +127,48 @@ function App() {
             )}
 
             <div className="flex flex-1 overflow-hidden relative">
-                <p>&copy; {new Date().getFullYear()} VectaStream</p>
-                <p className="mt-1 font-medium text-gray-500">Developed by RMD TECH</p>
+                {/* Sidebar Logic */}
+                <div className={`
+          z-40 h-full transition-transform duration-300 ease-in-out
+          ${(isMobile || isTablet) ? 'absolute inset-y-0 left-0' : 'relative'}
+          ${(isMobile || isTablet) && !isMobileMenuOpen ? '-translate-x-full' : 'translate-x-0'}
+        `}>
+                    <div className="h-full flex flex-col w-80 bg-background border-r border-glass-border shadow-2xl md:shadow-none">
+                        <Header />
+                        <Sidebar
+                            channels={channels}
+                            currentChannel={currentChannel}
+                            onChannelSelect={(channel) => {
+                                setCurrentChannel(channel);
+                                addToHistory(channel);
+                                if (isMobile || isTablet) setIsMobileMenuOpen(false);
+                            }}
+                            onLoadPlaylist={handleLoadPlaylist}
+                            isLoading={isLoading}
+                            playlistUrl={playlistUrl}
+                            setPlaylistUrl={setPlaylistUrl}
+                            getChannelStatus={getStatus}
+                            onRefreshChannel={handleRefreshChannel}
+                            onClearChannels={() => {
+                                setChannels([]);
+                                setCurrentChannel(null);
+                            }}
+                        />
+
+                        {/* Footer */}
+                        <div className="p-4 border-t border-glass-border text-center text-xs text-gray-600 bg-black/20">
+                            <p>&copy; {new Date().getFullYear()} VectaStream</p>
+                            <p className="mt-1 font-medium text-gray-500">Developed by RMD TECH</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Main Content (Player) */}
+                <main className="flex-1 relative bg-black w-full h-full">
+                    <Player channel={currentChannel} />
+                </main>
             </div>
         </div>
-                </div >
-
-        {/* Main Content (Player) */ }
-        < main className = "flex-1 relative bg-black w-full h-full" >
-            <Player channel={currentChannel} />
-                </main >
-            </div >
-        </div >
     );
 }
 
