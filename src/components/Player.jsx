@@ -88,6 +88,12 @@ const Player = ({ channel }) => {
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
                 setLoading(false);
                 playVideo();
+
+                // NATIVE STATUS CACHING: Mark stream as online
+                import('../utils/m3u.js').then(({ setCachedStatus }) => {
+                    setCachedStatus(channel.url, 'online');
+                    console.log(`[Status Cache] Marked ${channel.name} as online`);
+                });
             });
 
             hls.on(Hls.Events.ERROR, (event, data) => {
@@ -104,6 +110,13 @@ const Player = ({ channel }) => {
                         default:
                             setLoading(false);
                             setError("This stream is currently unavailable. It may be offline, geo-blocked, or require authentication.");
+
+                            // NATIVE STATUS CACHING: Mark stream as offline
+                            import('../utils/m3u.js').then(({ setCachedStatus }) => {
+                                setCachedStatus(channel.url, 'offline');
+                                console.log(`[Status Cache] Marked ${channel.name} as offline`);
+                            });
+
                             hls.destroy();
                             break;
                     }
