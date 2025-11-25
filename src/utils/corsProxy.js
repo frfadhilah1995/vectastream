@@ -1,6 +1,6 @@
 // Multiple CORS proxies for fallback
 // PRIORITIZE: Custom Cloudflare Worker if set
-const CUSTOM_PROXY = localStorage.getItem('vectastream_custom_proxy'); // e.g., 'https://my-worker.user.workers.dev/'
+const CUSTOM_PROXY = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
 
 const CORS_PROXIES = [
     CUSTOM_PROXY ? (url) => `${CUSTOM_PROXY}${url}` : '', // Custom Proxy (Highest Priority)
