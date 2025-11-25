@@ -71,7 +71,20 @@ const Player = ({ channel }) => {
 
             hlsRef.current = hls;
 
-            hls.loadSource(channel.url);
+            // PROXY INTEGRATION: Route stream through Cloudflare Worker if needed
+            const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
+
+            // Determine if we need to proxy this stream
+            let streamUrl = channel.url;
+            const isHttpStream = streamUrl.startsWith('http://');
+
+            // Always proxy HTTP streams (Mixed Content security), optionally proxy HTTPS for CORS
+            if (isHttpStream || true) { // TODO: Make HTTPS proxying optional based on error
+                streamUrl = `${PROXY_URL}${channel.url}`;
+                console.log(`[Player] 🔀 Proxying stream: ${channel.name}`);
+            }
+
+            hls.loadSource(streamUrl);
             hls.attachMedia(video);
 
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -101,7 +114,14 @@ const Player = ({ channel }) => {
 
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             // Native HLS support (Safari)
-            video.src = channel.url;
+            // Also use proxy for Safari to ensure HTTP->HTTPS conversion
+            const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
+            const isHttpStream = channel.url.startsWith('http://');
+            const streamUrl = (isHttpStream || true) ? `${PROXY_URL}${channel.url}` : channel.url;
+
+            video.src = streamUrl;
+            console.log(`[Player] 🍎 Safari - Proxying stream: ${channel.name}`);
+
             video.addEventListener('loadedmetadata', () => {
                 setLoading(false);
                 playVideo();
