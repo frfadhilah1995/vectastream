@@ -94,18 +94,33 @@ class StatusRefreshService {
             clearTimeout(timeout);
 
             if (response.ok) {
-                // Stream is back online!
+                // Stream is online!
                 setCachedStatus(channel.url, 'online');
-                console.log(`[Background Refresh] ✅ ${channel.name} is back online!`);
+                console.log(`[Status Check] ✅ ${channel.name} is ONLINE`);
 
                 // Notify callback
                 if (this.onStatusUpdate) {
                     this.onStatusUpdate(channel.url, 'online');
                 }
+            } else {
+                // Stream returned non-OK status (404, 403, etc.)
+                setCachedStatus(channel.url, 'offline');
+                console.log(`[Status Check] ❌ ${channel.name} is OFFLINE (${response.status})`);
+
+                // Notify callback
+                if (this.onStatusUpdate) {
+                    this.onStatusUpdate(channel.url, 'offline');
+                }
             }
         } catch (error) {
-            // Still offline, keep status
-            console.log(`[Background Refresh] ❌ ${channel.name} still offline`);
+            // Network error, timeout, or CORS - mark as offline
+            setCachedStatus(channel.url, 'offline');
+            console.log(`[Status Check] ❌ ${channel.name} is OFFLINE (${error.message})`);
+
+            // Notify callback
+            if (this.onStatusUpdate) {
+                this.onStatusUpdate(channel.url, 'offline');
+            }
         }
     }
 
