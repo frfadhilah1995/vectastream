@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X } from 'lucide-react';
+import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X, Bookmark, Trash2 } from 'lucide-react';
 import ChannelItem from './ChannelItem';
 import { statusRefreshService } from '../utils/statusRefresh.js';
+import { getSavedUrls, savePlaylistUrl, deletePlaylistUrl, updateChannelCount } from '../utils/savedPlaylists.js';
 
 const CHANNELS_PER_PAGE = 50;
 
@@ -28,10 +29,17 @@ const Sidebar = ({
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [currentPage, setCurrentPage] = useState(1);
+    const [savedPlaylists, setSavedPlaylists] = useState([]);
+    const [showSavedList, setShowSavedList] = useState(false);
 
     // Initialize state from localStorage
     const [sourceMode, setSourceMode] = useState(() => localStorage.getItem('vectastream_source_mode') || 'default');
     const [selectedDefault, setSelectedDefault] = useState(() => localStorage.getItem('vectastream_selected_default') || 'all');
+
+    // Load saved playlists on mount
+    useEffect(() => {
+        setSavedPlaylists(getSavedUrls());
+    }, []);
 
     // Persist state changes
     useEffect(() => {
@@ -97,6 +105,28 @@ const Sidebar = ({
     const startIndex = (currentPage - 1) * CHANNELS_PER_PAGE;
     const endIndex = startIndex + CHANNELS_PER_PAGE;
     const paginatedChannels = filteredChannels.slice(startIndex, endIndex);
+
+    // Saved Playlist Handlers
+    const handleLoadSaved = (url) => {
+        setPlaylistUrl(url);
+        onLoadPlaylist(url);
+        setShowSavedList(false);
+    };
+
+    const handleDeleteSaved = (url, e) => {
+        e.stopPropagation();
+        deletePlaylistUrl(url);
+        setSavedPlaylists(getSavedUrls());
+    };
+
+    // Auto-save after successful load
+    useEffect(() => {
+        if (channels.length > 0 && playlistUrl && sourceMode === 'custom') {
+            savePlaylistUrl(playlistUrl, channels.length);
+            updateChannelCount(playlistUrl, channels.length);
+            setSavedPlaylists(getSavedUrls());
+        }
+    }, [channels.length, playlistUrl, sourceMode]);
 
     return (
         <aside className="w-full h-full flex flex-col overflow-hidden bg-glass-bg backdrop-blur-xl">
@@ -170,6 +200,54 @@ const Sidebar = ({
                     {isLoading ? <Loader2 className="animate-spin" size={16} /> : <List size={16} />}
                     {sourceMode === 'default' ? 'Load Default Channels' : 'Load Playlist'}
                 </button>
+
+                {/* Saved Playlists Section (Custom mode only) */}
+                {sourceMode === 'custom' && savedPlaylists.length > 0 && (
+                    <div className="mt-3 border-t border-glass-border/50 pt-3">
+                        <button
+                            onClick={() => setShowSavedList(!showSavedList)}
+                            className="w-full flex items-center justify-between text-xs text-gray-400 hover:text-white transition-all mb-2"
+                        >
+                            <span className="flex items-center gap-1.5">
+                                <Bookmark size={12} />
+                                Recent Playlists ({savedPlaylists.length})
+                            </span>
+                            <span className={`transform transition-transform ${showSavedList ? 'rotate-180' : ''}`}>
+                                ▼
+                            </span>
+                        </button>
+
+                        {showSavedList && (
+                            <div className="space-y-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                {savedPlaylists.map((item, idx) => (
+                                    <div
+                                        key={item.url}
+                                        onClick={() => handleLoadSaved(item.url)}
+                                        className="group flex items-center gap-2 p-2 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer transition-all"
+                                    >
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-xs font-medium text-white truncate">
+                                                {item.name}
+                                            </div>
+                                            {item.channelCount && (
+                                                <div className="text-[10px] text-gray-500">
+                                                    {item.channelCount} channels
+                                                </div>
+                                            )}
+                                        </div>
+                                        <button
+                                            onClick={(e) => handleDeleteSaved(item.url, e)}
+                                            className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded text-red-400 hover:text-red-300 transition-all"
+                                            title="Delete"
+                                        >
+                                            <Trash2 size={12} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {sourceMode === 'default' && (
                     <p className="text-[10px] text-gray-500 text-center">

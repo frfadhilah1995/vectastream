@@ -107,10 +107,17 @@ function App() {
         checkStreamStatus(channel.url, channelId);
     }, [channels, checkStreamStatus]);
 
-    // OPTIMIZATION Phase 1: Removed mass auto-check of all channels
-    // Previously this checked 9000+ streams concurrently causing massive lag
-    // Now status is only checked on manual refresh button click
-    // This improves initial load time by ~90%
+    // Auto-populate status badges from cache when channels load
+    // This ONLY reads from localStorage cache (no network requests!)
+    // Shows green/red badges immediately based on previous playback attempts
+    useEffect(() => {
+        if (channels.length > 0) {
+            channels.forEach((ch, idx) => {
+                const channelId = `${ch.url}-${idx}`;
+                checkStreamStatus(ch.url, channelId);
+            });
+        }
+    }, [channels, checkStreamStatus]);
 
     return (
         <div className="flex flex-col h-full bg-background text-white font-sans overflow-hidden">
