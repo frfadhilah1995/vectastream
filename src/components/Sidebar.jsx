@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X } from 'lucide-react';
 import ChannelItem from './ChannelItem';
+import { statusRefreshService } from '../utils/statusRefresh.js';
 
 const CHANNELS_PER_PAGE = 50;
 
@@ -53,6 +54,24 @@ const Sidebar = ({
         // Note: Custom mode auto-load is handled by App.jsx using playlistUrl
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Run once on mount
+
+    // BACKGROUND REFRESH: Start service when channels load
+    const [, setRefreshTrigger] = useState(0);
+
+    useEffect(() => {
+        if (channels.length > 0) {
+            // Start background refresh with callback to trigger re-render
+            statusRefreshService.start(channels, (url, newStatus) => {
+                console.log(`[Sidebar] Status updated: ${url} → ${newStatus}`);
+                // Force re-render to update badges
+                setRefreshTrigger(prev => prev + 1);
+            });
+
+            return () => {
+                statusRefreshService.stop();
+            };
+        }
+    }, [channels]);
 
     const categories = useMemo(() => {
         const uniqueGroups = [...new Set(channels.map(c => c.group || 'Uncategorized'))];

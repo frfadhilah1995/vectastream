@@ -10,18 +10,46 @@ const ChannelItem = ({ channel, isActive, onClick, status, onRefresh }) => {
         if (!status) return null;
 
         const statusConfig = {
-            online: { color: 'bg-green-500', text: 'Online', icon: '●' },
-            offline: { color: 'bg-red-500', text: 'Offline', icon: '●' },
-            error: { color: 'bg-red-500', text: 'Error', icon: '●' },
-            checking: { color: 'bg-yellow-500', text: 'Checking', icon: '●' },
-            unknown: { color: 'bg-gray-500', text: 'Unknown', icon: '●' },
+            online: {
+                color: 'bg-green-500/90 shadow-[0_0_8px_rgba(34,197,94,0.4)]',
+                text: 'Live',
+                icon: '⬤',
+                pulse: true
+            },
+            offline: {
+                color: 'bg-red-500/90 shadow-[0_0_8px_rgba(239,68,68,0.4)]',
+                text: 'Offline',
+                icon: '○',
+                pulse: false
+            },
+            error: {
+                color: 'bg-red-500/90',
+                text: 'Error',
+                icon: '!',
+                pulse: false
+            },
+            checking: {
+                color: 'bg-yellow-500/90 animate-pulse',
+                text: 'Checking',
+                icon: '◐',
+                pulse: true
+            },
+            unknown: {
+                color: 'bg-gray-500/50',
+                text: '',
+                icon: '',
+                pulse: false
+            },
         };
 
         const config = statusConfig[status.status] || statusConfig.unknown;
 
+        // Don't show badge for unknown status
+        if (status.status === 'unknown') return null;
+
         return (
-            <span className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full ${config.color} text-white font-medium`}>
-                <span className="animate-pulse">{config.icon}</span>
+            <span className={`flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-full ${config.color} text-white font-medium transition-all`}>
+                <span className={config.pulse ? 'animate-pulse' : ''}>{config.icon}</span>
                 {config.text}
             </span>
         );
