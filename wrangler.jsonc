@@ -1,0 +1,8 @@
+{
+    "name": "vectastream-proxy",
+    "main": "workers/proxy.js",
+    "compatibility_date": "2025-11-25",
+    "observability": {
+        "enabled": true
+    }
+}
