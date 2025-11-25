@@ -4,34 +4,35 @@ const useStreamStatus = () => {
     const [statusMap, setStatusMap] = useState({});
 
     const checkStreamStatus = useCallback(async (url, channelId) => {
-        // Set checking status
+        // DISABLED: This feature causes Mixed Content errors by making direct HTTP requests
+        // Stream status is not critical for functionality - users can just try playing
+        // If we wanted to enable this, we'd need to route through the Cloudflare proxy
+
+        // Immediately return unknown status without making any network requests
         setStatusMap(prev => ({
             ...prev,
-            [channelId]: { status: 'checking', lastChecked: Date.now() }
+            [channelId]: { status: 'unknown', lastChecked: Date.now() }
         }));
 
+        /* ORIGINAL CODE - CAUSES MIXED CONTENT:
         try {
-            // Try to fetch just the headers with a timeout
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
 
             const response = await fetch(url, {
-                method: 'HEAD', // Only get headers, don't download content
+                method: 'HEAD',
                 signal: controller.signal,
-                mode: 'no-cors' // This allows the request but limits response info
+                mode: 'no-cors'
             });
 
             clearTimeout(timeoutId);
 
-            // Since mode is 'no-cors', we can't read the status
-            // If we got here without error, we assume it's online
             setStatusMap(prev => ({
                 ...prev,
                 [channelId]: { status: 'online', lastChecked: Date.now() }
             }));
 
         } catch (error) {
-            // Determine error type
             let statusType = 'offline';
             if (error.name === 'AbortError') {
                 statusType = 'timeout';
@@ -48,6 +49,7 @@ const useStreamStatus = () => {
                 }
             }));
         }
+        */
     }, []);
 
     const getStatus = useCallback((channelId) => {

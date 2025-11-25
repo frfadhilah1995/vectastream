@@ -29,39 +29,37 @@ const Player = ({ channel }) => {
             }
 
             const hls = new Hls({
-                // Performance & Latency Optimization
+                // PERFORMANCE OPTIMIZATION: Tuned for smooth streaming
                 enableWorker: true,
                 lowLatencyMode: true,
-                backBufferLength: 90,
 
-                // Loading & Network
-                maxBufferLength: 30,
-                maxMaxBufferLength: 60,
-                maxBufferSize: 60 * 1000 * 1000,
-                maxBufferHole: 0.5,
+                // BUFFER OPTIMIZATION: Smaller buffers = faster start, less memory
+                maxBufferLength: 20,        // Reduced from 30 - start faster
+                maxMaxBufferLength: 40,     // Reduced from 60
+                backBufferLength: 60,       // Reduced from 90
+                maxBufferSize: 30 * 1000 * 1000, // 30MB limit
+                maxBufferHole: 0.3,         // More aggressive
 
-                // Fragment Loading
-                fragLoadingTimeOut: 20000,
-                fragLoadingMaxRetry: 4,
-                fragLoadingRetryDelay: 1000,
-                fragLoadingMaxRetryTimeout: 64000,
+                // FRAGMENT LOADING: Faster timeouts for dead streams
+                fragLoadingTimeOut: 10000,  // 10s instead of 20s
+                fragLoadingMaxRetry: 3,     // Reduced from 4
+                fragLoadingRetryDelay: 500, // Faster retry
+                fragLoadingMaxRetryTimeout: 32000,
 
-                // Manifest Loading  
-                manifestLoadingTimeOut: 10000,
-                manifestLoadingMaxRetry: 3,
-                manifestLoadingRetryDelay: 1000,
-                manifestLoadingMaxRetryTimeout: 64000,
+                // MANIFEST LOADING: Quick detection of dead streams
+                manifestLoadingTimeOut: 8000,
+                manifestLoadingMaxRetry: 2,  // Reduced from 3
+                manifestLoadingRetryDelay: 500,
+                manifestLoadingMaxRetryTimeout: 16000,
 
-                // Level Loading
-                levelLoadingTimeOut: 10000,
-                levelLoadingMaxRetry: 4,
-                levelLoadingRetryDelay: 1000,
-                levelLoadingMaxRetryTimeout: 64000,
+                // LEVEL LOADING: Optimized
+                levelLoadingTimeOut: 8000,
+                levelLoadingMaxRetry: 3,
+                levelLoadingRetryDelay: 500,
+                levelLoadingMaxRetryTimeout: 16000,
 
-                // Start Level
+                // ABR: Start with lowest quality for instant playback
                 startLevel: -1,
-
-                // ABR Configuration
                 abrEwmaDefaultEstimate: 500000,
                 abrBandWidthFactor: 0.95,
                 abrBandWidthUpFactor: 0.7,
