@@ -24,95 +24,129 @@ const Player = ({ channel }) => {
         if (Hls.isSupported()) {
             if (hlsRef.current) {
                 hlsRef.current.destroy();
-
-                hlsRef.current = hls;
-
-                // SMART CONDITIONAL PROXY
-                const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
-                const isHttpStream = channel.url.startsWith('http://');
-
-                let streamUrl = channel.url;
-                let attemptedDirect = false;
-
-                if (isHttpStream) {
-                    streamUrl = `${PROXY_URL}${channel.url}`;
-                    console.log(`[Player] 🔀 Proxying HTTP stream: ${channel.name}`);
-                } else {
-                    console.log(`[Player] ✅ Direct HTTPS attempt: ${channel.name}`);
-                    attemptedDirect = true;
-                }
-
-                const startTime = performance.now();
-                hls.loadSource(streamUrl);
-                hls.attachMedia(video);
-
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    const loadTime = (performance.now() - startTime).toFixed(0);
-                    console.log(`[Player] ⚡ Loaded in ${loadTime}ms (${attemptedDirect ? 'direct' : 'proxied'})`);
-                    setLoading(false);
-                    playVideo();
-
-                    import('../utils/m3u.js').then(({ setCachedStatus }) => {
-                        setCachedStatus(channel.url, 'online');
-                    });
-                });
-
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                if (attemptedDirect && !streamUrl.includes(PROXY_URL)) {
-                                    console.log('[Player] ⚠️ Direct failed, retrying via proxy...');
-                                    attemptedDirect = false;
-                                    streamUrl = `${PROXY_URL}${channel.url}`;
-                                    hls.loadSource(streamUrl);
-                                    hls.startLoad();
-                                } else {
-                                    hls.startLoad();
-                                }
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                hls.recoverMediaError();
-                                break;
-                            default:
-                                setLoading(false);
-                                setError("This stream is unavailable.");
-                                import('../utils/m3u.js').then(({ setCachedStatus }) => {
-                                    setCachedStatus(channel.url, 'offline');
-                                });
-                                hls.destroy();
-                                break;
-                        }
-                    }
-                });
-
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
-                const isHttpStream = channel.url.startsWith('http://');
-                const streamUrl = isHttpStream ? `${PROXY_URL}${channel.url}` : channel.url;
-
-                video.src = streamUrl;
-                console.log(`[Player] 🍎 Safari ${isHttpStream ? 'proxied' : 'direct'}`);
-
-                video.addEventListener('loadedmetadata', () => {
-                    setLoading(false);
-                    playVideo();
-                });
-                video.addEventListener('error', () => {
-                    setLoading(false);
-                    setError("Stream unavailable.");
-                });
-            } else {
-                setLoading(false);
-                setError("Browser does not support HLS.");
             }
 
-            return () => {
-                if (hlsRef.current) {
-                    hlsRef.current.destroy();
+            const hls = new Hls({
+                // LL-HLS INSTANT PLAYBACK
+                enableWorker: true,
+                lowLatencyMode: true,                liveSyncDurationCount: 2,
+
+                // ULTRA-LOW BUFFER
+                maxBufferLength: 3,
+                maxMaxBufferLength: 10,
+                backBufferLength: 30,
+                maxBufferSize: 15 * 1000 * 1000,
+                maxBufferHole: 0.3,
+
+                // FAST FAILURE DETECTION
+                fragLoadingTimeOut: 8000,
+                fragLoadingMaxRetry: 2,
+                fragLoadingRetryDelay: 300,
+                fragLoadingMaxRetryTimeout: 16000,
+                manifestLoadingTimeOut: 5000,
+                manifestLoadingMaxRetry: 1,
+                manifestLoadingRetryDelay: 300,
+                manifestLoadingMaxRetryTimeout: 8000,
+                levelLoadingTimeOut: 5000,
+                levelLoadingMaxRetry: 2,
+                levelLoadingRetryDelay: 300,
+                levelLoadingMaxRetryTimeout: 10000,
+
+                startLevel: -1,
+                abrEwmaDefaultEstimate: 500000,
+                abrBandWidthFactor: 0.95,
+                abrBandWidthUpFactor: 0.7,
+                debug: false,
+            });
+
+            hlsRef.current = hls;
+
+            // SMART CONDITIONAL PROXY
+            const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
+            const isHttpStream = channel.url.startsWith('http://');
+
+            let streamUrl = channel.url;
+            let attemptedDirect = false;
+
+            if (isHttpStream) {
+                streamUrl = `${PROXY_URL}${channel.url}`;
+                console.log(`[Player] 🔀 Proxying HTTP stream: ${channel.name}`);
+            } else {
+                console.log(`[Player] ✅ Direct HTTPS attempt: ${channel.name}`);
+                attemptedDirect = true;
+            }
+
+            const startTime = performance.now();
+            hls.loadSource(streamUrl);
+            hls.attachMedia(video);
+
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                const loadTime = (performance.now() - startTime).toFixed(0);
+                console.log(`[Player] ⚡ Loaded in ${loadTime}ms (${attemptedDirect ? 'direct' : 'proxied'})`);
+                setLoading(false);
+                playVideo();
+
+                import('../utils/m3u.js').then(({ setCachedStatus }) => {
+                    setCachedStatus(channel.url, 'online');
+                });
+            });
+
+            hls.on(Hls.Events.ERROR, (event, data) => {
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            if (attemptedDirect && !streamUrl.includes(PROXY_URL)) {
+                                console.log('[Player] ⚠️ Direct failed, retrying via proxy...');
+                                attemptedDirect = false;
+                                streamUrl = `${PROXY_URL}${channel.url}`;
+                                hls.loadSource(streamUrl);
+                                hls.startLoad();
+                            } else {
+                                hls.startLoad();
+                            }
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            setLoading(false);
+                            setError("This stream is unavailable.");
+                            import('../utils/m3u.js').then(({ setCachedStatus }) => {
+                                setCachedStatus(channel.url, 'offline');
+                            });
+                            hls.destroy();
+                            break;
+                    }
                 }
-            };
-        }, [channel]);
+            });
+
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
+            const isHttpStream = channel.url.startsWith('http://');
+            const streamUrl = isHttpStream ? `${PROXY_URL}${channel.url}` : channel.url;
+
+            video.src = streamUrl;
+            console.log(`[Player] 🍎 Safari ${isHttpStream ? 'proxied' : 'direct'}`);
+
+            video.addEventListener('loadedmetadata', () => {
+                setLoading(false);
+                playVideo();
+            });
+            video.addEventListener('error', () => {
+                setLoading(false);
+                setError("Stream unavailable.");
+            });
+        } else {
+            setLoading(false);
+            setError("Browser does not support HLS.");
+        }
+
+        return () => {
+            if (hlsRef.current) {
+                hlsRef.current.destroy();
+            }
+        };
+    }, [channel]);
 
     if (!channel) {
         return (
