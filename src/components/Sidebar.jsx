@@ -135,7 +135,7 @@ const Sidebar = ({
                     <button
                         onClick={() => {
                             setSourceMode('default');
-                            onClearChannels(); // Clear channels when switching mode
+                            // onClearChannels(); // REMOVED: Don't clear player when switching tabs
                         }}
                         className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'default' ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
                     >
@@ -145,7 +145,7 @@ const Sidebar = ({
                     <button
                         onClick={() => {
                             setSourceMode('custom');
-                            onClearChannels(); // Clear channels when switching mode
+                            // onClearChannels(); // REMOVED: Don't clear player when switching tabs
                         }}
                         className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'custom' ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
                     >
@@ -168,7 +168,10 @@ const Sidebar = ({
                         />
                         {playlistUrl ? (
                             <button
-                                onClick={() => setPlaylistUrl('')}
+                                onClick={() => {
+                                    setPlaylistUrl('');
+                                    localStorage.removeItem('vectastream_last_url');
+                                }}
                                 className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all"
                                 title="Clear URL"
                             >

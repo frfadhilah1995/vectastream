@@ -45,7 +45,7 @@ function App() {
         console.log(`[App] 🔄 Loading playlist from: ${urlToLoad}`);
         setIsLoading(true);
         setChannels([]); // Clear existing channels immediately to avoid confusion
-        setCurrentChannel(null); // Stop playing current channel
+        // setCurrentChannel(null); // REMOVED: Keep playing current channel while loading new playlist
 
         try {
             let loadedChannels = [];
