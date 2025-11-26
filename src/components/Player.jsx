@@ -61,20 +61,36 @@ const Player = ({ channel }) => {
 
             hlsRef.current = hls;
 
-            // SMART CONDITIONAL PROXY
+            // CORS-AWARE PROXY LOGIC
             const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
-            const isHttpStream = channel.url.startsWith('http://');
+            
+            // Whitelist of domains known to have proper CORS headers
+            const CORS_SAFE_DOMAINS = [
+                'iptv-org.github.io',
+                'raw.githubusercontent.com',
+                'cdn.jsdelivr.net'
+            ];
 
             let streamUrl = channel.url;
             let attemptedDirect = false;
+            let needsProxy = true;
 
-            if (isHttpStream) {
+            // Check if domain is in whitelist
+            try {
+                const domain = new URL(channel.url).hostname;
+                needsProxy = !CORS_SAFE_DOMAINS.some(safe => domain.includes(safe));
+            } catch (e) {
+                needsProxy = true; // If URL parsing fails, use proxy
+            }
+
+            if (needsProxy) {
                 streamUrl = `${PROXY_URL}${channel.url}`;
-                console.log(`[Player] 🔀 Proxying HTTP stream: ${channel.name}`);
+                console.log(`[Player] 🔀 Proxying stream to bypass CORS: ${channel.name}`);
             } else {
-                console.log(`[Player] ✅ Direct HTTPS attempt: ${channel.name}`);
+                console.log(`[Player] ✅ Direct HTTPS (CORS-safe): ${channel.name}`);
                 attemptedDirect = true;
             }
+
 
             const startTime = performance.now();
             hls.loadSource(streamUrl);
