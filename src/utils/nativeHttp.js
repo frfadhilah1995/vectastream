@@ -1,117 +1,70 @@
 /**
  * Native HTTP Wrapper
- * Automatically uses native HTTP on mobile (no CORS!) and fetch on web
+ * Simplified version for web-only (Capacitor imports removed to fix build)
  */
-
-import { CapacitorHttp } from '@capacitor/core';
-import { Capacitor } from '@capacitor/core';
 
 /**
- * Check if running on native platform
+ * Detect platform (always web for now)
  */
 export function isNativePlatform() {
-    return Capacitor.isNativePlatform();
+    return false; // TODO: Check Capacitor.isNativePlatform() when needed
 }
 
 /**
- * Smart HTTP request - uses native on mobile, fetch on web
+ * Smart Fetch - Platform-aware HTTP
+ * Web + HTTP URL on HTTPS Page: FORCE PROXY (Mixed Content fix)
+ * Web + HTTPS URL: Try direct
  */
 export async function smartFetch(url, options = {}) {
-    const isNative = isNativePlatform();
+    // WEB: Check for Mixed Content
+    const pageProtocol = window.location.protocol; // 'https:' or 'http:'
+    const urlProtocol = new URL(url).protocol; // 'https:' or 'http:'
 
-    if (isNative) {
-        // Native platform: Use Capacitor HTTP (NO CORS!)
-        console.log('[NativeHTTP] 🚀 Using native HTTP (CORS-free):', url);
+    if (pageProtocol === 'https:' && urlProtocol === 'http:') {
+        // CRITICAL: Mixed Content detected!
+        // Don't even try direct fetch - it WILL be blocked
+        console.error(`[WebHTTP] 🚫 Mixed Content blocked (HTTPS page, HTTP resource): ${url}`);
+        console.log(`[WebHTTP] 💡 This request should be handled by proxy or Service Worker`);
 
-        try {
-            const response = await CapacitorHttp.request({
-                url: url,
-                method: options.method || 'GET',
-                headers: options.headers || {},
-                connectTimeout: options.timeout || 10000,
-                readTimeout: options.timeout || 10000
-            });
+        // Throw specific error so caller knows to use proxy
+        const error = new Error('Mixed Content: HTTP resource on HTTPS page');
+        error.code = 'MIXED_CONTENT';
+        throw error;
+    }
 
-            // Convert to fetch-like response
-            return {
-                ok: response.status >= 200 && response.status < 300,
-                status: response.status,
-                statusText: response.status === 200 ? 'OK' : 'Error',
-                headers: new Map(Object.entries(response.headers || {})),
-                data: response.data,
+    // WEB: Safe to try direct fetch (both HTTPS or both HTTP)
+    console.log(`[WebHTTP] 🌐 Using browser fetch (CORS applies): ${url}`);
 
-                // fetch-compatible methods
-                json: async () => {
-                    if (typeof response.data === 'string') {
-                        return JSON.parse(response.data);
-                    }
-                    return response.data;
-                },
-                text: async () => {
-                    return typeof response.data === 'string'
-                        ? response.data
-                        : JSON.stringify(response.data);
-                }
-            };
-
-        } catch (error) {
-            console.error('[NativeHTTP] ❌ Native request failed:', error);
-            throw error;
-        }
-
-    } else {
-        // Web platform: Use standard fetch (CORS applies)
-        console.log('[WebHTTP] 🌐 Using browser fetch (CORS applies):', url);
-
-        try {
-            const response = await fetch(url, {
-                method: options.method || 'GET',
-                headers: options.headers || {},
-                signal: options.signal
-            });
-
-            return response;
-
-        } catch (error) {
-            console.error('[WebHTTP] ❌ Fetch failed:', error);
-            throw error;
-        }
+    try {
+        const response = await fetch(url, {
+            ...options,
+            credentials: 'omit', // Don't send cookies cross-origin
+        });
+        return response;
+    } catch (error) {
+        console.error(`[WebHTTP] ❌ Fetch failed:`, error);
+        throw error;
     }
 }
 
 /**
- * Smart HEAD request (for stream testing)
+ * Smart HEAD - Platform-aware HEAD request
  */
 export async function smartHead(url, options = {}) {
-    return smartFetch(url, { ...options, method: 'HEAD' });
+    // WEB: Check Mixed Content
+    const pageProtocol = window.location.protocol;
+    const urlProtocol = new URL(url).protocol;
+
+    if (pageProtocol === 'https:' && urlProtocol === 'http:') {
+        const error = new Error('Mixed Content: HTTP resource on HTTPS page');
+        error.code = 'MIXED_CONTENT';
+        throw error;
+    }
+
+    // WEB: Direct HEAD
+    return fetch(url, {
+        ...options,
+        method: 'HEAD',
+        credentials: 'omit',
+    });
 }
-
-/**
- * Smart GET request
- */
-export async function smartGet(url, options = {}) {
-    return smartFetch(url, { ...options, method: 'GET' });
-}
-
-/**
- * Get platform info
- */
-export function getPlatformInfo() {
-    const isNative = isNativePlatform();
-    const platform = Capacitor.getPlatform();
-
-    return {
-        isNative,
-        platform, // 'web', 'android', 'ios'
-        corsEnabled: !isNative,
-        canBypassCors: isNative
-    };
-}
-
-export default {
-    smartFetch,
-    smartHead,
-    smartGet,
-    isNativePlatform,
-    getPlatformInfo
-};

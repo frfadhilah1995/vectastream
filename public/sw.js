@@ -1,12 +1,13 @@
 /**
- * Ghost Worker - Service Worker for Stream Interception
+ * Ghost Worker V3 - Service Worker for Stream Interception
  * Intercepts HLS requests and applies "Smart Healing" invisibly
  * Features:
  * 1. Protocol Upgrade (HTTP -> HTTPS Proxy) to fix Mixed Content
  * 2. Race Mode (Exponential Speed)
+ * 3. Reliable Proxy Fallbacks
  */
 
-const CACHE_NAME = 'vectastream-ghost-v2';
+const CACHE_NAME = 'vectastream-ghost-v3';
 const PROXY_URL = 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev';
 
 self.addEventListener('install', (event) => {
@@ -43,36 +44,36 @@ async function handleStreamRequest(request) {
         strategies.push(
             fetch(request, { mode: 'cors', credentials: 'omit' })
                 .then(res => {
-                    if (!res.ok) throw new Error('Direct failed');
+                    if (!res.ok) throw new Error(`Direct failed: ${res.status}`);
+                    console.log('[GhostWorker] ✅ Direct success');
                     return res;
                 })
         );
+    } else {
+        console.log('[GhostWorker] ⚠️ Skipping direct (Mixed Content)');
     }
 
     // 2. Cloudflare Proxy Strategy (Primary)
-    // Handles Mixed Content by upgrading to HTTPS via proxy
     const proxyUrl = `${PROXY_URL}/${url}`;
     strategies.push(
         fetch(proxyUrl)
             .then(res => {
-                if (!res.ok) throw new Error('Proxy failed');
+                if (!res.ok) throw new Error(`Cloudflare Proxy failed: ${res.status}`);
+                console.log('[GhostWorker] ✅ Cloudflare Proxy success');
                 return res;
             })
     );
 
-    // 3. CORS Anywhere Strategy (Backup)
-    const corsUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-    strategies.push(
-        fetch(corsUrl)
-            .then(res => {
-                if (!res.ok) throw new Error('CORS Anywhere failed');
-                return res;
-            })
-    );
+    // 3. REMOVED: allorigins.win (unreliable, CORS issues)
+
+    // If no strategies available (shouldn't happen), return error
+    if (strategies.length === 0) {
+        console.error('[GhostWorker] ❌ No strategies available');
+        return new Response('No available strategies', { status: 500 });
+    }
 
     try {
         // 🏁 RACE! First successful response wins
-        // This is "Exponential" - we don't wait for timeouts
         const winner = await Promise.any(strategies);
 
         // Clone response to be safe
@@ -84,6 +85,18 @@ async function handleStreamRequest(request) {
 
     } catch (aggregateError) {
         console.error('[GhostWorker] ❌ All strategies failed:', aggregateError);
-        return new Response('Stream unavailable via Ghost Worker', { status: 404 });
+
+        // Return specific error for debugging
+        return new Response(
+            JSON.stringify({
+                error: 'Stream unavailable via Ghost Worker',
+                url: url,
+                reasons: aggregateError.errors?.map(e => e.message) || []
+            }),
+            {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' }
+            }
+        );
     }
 }
