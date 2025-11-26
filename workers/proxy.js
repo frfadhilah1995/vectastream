@@ -70,93 +70,13 @@ export default {
         // Prepare Request Headers
         const modifiedHeaders = new Headers();
 
-        // 1. Apply Default Spoofed Headers
-        Object.entries(DEFAULT_HEADERS).forEach(([key, value]) => {
-            modifiedHeaders.set(key, value);
+    } catch(error) {
+        return new Response(`Proxy Error: ${error.message}`, {
+            status: 500,
+            headers: { 'Access-Control-Allow-Origin': '*' }
         });
-
-        // 2. CRITICAL: Universal Intelligent Referer & Origin Spoofing
-        // This makes the request look like it came from the target site itself (Same-Origin)
-        const targetOrigin = `${targetUrlObj.protocol}//${targetUrlObj.hostname}`;
-
-        // Set Origin to target's own origin (bypasses standard CORS checks)
-        modifiedHeaders.set('Origin', targetOrigin);
-
-        // Smart Referer Strategy:
-        // Most streams check if the request comes from their own domain or a specific player page.
-        // We default to setting the Referer to the target URL's parent directory.
-        // Example: 
-        // Target: https://site.com/live/stream.m3u8
-        // Referer: https://site.com/live/
-        const path = targetUrlObj.pathname;
-        const directory = path.substring(0, path.lastIndexOf('/') + 1);
-        const smartReferer = `${targetOrigin}${directory}`;
-
-        modifiedHeaders.set('Referer', smartReferer);
-
-        // Special handling for known strict sites (optional, but good to keep if needed)
-        // If a site specifically requires the full m3u8 path as referer (like detik), 
-        // the directory approach usually works, but we can be specific if needed.
-        if (targetUrlObj.hostname.includes('detik.com')) {
-            // Detik specifically likes the full m3u8 path or the index.m3u8
-            // But let's try the universal directory first, if it fails we can revert to specific.
-            // Actually, for detik, let's keep the specific logic as an override just to be safe since we verified it.
-            const refererPath = targetUrl.includes('index.m3u8')
-                ? targetUrl
-                : targetUrl.substring(0, targetUrl.lastIndexOf('/')) + '/index.m3u8';
-            modifiedHeaders.set('Referer', refererPath);
-        }
-
-        // 3. Forward specific important headers from client
-        const allowedForwardHeaders = ['range', 'if-modified-since', 'cache-control'];
-        for (const [key, value] of request.headers) {
-            if (allowedForwardHeaders.includes(key.toLowerCase())) {
-                modifiedHeaders.set(key, value);
-            }
-        }
-
-        // 4. Handle Custom Headers passed via Query Params (Advanced)
-        // Example: ?url=...&_header_Referer=https://mysite.com
-        for (const [key, value] of url.searchParams) {
-            if (key.startsWith('_header_')) {
-                const headerName = key.substring(8); // Remove '_header_'
-                modifiedHeaders.set(headerName, value);
-            }
-        }
-
-        try {
-            // FETCH TARGET
-            const response = await fetch(targetUrl, {
-                method: request.method,
-                headers: modifiedHeaders,
-                redirect: 'follow'
-            });
-
-            // Prepare Response Headers (CORS)
-            const responseHeaders = new Headers(response.headers);
-            responseHeaders.set('Access-Control-Allow-Origin', origin || '*');
-            responseHeaders.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
-            responseHeaders.set('Access-Control-Allow-Headers', '*');
-            responseHeaders.set('Access-Control-Expose-Headers', '*');
-
-            // Remove troublesome headers
-            responseHeaders.delete('X-Frame-Options');
-            responseHeaders.delete('Content-Security-Policy');
-
-            // Return Stream (Pass-through)
-            return new Response(response.body, {
-                status: response.status,
-                statusText: response.statusText,
-                headers: responseHeaders
-            });
-
-        } catch (error) {
-            return new Response(`Proxy Error: ${error.message}`, {
-                status: 500,
-                headers: { 'Access-Control-Allow-Origin': '*' }
-            });
-        }
     }
+}
 };
 
 function handleOptions(request) {
