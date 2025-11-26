@@ -1,91 +1,68 @@
-// VectaStream Service Worker for PWA
-const CACHE_NAME = 'vectastream-v1';
-const STATIC_ASSETS = [
-    './',
-    './index.html',
-    './manifest.json',
-    './icon-192.png',
-    './icon-512.png'
-];
+/**
+ * Ghost Worker - Service Worker for Stream Interception
+ * Intercepts HLS requests and applies "Smart Healing" invisibly
+ */
 
-// Install event - cache static assets
+const CACHE_NAME = 'vectastream-ghost-v1';
+const PROXY_URL = 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev';
+
 self.addEventListener('install', (event) => {
-    console.log('[SW] Installing service worker...');
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('[SW] Caching static assets');
-                return cache.addAll(STATIC_ASSETS);
-            })
-            .then(() => self.skipWaiting()
-            )
-    );
+    self.skipWaiting();
+    console.log('[GhostWorker] 👻 Installed and ready to haunt!');
 });
 
-// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-    console.log('[SW] Activating service worker...');
-    event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log('[SW] Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        }).then(() => self.clients.claim())
-    );
+    event.waitUntil(self.clients.claim());
+    console.log('[GhostWorker] 👻 Activated and controlling clients');
 });
 
-// Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
-    // Skip non-GET requests
-    if (event.request.method !== 'GET') return;
+    const url = new URL(event.request.url);
 
-    // Skip Chrome extension requests
-    if (event.request.url.startsWith('chrome-extension://')) return;
-
-    event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                // Clone response before caching
-                const responseToCache = response.clone();
-
-                // Cache successful responses
-                if (response.status === 200) {
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseToCache);
-                    });
-                }
-
-                return response;
-            })
-            .catch(() => {
-                // Network failed, try cache
-                return caches.match(event.request).then((response) => {
-                    if (response) {
-                        console.log('[SW] Serving from cache:', event.request.url);
-                        return response;
-                    }
-
-                    // If not in cache, return offline page or error
-                    return new Response('Offline - VectaStream requires internet connection', {
-                        status: 503,
-                        statusText: 'Service Unavailable',
-                        headers: new Headers({
-                            'Content-Type': 'text/plain'
-                        })
-                    });
-                });
-            })
-    );
-});
-
-// Handle messages from main app
-self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SKIP_WAITING') {
-        self.skipWaiting();
+    // Only intercept HLS streams (.m3u8 and .ts)
+    if (url.pathname.endsWith('.m3u8') || url.pathname.endsWith('.ts')) {
+        event.respondWith(handleStreamRequest(event.request));
     }
 });
+
+/**
+ * Handle stream request with "Race Logic"
+ */
+async function handleStreamRequest(request) {
+    const url = request.url;
+
+    // 1. Try Direct First (Fastest)
+    try {
+        const directResponse = await fetch(request, {
+            mode: 'cors',
+            credentials: 'omit'
+        });
+
+        if (directResponse.ok) return directResponse;
+    } catch (e) {
+        // Ignore direct failure
+    }
+
+    // 2. Try via Cloudflare Proxy (Standard)
+    try {
+        const proxyUrl = `${PROXY_URL}/${url}`;
+        const proxyResponse = await fetch(proxyUrl);
+
+        if (proxyResponse.ok) return proxyResponse;
+    } catch (e) {
+        // Ignore proxy failure
+    }
+
+    // 3. Try via CORS Anywhere (Backup)
+    try {
+        const corsUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        const corsResponse = await fetch(corsUrl);
+
+        if (corsResponse.ok) return corsResponse;
+    } catch (e) {
+        // Ignore backup failure
+    }
+
+    // 4. If all fail, return a 404 or custom error
+    return new Response('Stream unavailable via Ghost Worker', { status: 404 });
+}

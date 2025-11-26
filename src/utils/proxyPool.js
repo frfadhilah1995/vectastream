@@ -3,6 +3,8 @@
  * Manages multiple proxies with health scoring and intelligent routing
  */
 
+import { isNativePlatform } from './nativeHttp';
+
 class ProxyPool {
     constructor() {
         this.proxies = [
@@ -23,15 +25,6 @@ class ProxyPool {
                 features: ['cors', 'simple'],
                 rateLimit: 200 // requests per day
             }
-            // Indonesia VPS will be added when deployed
-            // {
-            //     name: 'Indonesia VPS',
-            //     url: 'https://indonesia-proxy.yourserver.com',
-            //     priority: 2,
-            //     geo: 'indonesia',
-            //     healthScore: 100,
-            //     features: ['cors', 'indonesia-local', 'fast']
-            // }
         ];
 
         this.failureCount = {};
@@ -47,6 +40,11 @@ class ProxyPool {
      */
     async getBestProxy(targetUrl, options = {}) {
         const { forceGeo = null, excludeProxies = [] } = options;
+
+        // On Native Platform, we might not need a proxy for CORS!
+        // But we still need it for Geo-blocking or HTTP upgrades.
+        // The Smart Healer handles the "Direct" attempt first.
+        // If we are here, it means Direct failed, so we definitely need a proxy.
 
         // Check if Indonesia-only server
         const isIndonesia = this.isIndonesiaServer(targetUrl);

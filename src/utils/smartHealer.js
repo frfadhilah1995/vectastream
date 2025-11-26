@@ -1,11 +1,13 @@
 /**
  * Advanced Smart Stream Healer
  * Multi-proxy rotation + Alternative sources + Exponential backoff retry
+ * Native Android Support (Capacitor)
  */
 
 import errorDB from './errorDatabase';
 import proxyPool from './proxyPool';
 import { getAlternatives } from './alternativeSources';
+import { smartHead, isNativePlatform } from './nativeHttp';
 
 /**
  * Retry with exponential backoff
@@ -85,46 +87,57 @@ async function testWithProxy(streamUrl, proxy, signal) {
 
 /**
  * Test direct connection (no proxy)
+ * Uses native HTTP on mobile (CORS-free!) and fetch on web
  */
 async function testDirect(streamUrl, signal) {
     const startTime = Date.now();
+    const isNative = isNativePlatform();
 
     try {
-        const response = await fetch(streamUrl, {
-            method: 'HEAD',
+        // Use smart HTTP (native on mobile, fetch on web)
+        const response = await smartHead(streamUrl, {
             signal,
-            headers: {
-                'Accept': '*/*'
-            }
+            timeout: 10000
         });
 
         const duration = Date.now() - startTime;
         const headers = {};
-        response.headers.forEach((value, key) => {
-            headers[key] = value;
-        });
+
+        // Handle both fetch Response and native response
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((value, key) => {
+                headers[key] = value;
+            });
+        } else if (response.headers) {
+            // Native headers map
+            Object.entries(response.headers).forEach(([key, value]) => {
+                headers[key] = value;
+            });
+        }
 
         return {
-            proxy: 'Direct',
+            proxy: isNative ? 'Direct (Native)' : 'Direct (Web)',
             statusCode: response.status,
             headers,
             duration,
-            success: response.ok,
+            success: response.ok || (response.status >= 200 && response.status < 300),
             error: null,
-            url: streamUrl
+            url: streamUrl,
+            isNative
         };
 
     } catch (error) {
         const duration = Date.now() - startTime;
 
         return {
-            proxy: 'Direct',
+            proxy: isNative ? 'Direct (Native)' : 'Direct (Web)',
             statusCode: null,
             headers: {},
             duration,
             success: false,
             error: error.message,
-            url: streamUrl
+            url: streamUrl,
+            isNative
         };
     }
 }
@@ -152,7 +165,10 @@ async function tryAllProxies(streamUrl, options = {}) {
         return { success: true, result: directResult, attempts };
     }
 
-    // 2. Try proxies
+    // 2. Try proxies (only if direct failed)
+    // On native, we might want to skip proxies if the error was definitely not geo-blocking
+    // But for now, let's keep it robust and try proxies if direct fails
+
     const proxies = proxyPool.getAllProxies();
 
     for (const proxy of proxies) {

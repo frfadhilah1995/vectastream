@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">VectaStream</string>
+    <string name="title_activity_main">VectaStream</string>
+    <string name="package_name">io.vectastream.app</string>
+    <string name="custom_url_scheme">io.vectastream.app</string>
+</resources>
