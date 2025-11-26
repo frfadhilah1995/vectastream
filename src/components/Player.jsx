@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import { Tv, AlertTriangle, Loader2, Activity, CheckCircle, XCircle } from 'lucide-react';
 import { healStream } from '../utils/smartHealer';
+import FetchLoader from '../utils/fetchLoader';
 
 const Player = ({ channel }) => {
     const videoRef = useRef(null);
@@ -59,8 +60,11 @@ const Player = ({ channel }) => {
                 }
 
                 const hls = new Hls({
+                    // CRITICAL: Use Fetch-based loader (enables Service Worker interception)
+                    loader: FetchLoader,
+
                     // CRITICAL: Disable Worker so Service Worker can intercept
-                    enableWorker: false, // Was: true - caused SW bypass
+                    enableWorker: false,
 
                     // LL-HLS INSTANT PLAYBACK
                     lowLatencyMode: true,
