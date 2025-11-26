@@ -29,7 +29,7 @@ const Player = ({ channel }) => {
             const hls = new Hls({
                 // LL-HLS INSTANT PLAYBACK
                 enableWorker: true,
-                lowLatencyMode: true,                liveSyncDurationCount: 2,
+                lowLatencyMode: true, liveSyncDurationCount: 2,
 
                 // ULTRA-LOW BUFFER
                 maxBufferLength: 3,
@@ -63,12 +63,18 @@ const Player = ({ channel }) => {
 
             // CORS-AWARE PROXY LOGIC
             const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
-            
+
             // Whitelist of domains known to have proper CORS headers
             const CORS_SAFE_DOMAINS = [
                 'iptv-org.github.io',
                 'raw.githubusercontent.com',
                 'cdn.jsdelivr.net'
+            ];
+
+            // Domains that block Cloudflare Workers but allow direct HLS playback
+            const WORKER_BLOCKED_DOMAINS = [
+                'detik.com',
+                'video.detik.com'
             ];
 
             let streamUrl = channel.url;
@@ -78,19 +84,29 @@ const Player = ({ channel }) => {
             // Check if domain is in whitelist
             try {
                 const domain = new URL(channel.url).hostname;
-                needsProxy = !CORS_SAFE_DOMAINS.some(safe => domain.includes(safe));
+                const isCORSSafe = CORS_SAFE_DOMAINS.some(safe => domain.includes(safe));
+                const isWorkerBlocked = WORKER_BLOCKED_DOMAINS.some(blocked => domain.includes(blocked));
+
+                // If worker is blocked, try direct first (HLS chunks often don't need CORS for playback)
+                if (isWorkerBlocked) {
+                    streamUrl = channel.url;
+                    attemptedDirect = true;
+                    needsProxy = false;
+                    console.log(`[Player] ⚠️ Direct attempt (proxy blocked by server): ${channel.name}`);
+                } else if (isCORSSafe) {
+                    streamUrl = channel.url;
+                    attemptedDirect = true;
+                    needsProxy = false;
+                    console.log(`[Player] ✅ Direct HTTPS (CORS-safe): ${channel.name}`);
+                } else {
+                    streamUrl = `${PROXY_URL}${channel.url}`;
+                    console.log(`[Player] 🔀 Proxying stream to bypass CORS: ${channel.name}`);
+                }
             } catch (e) {
-                needsProxy = true; // If URL parsing fails, use proxy
-            }
-
-            if (needsProxy) {
+                // If URL parsing fails, use proxy
                 streamUrl = `${PROXY_URL}${channel.url}`;
-                console.log(`[Player] 🔀 Proxying stream to bypass CORS: ${channel.name}`);
-            } else {
-                console.log(`[Player] ✅ Direct HTTPS (CORS-safe): ${channel.name}`);
-                attemptedDirect = true;
+                console.log(`[Player] 🔀 Proxying stream (fallback): ${channel.name}`);
             }
-
 
             const startTime = performance.now();
             hls.loadSource(streamUrl);

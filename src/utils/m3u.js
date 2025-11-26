@@ -29,12 +29,32 @@ export const parseM3U = (content, sourceUrl = '') => {
         let streamName = 'Live Stream';
         if (sourceUrl) {
             try {
-                const urlParts = sourceUrl.split('/');
-                const filename = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2];
-                // Try to extract meaningful name (e.g. "trans7" from "trans7.smil/index.m3u8")
-                const match = filename.match(/([a-zA-Z0-9_-]+)/);
-                if (match) {
-                    streamName = match[1].replace(/[-_]/g, ' ').toUpperCase();
+                const urlParts = sourceUrl.split('/').filter(Boolean);
+
+                // Skip generic filenames (index, playlist, stream, etc.)
+                const genericNames = ['index', 'playlist', 'stream', 'master', 'manifest', 'chunklist'];
+
+                // Search backwards through URL parts for meaningful name
+                for (let i = urlParts.length - 1; i >= 0; i--) {
+                    let part = urlParts[i];
+
+                    // Remove file extension
+                    part = part.replace(/\.(m3u8?|smil|mpd|ts)$/i, '');
+
+                    // Remove common suffixes
+                    part = part.replace(/_(sleng|hlsaes|hls|rtmp).*$/i, '');
+
+                    // Extract name from patterns like "smil:trans7.smil"
+                    const smilMatch = part.match(/(?:smil:)?([a-zA-Z0-9_-]+)/);
+                    if (smilMatch) {
+                        const candidate = smilMatch[1].toLowerCase();
+
+                        // Skip generic names
+                        if (!genericNames.includes(candidate) && candidate.length > 2) {
+                            streamName = candidate.replace(/[-_]/g, ' ').toUpperCase();
+                            break;
+                        }
+                    }
                 }
             } catch (e) {
                 console.warn('[M3U Parser] Could not extract stream name from URL');
