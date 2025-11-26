@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X, Bookmark, Trash2 } from 'lucide-react';
 import ChannelItem from './ChannelItem';
 import { statusRefreshService } from '../utils/statusRefresh.js';
@@ -292,6 +293,9 @@ const Sidebar = ({
                             placeholder="Search channels..."
                             className="w-full bg-white/5 border border-transparent rounded-lg py-2 pl-9 pr-3 text-sm text-white focus:bg-black/40 focus:border-glass-border outline-none transition-all"
                         />
+                        {searchTerm && selectedCategory !== 'All' && (
+                            <span className="text-accent font-normal normal-case absolute right-3 top-1/2 -translate-y-1/2 text-xs">in {selectedCategory}</span>
+                        )}
                     </div>
                 </div>
             )}
@@ -364,6 +368,16 @@ const Sidebar = ({
                         </div>
                     </div>
                 )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-glass-border text-center text-xs text-gray-600 bg-black/20">
+                <RouterLink to="/debug" className="flex items-center justify-center gap-2 mb-2 text-accent hover:text-white transition-colors">
+                    <Globe size={12} />
+                    <span>Stream Debugger</span>
+                </RouterLink>
+                <p>&copy; {new Date().getFullYear()} VectaStream</p>
+                <p className="mt-1 font-medium text-gray-500">Developed by RMD TECH</p>
             </div>
         </aside>
     );

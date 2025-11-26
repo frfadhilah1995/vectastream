@@ -1,13 +1,3 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import Player from './components/Player';
-import { parseM3U } from './utils/m3u';
-import { fetchWithCorsProxy } from './utils/corsProxy';
-import { getCachedPlaylist, cachePlaylist } from './utils/playlistCache';
-import { addToHistory } from './utils/history';
-import { Menu, X } from 'lucide-react';
-import useDevice from './hooks/useDevice';
 import useStreamStatus from './hooks/useStreamStatus';
 
 import { statusRefreshService } from './utils/statusRefresh';
@@ -172,7 +162,12 @@ function App() {
 
                 {/* Main Content (Player) */}
                 <main className="flex-1 relative bg-black w-full h-full">
-                    <Player channel={currentChannel} />
+                    <Routes>
+                        <Route path="/debug" element={<StreamDebugger />} />
+                        <Route path="/" element={
+                            <Player channel={currentChannel} />
+                        } />
+                    </Routes>
                 </main>
             </div>
         </div>
