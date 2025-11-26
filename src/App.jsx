@@ -62,8 +62,9 @@ function App() {
                 const text = await fetchWithCorsProxy(urlToLoad);
                 console.log(`[App] ✅ Fetched playlist, size: ${text.length} characters`);
 
-                const parsedChannels = parseM3U(text);
+                const parsedChannels = parseM3U(text, urlToLoad);
                 console.log(`[App] 📺 Parsed ${parsedChannels.length} channels`);
+
 
                 if (parsedChannels.length === 0) {
                     alert("No channels found in playlist.");

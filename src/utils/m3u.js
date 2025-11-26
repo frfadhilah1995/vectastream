@@ -3,17 +3,61 @@ import Parser from 'm3u8-parser';
 /**
  * Parse M3U playlist using m3u8-parser (60% faster than regex)
  * Robust, community-maintained, supports all M3U/M3U8 formats
+ * 
+ * Supports two formats:
+ * 1. Channel list - Multiple #EXTINF entries with URLs
+ * 2. HLS master playlist - Single stream with variants (#EXT-X-STREAM-INF)
  */
-export const parseM3U = (content) => {
+export const parseM3U = (content, sourceUrl = '') => {
     console.log('[M3U Parser] Starting parse...');
     const startTime = performance.now();
 
     const channels = [];
 
-    // Split by lines for manual EXTINF parsing (m3u8-parser is for HLS manifests, not channel lists)
-    // We'll keep regex for channel parsing but make it more robust
+    // Split by lines for manual EXTINF parsing
     const lines = content.split('\n').map(line => line.trim()).filter(Boolean);
 
+    // Detect if this is an HLS master playlist (single stream) vs channel list
+    const hasStreamInf = content.includes('#EXT-X-STREAM-INF');
+    const hasExtInf = content.includes('#EXTINF:');
+
+    // If this is a master playlist (single stream), create a single channel entry
+    if (hasStreamInf && !hasExtInf) {
+        console.log('[M3U Parser] 🔍 Detected HLS master playlist (single stream)');
+
+        // Extract stream name from URL or use default
+        let streamName = 'Live Stream';
+        if (sourceUrl) {
+            try {
+                const urlParts = sourceUrl.split('/');
+                const filename = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2];
+                // Try to extract meaningful name (e.g. "trans7" from "trans7.smil/index.m3u8")
+                const match = filename.match(/([a-zA-Z0-9_-]+)/);
+                if (match) {
+                    streamName = match[1].replace(/[-_]/g, ' ').toUpperCase();
+                }
+            } catch (e) {
+                console.warn('[M3U Parser] Could not extract stream name from URL');
+            }
+        }
+
+        // Create single channel entry pointing to the master playlist
+        channels.push({
+            name: streamName,
+            url: sourceUrl || content.split('\n').find(l => l.startsWith('http')) || '',
+            id: streamName.toLowerCase().replace(/\s+/g, '-'),
+            logo: '',
+            group: 'Direct Stream',
+            protocol: 'HLS',
+            resolution: null
+        });
+
+        const parseTime = (performance.now() - startTime).toFixed(2);
+        console.log(`[M3U Parser] ✅ Parsed 1 direct stream in ${parseTime}ms: ${streamName}`);
+        return channels;
+    }
+
+    // Standard channel list parsing
     let currentChannel = null;
 
     for (let i = 0; i < lines.length; i++) {
@@ -63,6 +107,7 @@ export const parseM3U = (content) => {
 
     return channels;
 };
+
 
 /**
  * Status caching utilities
