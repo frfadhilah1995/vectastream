@@ -71,54 +71,108 @@ export default {
         const modifiedHeaders = new Headers();
 
         // 1. Apply Default Spoofed Headers
-        modifiedHeaders.set(key, value);
-    }
-}
+        Object.entries(DEFAULT_HEADERS).forEach(([key, value]) => {
+            modifiedHeaders.set(key, value);
+        });
 
-// 4. Handle Custom Headers passed via Query Params
-for (const [key, value] of url.searchParams) {
-    if (key.startsWith('_header_')) {
-        const headerName = key.substring(8);
-        modifiedHeaders.set(headerName, value);
-    }
-}
+        // 2. CRITICAL: Universal Intelligent Referer & Origin Spoofing
+        const targetOrigin = `${targetUrlObj.protocol}//${targetUrlObj.hostname}`;
 
-try {
-    // FETCH TARGET
-    const response = await fetch(targetUrl, {
-        method: request.method,
-        headers: modifiedHeaders,
-        redirect: 'follow'
-    });
+        // DETECT SERVER TYPE & MODE
+        // Standard Mode: Mimics an embedded player (Referer = URL, Origin = Domain)
+        // Direct Mode: Mimics a direct browser navigation (No Referer, No Origin)
 
-    // Prepare Response Headers (CORS)
-    const responseHeaders = new Headers(response.headers);
-    responseHeaders.set('Access-Control-Allow-Origin', origin || '*');
-    responseHeaders.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
-    responseHeaders.set('Access-Control-Allow-Headers', '*');
-    responseHeaders.set('Access-Control-Expose-Headers', '*');
+        const port = targetUrlObj.port;
+        const isRawStream = port === '9981' || port === '8000' || targetUrl.includes('channelid');
 
-    // Debug Headers (Helpful for diagnosing 403/404s)
-    responseHeaders.set('X-Debug-Target-Status', response.status);
-    responseHeaders.set('X-Debug-Target-Url', targetUrl);
+        if (isRawStream) {
+            // --- BROWSER DIRECT MODE (Anti-Mainstream Fix) ---
+            // For raw servers (Tvheadend, Shoutcast), web headers often cause blocks.
+            // We mimic a user typing the URL directly in the address bar.
+            modifiedHeaders.delete('Referer');
+            modifiedHeaders.delete('Origin');
 
-    // Remove troublesome headers
-    responseHeaders.delete('X-Frame-Options');
-    responseHeaders.delete('Content-Security-Policy');
+            // Override Fetch Metadata to look like a top-level navigation
+            modifiedHeaders.set('sec-fetch-dest', 'document');
+            modifiedHeaders.set('sec-fetch-mode', 'navigate');
+            modifiedHeaders.set('sec-fetch-site', 'none');
+            modifiedHeaders.set('sec-fetch-user', '?1');
 
-    // Return Stream
-    return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: responseHeaders
-    });
+        } else {
+            // --- STANDARD EMBEDDED MODE ---
+            // For CDNs, Wowza, Nginx, etc.
 
-} catch (error) {
-    return new Response(`Proxy Error: ${error.message}`, {
-        status: 500,
-        headers: { 'Access-Control-Allow-Origin': '*' }
-    });
-}
+            // Origin Handling:
+            // - HTTPS targets: Send Origin (mimic CORS/Same-Origin)
+            // - HTTP targets: Omit Origin (mimic standard request)
+            if (targetUrlObj.protocol === 'https:') {
+                modifiedHeaders.set('Origin', targetOrigin);
+            }
+
+            // Smart Referer Strategy (Self-Referential):
+            // Mimics direct player access on the server itself.
+            const smartReferer = targetUrl;
+            modifiedHeaders.set('Referer', smartReferer);
+
+            // Special handling for known strict sites
+            if (targetUrlObj.hostname.includes('detik.com')) {
+                modifiedHeaders.set('Origin', targetOrigin);
+            }
+        }
+
+        // 3. Forward specific important headers from client
+        const allowedForwardHeaders = ['range', 'if-modified-since', 'cache-control'];
+        for (const [key, value] of request.headers) {
+            if (allowedForwardHeaders.includes(key.toLowerCase())) {
+                modifiedHeaders.set(key, value);
+            }
+        }
+
+        // 4. Handle Custom Headers passed via Query Params
+        for (const [key, value] of url.searchParams) {
+            if (key.startsWith('_header_')) {
+                const headerName = key.substring(8);
+                modifiedHeaders.set(headerName, value);
+            }
+        }
+
+        try {
+            // FETCH TARGET
+            const response = await fetch(targetUrl, {
+                method: request.method,
+                headers: modifiedHeaders,
+                redirect: 'follow'
+            });
+
+            // Prepare Response Headers (CORS)
+            const responseHeaders = new Headers(response.headers);
+            responseHeaders.set('Access-Control-Allow-Origin', origin || '*');
+            responseHeaders.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
+            responseHeaders.set('Access-Control-Allow-Headers', '*');
+            responseHeaders.set('Access-Control-Expose-Headers', '*');
+
+            // Debug Headers (Helpful for diagnosing 403/404s)
+            responseHeaders.set('X-Debug-Target-Status', response.status);
+            responseHeaders.set('X-Debug-Target-Url', targetUrl);
+            responseHeaders.set('X-Debug-Proxy-Mode', isRawStream ? 'Browser-Direct' : 'Standard-Embedded');
+
+            // Remove troublesome headers
+            responseHeaders.delete('X-Frame-Options');
+            responseHeaders.delete('Content-Security-Policy');
+
+            // Return Stream
+            return new Response(response.body, {
+                status: response.status,
+                statusText: response.statusText,
+                headers: responseHeaders
+            });
+
+        } catch (error) {
+            return new Response(`Proxy Error: ${error.message}`, {
+                status: 500,
+                headers: { 'Access-Control-Allow-Origin': '*' }
+            });
+        }
     }
 };
 
