@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { analyzeStream } from '../utils/streamAnalyzer';
-import { FaBug, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaMagic } from 'react-icons/fa';
+import { Bug, CheckCircle, AlertTriangle, XCircle, Wand2 } from 'lucide-react';
 
 const StreamDebugger = () => {
     const [input, setInput] = useState('');
@@ -15,7 +15,7 @@ const StreamDebugger = () => {
     return (
         <div className="p-6 max-w-4xl mx-auto text-white">
             <div className="flex items-center gap-3 mb-6">
-                <FaBug className="text-3xl text-accent" />
+                <Bug className="text-3xl text-accent" />
                 <h1 className="text-3xl font-bold">Stream Debugger & Auto-Fixer</h1>
             </div>
 
@@ -36,7 +36,7 @@ const StreamDebugger = () => {
                     onClick={handleAnalyze}
                     className="mt-4 px-6 py-3 bg-accent hover:bg-accent/80 text-white font-semibold rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-accent/20"
                 >
-                    <FaMagic /> Analyze & Fix
+                    <Wand2 /> Analyze & Fix
                 </button>
             </div>
 
@@ -45,13 +45,13 @@ const StreamDebugger = () => {
                 <div className="space-y-6 animate-fade-in">
                     {/* Status Card */}
                     <div className={`p-6 rounded-2xl border ${result.issues.some(i => i.level === 'error') ? 'bg-red-500/10 border-red-500/30' :
-                            result.issues.some(i => i.level === 'warning') ? 'bg-yellow-500/10 border-yellow-500/30' :
-                                'bg-green-500/10 border-green-500/30'
+                        result.issues.some(i => i.level === 'warning') ? 'bg-yellow-500/10 border-yellow-500/30' :
+                            'bg-green-500/10 border-green-500/30'
                         }`}>
                         <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-                            {result.issues.some(i => i.level === 'error') ? <><FaTimesCircle className="text-red-400" /> Critical Issues Found</> :
-                                result.issues.some(i => i.level === 'warning') ? <><FaExclamationTriangle className="text-yellow-400" /> Potential Issues</> :
-                                    <><FaCheckCircle className="text-green-400" /> Stream Looks Healthy</>}
+                            {result.issues.some(i => i.level === 'error') ? <><XCircle className="text-red-400" /> Critical Issues Found</> :
+                                result.issues.some(i => i.level === 'warning') ? <><AlertTriangle className="text-yellow-400" /> Potential Issues</> :
+                                    <><CheckCircle className="text-green-400" /> Stream Looks Healthy</>}
                         </h2>
                         {result.url && (
                             <p className="font-mono text-sm opacity-70 break-all">Target: {result.url}</p>
@@ -66,7 +66,7 @@ const StreamDebugger = () => {
                             <ul className="space-y-3">
                                 {result.recommendations.map((rec, idx) => (
                                     <li key={idx} className="flex items-start gap-3 bg-white/5 p-3 rounded-lg">
-                                        <FaCheckCircle className="text-green-400 mt-1 shrink-0" />
+                                        <CheckCircle className="text-green-400 mt-1 shrink-0" />
                                         <span>{rec}</span>
                                     </li>
                                 ))}
@@ -81,8 +81,8 @@ const StreamDebugger = () => {
                             <ul className="space-y-2">
                                 {result.issues.map((issue, idx) => (
                                     <li key={idx} className={`text-sm flex items-start gap-2 ${issue.level === 'error' ? 'text-red-400' :
-                                            issue.level === 'warning' ? 'text-yellow-400' :
-                                                'text-green-400'
+                                        issue.level === 'warning' ? 'text-yellow-400' :
+                                            'text-green-400'
                                         }`}>
                                         <span className="mt-1">•</span>
                                         {issue.message}
