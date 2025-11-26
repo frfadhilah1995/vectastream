@@ -1,0 +1,2736 @@
+{
+  "metadata": {
+    "exportDate": "2025-11-26T14:50:34.739Z",
+    "totalLogs": 28,
+    "version": 1
+  },
+  "statistics": {
+    "totalAttempts": 28,
+    "successCount": 12,
+    "failureCount": 16,
+    "verdictBreakdown": {
+      "UNKNOWN_ERROR": 8,
+      "SUCCESS": 12,
+      "DEAD_LINK": 3,
+      "NETWORK_ERROR": 5
+    },
+    "strategySuccess": {
+      "Direct": {
+        "success": 9,
+        "total": 28
+      },
+      "Standard": {
+        "success": 3,
+        "total": 19
+      },
+      "BrowserDirect": {
+        "success": 0,
+        "total": 16
+      },
+      "SelfRef": {
+        "success": 0,
+        "total": 16
+      }
+    },
+    "commonErrors": {
+      "UNKNOWN_ERROR": 8,
+      "DEAD_LINK": 3,
+      "NETWORK_ERROR": 5
+    },
+    "recentLogs": [
+      {
+        "channel": {
+          "name": "Bungo TV (480p) [Not 24/7]",
+          "url": "https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8",
+          "group": "General"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": null,
+            "headers": {},
+            "duration": 17,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8"
+          },
+          {
+            "strategy": "Standard",
+            "proxyMode": "standard",
+            "statusCode": null,
+            "headers": {},
+            "duration": 3,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8"
+          },
+          {
+            "strategy": "BrowserDirect",
+            "proxyMode": "direct",
+            "statusCode": null,
+            "headers": {},
+            "duration": 1,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8?mode=direct"
+          },
+          {
+            "strategy": "SelfRef",
+            "proxyMode": "self-ref",
+            "statusCode": null,
+            "headers": {},
+            "duration": 1,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8?mode=self-ref"
+          }
+        ],
+        "verdict": "NETWORK_ERROR",
+        "recommendation": "Network connection failed. Check internet connection or server may be down.",
+        "workingUrl": null,
+        "workingStrategy": null,
+        "timestamp": "2025-11-26T14:50:13.963Z",
+        "id": 28
+      },
+      {
+        "channel": {
+          "name": "BTV (720p)",
+          "url": "https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8",
+          "group": "News"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": null,
+            "headers": {},
+            "duration": 20,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8"
+          },
+          {
+            "strategy": "Standard",
+            "proxyMode": "standard",
+            "statusCode": null,
+            "headers": {},
+            "duration": 2,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8"
+          },
+          {
+            "strategy": "BrowserDirect",
+            "proxyMode": "direct",
+            "statusCode": null,
+            "headers": {},
+            "duration": 2,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8?mode=direct"
+          },
+          {
+            "strategy": "SelfRef",
+            "proxyMode": "self-ref",
+            "statusCode": null,
+            "headers": {},
+            "duration": 1,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8?mode=self-ref"
+          }
+        ],
+        "verdict": "NETWORK_ERROR",
+        "recommendation": "Network connection failed. Check internet connection or server may be down.",
+        "workingUrl": null,
+        "workingStrategy": null,
+        "timestamp": "2025-11-26T14:50:05.466Z",
+        "id": 27
+      },
+      {
+        "channel": {
+          "name": "BRTV (720p)",
+          "url": "https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8",
+          "group": "Undefined"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": null,
+            "headers": {},
+            "duration": 17,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8"
+          },
+          {
+            "strategy": "Standard",
+            "proxyMode": "standard",
+            "statusCode": null,
+            "headers": {},
+            "duration": 2,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8"
+          },
+          {
+            "strategy": "BrowserDirect",
+            "proxyMode": "direct",
+            "statusCode": null,
+            "headers": {},
+            "duration": 1,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8?mode=direct"
+          },
+          {
+            "strategy": "SelfRef",
+            "proxyMode": "self-ref",
+            "statusCode": null,
+            "headers": {},
+            "duration": 2,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8?mode=self-ref"
+          }
+        ],
+        "verdict": "NETWORK_ERROR",
+        "recommendation": "Network connection failed. Check internet connection or server may be down.",
+        "workingUrl": null,
+        "workingStrategy": null,
+        "timestamp": "2025-11-26T14:50:02.865Z",
+        "id": 26
+      },
+      {
+        "channel": {
+          "name": "Biznet Kids (1080p)",
+          "url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8",
+          "group": "Kids"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": null,
+            "headers": {},
+            "duration": 10,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+          },
+          {
+            "strategy": "Standard",
+            "proxyMode": "standard",
+            "statusCode": null,
+            "headers": {},
+            "duration": 2,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+          },
+          {
+            "strategy": "BrowserDirect",
+            "proxyMode": "direct",
+            "statusCode": null,
+            "headers": {},
+            "duration": 8,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8?mode=direct"
+          },
+          {
+            "strategy": "SelfRef",
+            "proxyMode": "self-ref",
+            "statusCode": null,
+            "headers": {},
+            "duration": 14,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8?mode=self-ref"
+          }
+        ],
+        "verdict": "NETWORK_ERROR",
+        "recommendation": "Network connection failed. Check internet connection or server may be down.",
+        "workingUrl": null,
+        "workingStrategy": null,
+        "timestamp": "2025-11-26T14:49:56.333Z",
+        "id": 25
+      },
+      {
+        "channel": {
+          "name": "Biznet Lifestyle (1080p)",
+          "url": "http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8",
+          "group": "Lifestyle"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": null,
+            "headers": {},
+            "duration": 16,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8"
+          },
+          {
+            "strategy": "Standard",
+            "proxyMode": "standard",
+            "statusCode": null,
+            "headers": {},
+            "duration": 414,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8"
+          },
+          {
+            "strategy": "BrowserDirect",
+            "proxyMode": "direct",
+            "statusCode": null,
+            "headers": {},
+            "duration": 143,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8?mode=direct"
+          },
+          {
+            "strategy": "SelfRef",
+            "proxyMode": "self-ref",
+            "statusCode": null,
+            "headers": {},
+            "duration": 168,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8?mode=self-ref"
+          }
+        ],
+        "verdict": "NETWORK_ERROR",
+        "recommendation": "Network connection failed. Check internet connection or server may be down.",
+        "workingUrl": null,
+        "workingStrategy": null,
+        "timestamp": "2025-11-26T14:49:54.552Z",
+        "id": 24
+      },
+      {
+        "channel": {
+          "name": "Biznet Kids (1080p)",
+          "url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8",
+          "group": "Kids"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": null,
+            "headers": {},
+            "duration": 26,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+          },
+          {
+            "strategy": "Standard",
+            "proxyMode": "standard",
+            "statusCode": 200,
+            "headers": {
+              "access-control-allow-credentials": "true",
+              "access-control-allow-headers": "*",
+              "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+              "access-control-allow-origin": "https://frfadhilah1995.github.io",
+              "access-control-expose-headers": "*",
+              "alt-svc": "h3=\":443\"; ma=86400",
+              "cache-control": "no-cache",
+              "cf-cache-status": "DYNAMIC",
+              "cf-ray": "9a4a31bd5b41fce3-SIN",
+              "content-type": "application/vnd.apple.mpegurl",
+              "date": "Wed, 26 Nov 2025 14:49:45 GMT",
+              "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+              "priority": "u=1,i",
+              "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=q3KbLHE63KFmaFB2noilcH3D5bp1cxp%2B%2FjTdHO9ClGAcPXw6BT0ZXsLKpJGzBc1Axd3yhztmYinqmgXumpwFAE79YkWOgcYawt4pRJnMVWt4pcknw6gCpXkuxQbv0StH1Z%2FzfoRWgRhXKNDGqgj1WQ%3D%3D\"}]}",
+              "server": "cloudflare",
+              "server-timing": "cfExtPri",
+              "vary": "accept-encoding",
+              "x-debug-proxy-mode": "Standard-Embedded",
+              "x-debug-target-status": "200",
+              "x-debug-target-url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+            },
+            "duration": 151,
+            "success": true,
+            "error": null,
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+          }
+        ],
+        "verdict": "SUCCESS",
+        "recommendation": "Stream works with Standard mode. Using: https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8",
+        "workingUrl": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8",
+        "workingStrategy": "Standard",
+        "timestamp": "2025-11-26T14:49:46.100Z",
+        "id": 23
+      },
+      {
+        "channel": {
+          "name": "Biznet Adventure (1080p)",
+          "url": "http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8",
+          "group": "Undefined"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": null,
+            "headers": {},
+            "duration": 13,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8"
+          },
+          {
+            "strategy": "Standard",
+            "proxyMode": "standard",
+            "statusCode": 200,
+            "headers": {
+              "access-control-allow-credentials": "true",
+              "access-control-allow-headers": "*",
+              "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+              "access-control-allow-origin": "https://frfadhilah1995.github.io",
+              "access-control-expose-headers": "*",
+              "alt-svc": "h3=\":443\"; ma=86400",
+              "cache-control": "no-cache",
+              "cf-cache-status": "DYNAMIC",
+              "cf-ray": "9a4a31279c1efce3-SIN",
+              "content-type": "application/vnd.apple.mpegurl",
+              "date": "Wed, 26 Nov 2025 14:49:21 GMT",
+              "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+              "priority": "u=1,i",
+              "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=V%2FDKMOg044YQX8jnWYzyQSrpNLoHofWmNyG8Sl%2F4e5zTjGPvwcR4eU%2Fx9Z%2BMBgU5QK8%2Bt%2BAEghcaRSnEFgfBvQmg2StwhcNdkf94yag%2Fxau1WwaBhabFd2VbSWeu5TSEmo%2FcfTqnj26%2BcSW4IRym2A%3D%3D\"}]}",
+              "server": "cloudflare",
+              "server-timing": "cfExtPri",
+              "vary": "accept-encoding",
+              "x-debug-proxy-mode": "Standard-Embedded",
+              "x-debug-target-status": "200",
+              "x-debug-target-url": "http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8"
+            },
+            "duration": 292,
+            "success": true,
+            "error": null,
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8"
+          }
+        ],
+        "verdict": "SUCCESS",
+        "recommendation": "Stream works with Standard mode. Using: https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8",
+        "workingUrl": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8",
+        "workingStrategy": "Standard",
+        "timestamp": "2025-11-26T14:49:22.316Z",
+        "id": 22
+      },
+      {
+        "channel": {
+          "name": "Bioskop Indonesia (576p)",
+          "url": "http://103.180.118.5:9981/stream/channelid/1574481607",
+          "group": "Undefined"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": null,
+            "headers": {},
+            "duration": 19,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "http://103.180.118.5:9981/stream/channelid/1574481607"
+          },
+          {
+            "strategy": "Standard",
+            "proxyMode": "standard",
+            "statusCode": 403,
+            "headers": {
+              "access-control-allow-headers": "*",
+              "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+              "access-control-allow-origin": "https://frfadhilah1995.github.io",
+              "access-control-expose-headers": "*",
+              "alt-svc": "h3=\":443\"; ma=86400",
+              "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+              "cf-ray": "9a4a3112edb7fce3-SIN",
+              "content-encoding": "zstd",
+              "content-type": "text/html; charset=UTF-8",
+              "date": "Wed, 26 Nov 2025 14:49:18 GMT",
+              "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+              "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+              "priority": "u=1,i",
+              "referrer-policy": "same-origin",
+              "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=s4jFlFq99n%2F8voekQuRXj1mXRNW45QW3zCTWethPUjUvvqbsJZKr1hKd7gBRBBU%2BQh1pRXR%2BbNKNiOwIharD2CwJaQijECIJSHwAqZZaPnwd5jiyY7%2FIhU5dkUZCAzueuUWUm9d77kzMzeOQGBhMFg%3D%3D\"}]}",
+              "server": "cloudflare",
+              "server-timing": "cfExtPri",
+              "vary": "Accept-Encoding",
+              "x-debug-proxy-mode": "Browser-Direct",
+              "x-debug-target-status": "403",
+              "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/1574481607"
+            },
+            "duration": 40,
+            "success": false,
+            "error": null,
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/1574481607"
+          },
+          {
+            "strategy": "BrowserDirect",
+            "proxyMode": "direct",
+            "statusCode": 403,
+            "headers": {
+              "access-control-allow-headers": "*",
+              "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+              "access-control-allow-origin": "https://frfadhilah1995.github.io",
+              "access-control-expose-headers": "*",
+              "alt-svc": "h3=\":443\"; ma=86400",
+              "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+              "cf-ray": "9a4a31132dd9fce3-SIN",
+              "content-encoding": "zstd",
+              "content-type": "text/html; charset=UTF-8",
+              "date": "Wed, 26 Nov 2025 14:49:18 GMT",
+              "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+              "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+              "priority": "u=1,i",
+              "referrer-policy": "same-origin",
+              "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=gdy6RfC7mwHtmZY5g1tCAyH5pVM3Xhm3kHz0vVSdu25oWR2HzIJDWYyhS0nC%2Fd6DLEVhwTX%2FhMWYMZitWIZNEe96UBQ8xWXkZ5ZFCKOwQVBqULc3925E07DF6iJhEYDFyvthdvkBWP3n8fOEg4fqqw%3D%3D\"}]}",
+              "server": "cloudflare",
+              "server-timing": "cfExtPri",
+              "vary": "Accept-Encoding",
+              "x-debug-proxy-mode": "Browser-Direct",
+              "x-debug-target-status": "403",
+              "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/1574481607?mode=direct"
+            },
+            "duration": 39,
+            "success": false,
+            "error": null,
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/1574481607?mode=direct"
+          },
+          {
+            "strategy": "SelfRef",
+            "proxyMode": "self-ref",
+            "statusCode": 403,
+            "headers": {
+              "access-control-allow-headers": "*",
+              "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+              "access-control-allow-origin": "https://frfadhilah1995.github.io",
+              "access-control-expose-headers": "*",
+              "alt-svc": "h3=\":443\"; ma=86400",
+              "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+              "cf-ray": "9a4a31135deefce3-SIN",
+              "content-encoding": "zstd",
+              "content-type": "text/html; charset=UTF-8",
+              "date": "Wed, 26 Nov 2025 14:49:18 GMT",
+              "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+              "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+              "priority": "u=1,i",
+              "referrer-policy": "same-origin",
+              "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=7CYbR8vMH%2BgVDCp8fOx%2FI0YBNj8gLzwVoAOMp0A5qTetnHqZN1terK8W232YNLMyz61jWg5sG15To4WoNUW37wG8qXdBmGy0drJ2fnBsgc3fU%2BDQVmfN%2BmnmHGazj8fmiivyAXCrTqJDLvqkfRO8wQ%3D%3D\"}]}",
+              "server": "cloudflare",
+              "server-timing": "cfExtPri",
+              "vary": "Accept-Encoding",
+              "x-debug-proxy-mode": "Browser-Direct",
+              "x-debug-target-status": "403",
+              "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/1574481607?mode=self-ref"
+            },
+            "duration": 41,
+            "success": false,
+            "error": null,
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/1574481607?mode=self-ref"
+          }
+        ],
+        "verdict": "UNKNOWN_ERROR",
+        "recommendation": "Stream failed with status 403. Unknown error",
+        "workingUrl": null,
+        "workingStrategy": null,
+        "timestamp": "2025-11-26T14:49:18.827Z",
+        "id": 21
+      },
+      {
+        "channel": {
+          "name": "BeritaSatu English",
+          "url": "https://beritasatu.secureswiftcontent.com/han/beritasatu/bsatu10008/srtoutput/manifest.m3u8",
+          "group": "News"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": 200,
+            "headers": {
+              "cache-control": "no-cache, no-store",
+              "content-length": "915",
+              "content-type": "application/vnd.apple.mpegurl",
+              "last-modified": "Wed, 26 Nov 2025 14:49:10 GMT"
+            },
+            "duration": 274,
+            "success": true,
+            "error": null,
+            "url": "https://beritasatu.secureswiftcontent.com/han/beritasatu/bsatu10008/srtoutput/manifest.m3u8"
+          }
+        ],
+        "verdict": "SUCCESS",
+        "recommendation": "Stream works with Direct mode. Using: https://beritasatu.secureswiftcontent.com/han/beritasatu/bsatu10008/srtoutput/manifest.m3u8",
+        "workingUrl": "https://beritasatu.secureswiftcontent.com/han/beritasatu/bsatu10008/srtoutput/manifest.m3u8",
+        "workingStrategy": "Direct",
+        "timestamp": "2025-11-26T14:49:12.351Z",
+        "id": 20
+      },
+      {
+        "channel": {
+          "name": "Batam TV (480p) [Not 24/7]",
+          "url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8",
+          "group": "General"
+        },
+        "attempts": [
+          {
+            "strategy": "Direct",
+            "proxyMode": "none",
+            "statusCode": null,
+            "headers": {},
+            "duration": 16,
+            "success": false,
+            "error": "Failed to fetch",
+            "url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8"
+          },
+          {
+            "strategy": "Standard",
+            "proxyMode": "standard",
+            "statusCode": 403,
+            "headers": {
+              "access-control-allow-headers": "*",
+              "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+              "access-control-allow-origin": "https://frfadhilah1995.github.io",
+              "access-control-expose-headers": "*",
+              "alt-svc": "h3=\":443\"; ma=86400",
+              "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+              "cf-ray": "9a4a30bcce0dfce3-SIN",
+              "content-encoding": "zstd",
+              "content-type": "text/html; charset=UTF-8",
+              "date": "Wed, 26 Nov 2025 14:49:04 GMT",
+              "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+              "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+              "priority": "u=1,i",
+              "referrer-policy": "same-origin",
+              "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=wGaKp0zMNRwJYZggRqTeO1oVD9TsfCJ3PSAQr5CTcTFf57FpyVSII7MirJPTgXMHYNb5dpYMzhJmHp23b7wpJNDxdXDagHJHRE1g3xMBAu8N5BmS8VPHIVGNoNyUFeVLLPCO%2FXWlzwCZ8H0J7T0PLw%3D%3D\"}]}",
+              "server": "cloudflare",
+              "server-timing": "cfExtPri",
+              "vary": "Accept-Encoding",
+              "x-debug-proxy-mode": "Standard-Embedded",
+              "x-debug-target-status": "403",
+              "x-debug-target-url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8"
+            },
+            "duration": 117,
+            "success": false,
+            "error": null,
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8"
+          },
+          {
+            "strategy": "BrowserDirect",
+            "proxyMode": "direct",
+            "statusCode": 403,
+            "headers": {
+              "access-control-allow-headers": "*",
+              "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+              "access-control-allow-origin": "https://frfadhilah1995.github.io",
+              "access-control-expose-headers": "*",
+              "alt-svc": "h3=\":443\"; ma=86400",
+              "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+              "cf-ray": "9a4a30bd8e87fce3-SIN",
+              "content-encoding": "zstd",
+              "content-type": "text/html; charset=UTF-8",
+              "date": "Wed, 26 Nov 2025 14:49:04 GMT",
+              "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+              "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+              "priority": "u=1,i",
+              "referrer-policy": "same-origin",
+              "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=uUL6Cz3dQwolfUHx1hrt7wXV7uJ1FktVY4ZMb%2BXa4w2H0Ih3aLbxIET2tlocCxs5UmYGfKdE7ZawW5YPDYf24tvOCUthrdtsWL6wTc2B5gqL42PRtFIGqTr4rZlbP5UM8u7tzkb%2BdYeO6R6EA3BeYg%3D%3D\"}]}",
+              "server": "cloudflare",
+              "server-timing": "cfExtPri",
+              "vary": "Accept-Encoding",
+              "x-debug-proxy-mode": "Standard-Embedded",
+              "x-debug-target-status": "403",
+              "x-debug-target-url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8?mode=direct"
+            },
+            "duration": 72,
+            "success": false,
+            "error": null,
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8?mode=direct"
+          },
+          {
+            "strategy": "SelfRef",
+            "proxyMode": "self-ref",
+            "statusCode": 403,
+            "headers": {
+              "access-control-allow-headers": "*",
+              "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+              "access-control-allow-origin": "https://frfadhilah1995.github.io",
+              "access-control-expose-headers": "*",
+              "alt-svc": "h3=\":443\"; ma=86400",
+              "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+              "cf-ray": "9a4a30be0efefce3-SIN",
+              "content-encoding": "zstd",
+              "content-type": "text/html; charset=UTF-8",
+              "date": "Wed, 26 Nov 2025 14:49:04 GMT",
+              "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+              "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+              "priority": "u=1,i",
+              "referrer-policy": "same-origin",
+              "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=XLuYaH6ikNgRj3OwglHqAVDcvpqdUsQIh2V%2FTEvf3XAWyb9svP4%2FzGml%2FKWGG%2BI5zK6vvH85pR8RXzmBRprO47HAbWXbsBxj44MWPExQx2hFGDXDtNIuvI%2BWYr8CTNxguf0gjyRtQ77VmrBSlZ3rJA%3D%3D\"}]}",
+              "server": "cloudflare",
+              "server-timing": "cfExtPri",
+              "vary": "Accept-Encoding",
+              "x-debug-proxy-mode": "Standard-Embedded",
+              "x-debug-target-status": "403",
+              "x-debug-target-url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8?mode=self-ref"
+            },
+            "duration": 80,
+            "success": false,
+            "error": null,
+            "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8?mode=self-ref"
+          }
+        ],
+        "verdict": "UNKNOWN_ERROR",
+        "recommendation": "Stream failed with status 403. Unknown error",
+        "workingUrl": null,
+        "workingStrategy": null,
+        "timestamp": "2025-11-26T14:49:05.196Z",
+        "id": 19
+      }
+    ],
+    "successRate": 43
+  },
+  "logs": [
+    {
+      "channel": {
+        "name": "AKTV (720p) [Not 24/7]",
+        "url": "https://e.siar.us/live/aktv.m3u8",
+        "group": "General"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 168,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://e.siar.us/live/aktv.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2c7d7b489e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:46:10 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=fDpaZ3bBvyAL3JbtghwSFUVnDTA49FqFd0kQlm9UVKdZfewTmD1XlaijC8Fky9Dto%2FG7FnzWEx45IBnE7UEN0Rpar%2FBARJyEsuADmyt2CeauS6Gj4yI2M0lNdiAatR2IkmcZrx6OsYrOX7uaKkwZzg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://e.siar.us/live/aktv.m3u8"
+          },
+          "duration": 375,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://e.siar.us/live/aktv.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2c7fdba09e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:46:11 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=jdxsVMUGsd5oRmbvhnoms6q%2FKYtDIWhaKVKjic1POFMG8trOhqI3vFZhG%2BvofNh1zJv27zKVk22kclci7pxajnRwkFhFUNSe7wjZl9js%2ByoYfRGvNfayfExqrssSpW9aw1FPdr%2Fyp32anlwHHRl%2BHg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://e.siar.us/live/aktv.m3u8?mode=direct"
+          },
+          "duration": 247,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://e.siar.us/live/aktv.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2c816bca9e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:46:11 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=fkC%2Fhm36v3NYWVHVpRJYok8xh6lvFcJ5xVI6pVyaAvlimHDCjoDFv4g2E%2BEh8DMCT5aHJAUdySamvVw1TEeeVg%2FmKSnZfX%2BNq126U%2FsXo7mAAGvn%2BJav4Mg7VVbLDF2r%2Fb1CJDPWQMayMQOtEb5HTg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://e.siar.us/live/aktv.m3u8?mode=self-ref"
+          },
+          "duration": 201,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://e.siar.us/live/aktv.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "UNKNOWN_ERROR",
+      "recommendation": "Stream failed with status 404. Unknown error",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:46:11.797Z",
+      "id": 1
+    },
+    {
+      "channel": {
+        "name": "00s Replay",
+        "url": "http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/62ba60f059624e000781c436/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c25e430-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=1b7de8e4-d114-4438-b098-6f7aee77b4be",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 21,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/62ba60f059624e000781c436/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c25e430-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=1b7de8e4-d114-4438-b098-6f7aee77b4be"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 200,
+          "headers": {
+            "access-control-allow-credentials": "true",
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "access-control-max-age": "1728000",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "no-cache, no-store, must-revalidate",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2cd41cdd9e2e-SIN",
+            "content-length": "1874",
+            "content-type": "application/x-mpegurl; charset=utf-8",
+            "date": "Wed, 26 Nov 2025 14:46:25 GMT",
+            "etag": "W/\"752-/MvB1mnY0Dav9EZdJ4/QunDIsrg\"",
+            "expires": "Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time)",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=AidajaMKiHGD6kV2MYTidBWyWPc%2Fuk%2BUxaFMkxGCetXQXpJCPtcZhvznKnjeUGBySnTnhVtUmgP8gpKm%2B%2FYaQI2RiWYIiaHaOkWjtVMYrLAMzJWWw9xuUzBwEds3ySSaYUCGFMYAkMCzYUlQ74K%2BCw%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "200",
+            "x-debug-target-url": "http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/62ba60f059624e000781c436/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c25e430-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=1b7de8e4-d114-4438-b098-6f7aee77b4be",
+            "x-envoy-upstream-service-time": "35"
+          },
+          "duration": 779,
+          "success": true,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/62ba60f059624e000781c436/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c25e430-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=1b7de8e4-d114-4438-b098-6f7aee77b4be"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Standard mode. Using: https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/62ba60f059624e000781c436/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c25e430-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=1b7de8e4-d114-4438-b098-6f7aee77b4be",
+      "workingUrl": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/62ba60f059624e000781c436/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c25e430-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=1b7de8e4-d114-4438-b098-6f7aee77b4be",
+      "workingStrategy": "Standard",
+      "timestamp": "2025-11-26T14:46:25.605Z",
+      "id": 2
+    },
+    {
+      "channel": {
+        "name": "AKTV (720p) [Not 24/7]",
+        "url": "https://e.siar.us/live/aktv.m3u8",
+        "group": "General"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 47,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://e.siar.us/live/aktv.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2e517c749e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:47:25 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=1lvVHIE0kav8QeqOWZIdqajBfYyukUyuoFZIFG45U7%2FlU%2BLaFwG%2F%2BKnnTxEu9CkO4pYKsKSx5z8UYOz27KYoGBFR%2FaW36zb083iSDySncdfehPrLyZv6y%2FPFfecq3SgRmjG8rXq0a3G7Xz2SIqwdjA%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://e.siar.us/live/aktv.m3u8"
+          },
+          "duration": 274,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://e.siar.us/live/aktv.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2e532caa9e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:47:25 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=SBF5UiB47Inz8hSqpCcqoWnudCNf09z2BD0mTtifSEi2MGCiAEyEm1pS9P6RNjl1RT%2F6WC6ICrgg1IjX9%2Fqev%2BO7%2FAFL%2B%2BgThG6O8TQ0%2FQI8%2F2%2Bmr16xXLDXnq8Hd9WUHVfJ1w%2BaqrOIBnNaILEWeA%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://e.siar.us/live/aktv.m3u8?mode=direct"
+          },
+          "duration": 234,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://e.siar.us/live/aktv.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2e54acc89e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:47:26 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=5lu30CLauTNMgoVlSqEavrBgmFVmLTde2Axa6D7%2Fbuw%2BV4jeCHhM5Xlu%2F4as5EOW3wyYbDobdUzhy%2BlWbOy6Vh1y%2FTmL6JiYBq6%2BpvMKjOYhp5G6%2BfoNLaaZQymubEcVP3WQM%2FXjP2f%2Fa6atOhwIgg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://e.siar.us/live/aktv.m3u8?mode=self-ref"
+          },
+          "duration": 641,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://e.siar.us/live/aktv.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "UNKNOWN_ERROR",
+      "recommendation": "Stream failed with status 404. Unknown error",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:47:26.991Z",
+      "id": 3
+    },
+    {
+      "channel": {
+        "name": "Al-Iman TV (720p)",
+        "url": "https://tv.aliman.id/aliman/live.m3u8",
+        "group": "Religious"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 404,
+          "headers": {
+            "content-type": "text/html"
+          },
+          "duration": 93,
+          "success": false,
+          "error": null,
+          "url": "https://tv.aliman.id/aliman/live.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2ea66f309e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:47:39 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=TeT3qhwmQRBuenSpwy8fUkrd2XbYf5js1JcLOzdyjdcxZQV3%2BgbPvL3sEKzNarRPewvFeXQS2aOedwvYQApxViV0pnXSQrqGANJFBC1NQT8vOVku4DgzQw1iFFs5cpgaaC5uHIdRS6i9eoXaz%2F8nKg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://tv.aliman.id/aliman/live.m3u8"
+          },
+          "duration": 253,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://tv.aliman.id/aliman/live.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2ea7ff689e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:47:39 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=7qHhwl%2BL77kHX53J%2BbT8MHu4dXgOvzjWjisNLwn1Ney0U9oA7jK5IGPBWoQ%2FVNbsrm7wdSxGqnboCG7S8qceZctssYFJOa%2FEnUd2OrAAjIS1j675JO%2FgaNgBKUCNJw%2B4qJlJTHFh09hPiwCFeBdpNg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://tv.aliman.id/aliman/live.m3u8?mode=direct"
+          },
+          "duration": 307,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://tv.aliman.id/aliman/live.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2ea9ef9c9e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:47:39 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=KYW1tZ3jYqCdKq%2FGS5vJT07rQ1KA%2F%2BOC%2BHfWvCr49dHCfGT8abFv%2Bqiw9Exi%2FSQNP%2FvFwG1Jk3XkeuWWTylziiCB5jYnnIIslJydRO0wAEqBvan6SIEH9Pkw2VUpGci4Mb8KmGv233oVuPETRXhziQ%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://tv.aliman.id/aliman/live.m3u8?mode=self-ref"
+          },
+          "duration": 308,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://tv.aliman.id/aliman/live.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "DEAD_LINK",
+      "recommendation": "Stream file not found on server (404). Content may be offline or moved.",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:47:40.304Z",
+      "id": 4
+    },
+    {
+      "channel": {
+        "name": "Alwafa Tarim TV (Am Media) (720p)",
+        "url": "https://ammedia.siar.us/ammedia/live/playlist.m3u8",
+        "group": "Religious"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 200,
+          "headers": {
+            "cache-control": "public, max-age=2",
+            "content-length": "637",
+            "content-type": "text/plain",
+            "last-modified": "Wed, 26 Nov 2025 14:47:46 GMT"
+          },
+          "duration": 371,
+          "success": true,
+          "error": null,
+          "url": "https://ammedia.siar.us/ammedia/live/playlist.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Direct mode. Using: https://ammedia.siar.us/ammedia/live/playlist.m3u8",
+      "workingUrl": "https://ammedia.siar.us/ammedia/live/playlist.m3u8",
+      "workingStrategy": "Direct",
+      "timestamp": "2025-11-26T14:47:48.644Z",
+      "id": 5
+    },
+    {
+      "channel": {
+        "name": "Al-Iman TV (720p)",
+        "url": "https://tv.aliman.id/aliman/live.m3u8",
+        "group": "Religious"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 404,
+          "headers": {
+            "content-type": "text/html"
+          },
+          "duration": 53,
+          "success": false,
+          "error": null,
+          "url": "https://tv.aliman.id/aliman/live.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2ef949789e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:47:52 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=V%2ByheqVKc4Q6V1D6VT%2FPpKSstvotbcXWR0owVD3o%2Bwc4AZ%2Fo3BYkw%2ByIhGzPUBPhMHMrFPThW2V2FrCNIEUyb%2Faa8%2FNozLg0%2FsCY3KaKst2jqRrnRs4pJS2KVzxYsNdDiypvkzjOO91B16rJRjNDAw%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://tv.aliman.id/aliman/live.m3u8"
+          },
+          "duration": 205,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://tv.aliman.id/aliman/live.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2efa89a89e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:47:52 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=igt7qs7gxjjxSgy4RmBQJ37c%2FKxUDh6w%2Fkl78mcnKOwFLPvOzKiJol0%2BORBr2i7zWk5CgRbhsWci3jgjcjllu%2FybyCvYQl7WgxdNRUcTt8kmBEfPhALpRTg5wvUFzVLRM0U5GVil5Iv5pWtpMfTyNw%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://tv.aliman.id/aliman/live.m3u8?mode=direct"
+          },
+          "duration": 207,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://tv.aliman.id/aliman/live.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2efbd9d59e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html",
+            "date": "Wed, 26 Nov 2025 14:47:52 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=SXLX%2F1f58kiKQzo4VPPulnYLiqQ2PvTk1niqQNJZl1aSM3RkbP7rdH5zbhrFLerZwCAOr8szrlJPplqlxzH72yR7Rxnp%2FbElsDsBPHrLjF8IR1TIuXCWWZEoTtqpBCtcj%2BhtT4l8yaVYD9MNnOuj9w%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://tv.aliman.id/aliman/live.m3u8?mode=self-ref"
+          },
+          "duration": 407,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://tv.aliman.id/aliman/live.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "DEAD_LINK",
+      "recommendation": "Stream file not found on server (404). Content may be offline or moved.",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:47:53.512Z",
+      "id": 6
+    },
+    {
+      "channel": {
+        "name": "Angel TV Indonesia (720p)",
+        "url": "https://janya-digimix.akamaized.net/vglive-sk-234616/indonesia/ngrp:angelindonesia_all/playlist.m3u8",
+        "group": "Religious"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 200,
+          "headers": {
+            "akamai-mon-iucid-del": "1641344",
+            "cache-control": "max-age=0, no-cache",
+            "content-length": "200",
+            "content-type": "application/x-mpegURL",
+            "expires": "Wed, 26 Nov 2025 14:48:00 GMT",
+            "pragma": "no-cache"
+          },
+          "duration": 630,
+          "success": true,
+          "error": null,
+          "url": "https://janya-digimix.akamaized.net/vglive-sk-234616/indonesia/ngrp:angelindonesia_all/playlist.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Direct mode. Using: https://janya-digimix.akamaized.net/vglive-sk-234616/indonesia/ngrp:angelindonesia_all/playlist.m3u8",
+      "workingUrl": "https://janya-digimix.akamaized.net/vglive-sk-234616/indonesia/ngrp:angelindonesia_all/playlist.m3u8",
+      "workingStrategy": "Direct",
+      "timestamp": "2025-11-26T14:48:00.271Z",
+      "id": 7
+    },
+    {
+      "channel": {
+        "name": "Arek TV (720p)",
+        "url": "https://ams.juraganstreaming.com:5443/LiveApp/streams/arektv.m3u8",
+        "group": "General"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 404,
+          "headers": {
+            "content-language": "en",
+            "content-length": "757",
+            "content-type": "text/html;charset=utf-8"
+          },
+          "duration": 197,
+          "success": false,
+          "error": null,
+          "url": "https://ams.juraganstreaming.com:5443/LiveApp/streams/arektv.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2f577a889e2e-SIN",
+            "content-encoding": "zstd",
+            "content-language": "en",
+            "content-type": "text/html;charset=utf-8",
+            "date": "Wed, 26 Nov 2025 14:48:07 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=G5MCJqIQDWp4Hh6H5Wz9pQbtoG5hWom8lyql%2FiG4aYBHBGVh611ZZEXupRfPfyFO5%2BeqLMPC9HwCT5SKRiaQUjQkJQAOV2VBTlULXWbObQLCa12SBBcNGU0JhsmFX0VJBiGpQ6ci%2Bx3EmvERrT30nQ%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://ams.juraganstreaming.com:5443/LiveApp/streams/arektv.m3u8"
+          },
+          "duration": 273,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://ams.juraganstreaming.com:5443/LiveApp/streams/arektv.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2f594ab99e2e-SIN",
+            "content-encoding": "zstd",
+            "content-language": "en",
+            "content-type": "text/html;charset=utf-8",
+            "date": "Wed, 26 Nov 2025 14:48:07 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=zowJlM7tVWe1RojRXERWK2GrUHHXchQCyRYAwlAYqBckkrQKlp9Ozb5Gl9Ri622BrXXd9kcxJqmTflF5tMEQ1fMZYBT2ad3UkawW%2FsunXpnRl8m28zcPHRTjSFZsIGFIb0w%2F6C6q%2BTlVvp0H059Y%2Fg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://ams.juraganstreaming.com:5443/LiveApp/streams/arektv.m3u8?mode=direct"
+          },
+          "duration": 275,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://ams.juraganstreaming.com:5443/LiveApp/streams/arektv.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 404,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a2f5adad89e2e-SIN",
+            "content-encoding": "zstd",
+            "content-language": "en",
+            "content-type": "text/html;charset=utf-8",
+            "date": "Wed, 26 Nov 2025 14:48:08 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=06T28ekbd9k%2FciAq3UGOH9RLq5%2Bx0%2FHZFFHW1MJ15YO1q8hX%2BRM1cq0lFs8lF%2Fmt8dswGId8prsG%2FmKhRGBM9Qr59Bz1iM1uY3D5TmhhfeRF8Vqb3evyBEw58gI40Xc4tlbMU4KsG6ZCC18kAi8blg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "404",
+            "x-debug-target-url": "https://ams.juraganstreaming.com:5443/LiveApp/streams/arektv.m3u8?mode=self-ref"
+          },
+          "duration": 239,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://ams.juraganstreaming.com:5443/LiveApp/streams/arektv.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "DEAD_LINK",
+      "recommendation": "Stream file not found on server (404). Content may be offline or moved.",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:48:08.522Z",
+      "id": 8
+    },
+    {
+      "channel": {
+        "name": "Ashiil TV (480p)",
+        "url": "https://ams.juraganstreaming.com:5443/LiveApp/streams/ashiiltv2.m3u8",
+        "group": "Religious"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 200,
+          "headers": {
+            "content-length": "1485",
+            "content-type": "application/vnd.apple.mpegurl",
+            "last-modified": "Wed, 26 Nov 2025 14:48:09 GMT"
+          },
+          "duration": 47,
+          "success": true,
+          "error": null,
+          "url": "https://ams.juraganstreaming.com:5443/LiveApp/streams/ashiiltv2.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Direct mode. Using: https://ams.juraganstreaming.com:5443/LiveApp/streams/ashiiltv2.m3u8",
+      "workingUrl": "https://ams.juraganstreaming.com:5443/LiveApp/streams/ashiiltv2.m3u8",
+      "workingStrategy": "Direct",
+      "timestamp": "2025-11-26T14:48:10.411Z",
+      "id": 9
+    },
+    {
+      "channel": {
+        "name": "Astha TV (1080p) [Not 24/7]",
+        "url": "https://hgmtv.com:19360/asthatv/asthatv.m3u8",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 200,
+          "headers": {
+            "content-type": "application/vnd.apple.mpegurl"
+          },
+          "duration": 477,
+          "success": true,
+          "error": null,
+          "url": "https://hgmtv.com:19360/asthatv/asthatv.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Direct mode. Using: https://hgmtv.com:19360/asthatv/asthatv.m3u8",
+      "workingUrl": "https://hgmtv.com:19360/asthatv/asthatv.m3u8",
+      "workingStrategy": "Direct",
+      "timestamp": "2025-11-26T14:48:15.680Z",
+      "id": 10
+    },
+    {
+      "channel": {
+        "name": "Atambua TV (720p)",
+        "url": "http://122.248.43.242:1935/ATAMBUATV/_definst_/myStream/playlist.m3u8",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 18,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://122.248.43.242:1935/ATAMBUATV/_definst_/myStream/playlist.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a2fd428639e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:27 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=7hH5ddaCJpxZVs%2FGeDf%2Fg%2FycDBHHDR4lUsPkkrUk20H2yS0eDjRLGfxK2wDLT6cyPTXu%2FivS%2Fm%2FNFPf%2F8w%2F1wjdffDlMTa%2B47AY2QjcKs2DlO1ZXydbSj51uGZJPTyNHYEBRWGvcV63cMftgZBgGBw%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://122.248.43.242:1935/ATAMBUATV/_definst_/myStream/playlist.m3u8"
+          },
+          "duration": 397,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://122.248.43.242:1935/ATAMBUATV/_definst_/myStream/playlist.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a2fd6c8be9e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:27 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=u4QUIhiwvbnjmjN8j8r2pLpf%2BAGqU2gsm0lIk6LfENuv6s0rtwFbQ9glfBzgEpj6GhIHdZW%2BJxYB1htdqoPhs%2BYfskomnE4fLvYNNOAOehpCkA0KWOHLKe0TyxuE2NNlMGGPMOwUbpTUelbq79CtiA%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://122.248.43.242:1935/ATAMBUATV/_definst_/myStream/playlist.m3u8?mode=direct"
+          },
+          "duration": 471,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://122.248.43.242:1935/ATAMBUATV/_definst_/myStream/playlist.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a2fd9990c9e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:28 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=j7JgAJeMfxqY2EhMQfaeqddADZap8n7455EmJxhnArADRJ9r41GEag7ER3XRqOndeGqE%2BNPW5VHKz9ARk5KcoL%2BLgZJus9n1HzKiZwaD2dJiBGgzaM2pCN7nDVNGAqcyJ%2BGU08gHh94CV4Z%2B1ub6MQ%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://122.248.43.242:1935/ATAMBUATV/_definst_/myStream/playlist.m3u8?mode=self-ref"
+          },
+          "duration": 363,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://122.248.43.242:1935/ATAMBUATV/_definst_/myStream/playlist.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "UNKNOWN_ERROR",
+      "recommendation": "Stream failed with status 403. Unknown error",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:48:28.941Z",
+      "id": 11
+    },
+    {
+      "channel": {
+        "name": "ATV (576p)",
+        "url": "http://103.180.118.5:9981/stream/channelid/1457201262",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 7,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://103.180.118.5:9981/stream/channelid/1457201262"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a2ffdcd7c9e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:34 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=PYAaXvhvJmCXD%2BplLUMzodX6KFQUfnT4LcwfT1JBEZnpmgVQpiVytYBPvkM8b1e66iySVBCLUwYueMlyG0i1SNYDaXjEC%2Fi2kWm9WnRv7NE7f9TzHLa3l9I6Q9%2FXSEyP36o8PLVofn5pNfLuXZE%2BUA%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Browser-Direct",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/1457201262"
+          },
+          "duration": 276,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/1457201262"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a2fff6db89e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:34 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=l2RYA23621s3IeaH1Gd8YTLWEoJi%2FvHWA%2FNTDAYpttLrmPHiyRMAKqJFpI3Dyg%2Fgv6OzeoqTTNXeCQ6YVeBZqolPBD%2FdGCW1VkyfQJffeCF1ZO1dnPC5ZXGCnogAQx2jWu2MZUu8NADhrrZ4jE2Sjw%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Browser-Direct",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/1457201262?mode=direct"
+          },
+          "duration": 194,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/1457201262?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a30009de79e2e-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:34 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=XKD37xALfDApx0roz5r%2Fiqoudnp7aJXiHmiZg%2FyhkiuroJgWfQ5%2BrUidGkCyuP6xJChv4%2BnJ9im5jvL04xuPUMs2cIeal3FRViSLqrzblOTnHaHng%2FcKtiEOjCAxstmznl7ibNAXzup0kvSXF3aW4Q%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Browser-Direct",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/1457201262?mode=self-ref"
+          },
+          "duration": 218,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/1457201262?mode=self-ref"
+        }
+      ],
+      "verdict": "UNKNOWN_ERROR",
+      "recommendation": "Stream failed with status 403. Unknown error",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:48:35.047Z",
+      "id": 12
+    },
+    {
+      "channel": {
+        "name": "Bali TV (576p)",
+        "url": "http://103.180.118.5:9981/stream/channelid/916002722",
+        "group": "Culture"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 16,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://103.180.118.5:9981/stream/channelid/916002722"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a3012bc45fce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:37 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=La6DoDT%2Fip2gcLq8e%2FvLD8U67dR3Up1IJgrAPSud66S8w7g7uWgqDwnP4NfiwMqxdnLwcK2NrsU3YXnAplVUWO5epVYPFYWymVnjyrf7nlbfIgE1FUGKOmBKy2MVx0AfpKVYigdlltisxHJ3Bk13kQ%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Browser-Direct",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/916002722"
+          },
+          "duration": 127,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/916002722"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a30138cf6fce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:37 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=48KlDE45ND9dN3B997hq27QnVkk40HUmWNgNPKm2P6zSvyBKx1zO%2FJfVA3XhxG69ObVz1pjMCmsm7VHR7012IaH6XIzOZIGZwR%2Bl8A%2BlfAaGlWY8Cdoye1ZG5HWU2cPGd7tc43CgQ5K9b3sKEDMs3g%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Browser-Direct",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/916002722?mode=direct"
+          },
+          "duration": 41,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/916002722?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a3013cd1cfce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:37 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=aqKd%2FDq9PJHlqGMbdVZqzpMFCbjF%2FHm7XGLeBuea3HN2hvnGfxGTRE719QXWwyJ4sN3LhOz%2BrfH12qaHicsHDdBLAzQk3S5dL7Zjbb9ZuR9qiLizAVtVrTl5YZJ1UDMwP%2B1TiBi9TGIAJdrzif5MgA%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Browser-Direct",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/916002722?mode=self-ref"
+          },
+          "duration": 37,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/916002722?mode=self-ref"
+        }
+      ],
+      "verdict": "UNKNOWN_ERROR",
+      "recommendation": "Stream failed with status 403. Unknown error",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:48:37.929Z",
+      "id": 13
+    },
+    {
+      "channel": {
+        "name": "Balikpapan TV (720p)",
+        "url": "https://5bf7b725107e5.streamlock.net/btv/btv/playlist.m3u8",
+        "group": "General"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 200,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "149",
+            "content-type": "application/vnd.apple.mpegurl",
+            "date": "Wed, 26 Nov 2025 14:48:41 GMT",
+            "etag": "\"FHc3UnMkdtw/tchQSK60L/Ouf5HQ+hIoxuyZ5ZB9DSs\""
+          },
+          "duration": 283,
+          "success": true,
+          "error": null,
+          "url": "https://5bf7b725107e5.streamlock.net/btv/btv/playlist.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Direct mode. Using: https://5bf7b725107e5.streamlock.net/btv/btv/playlist.m3u8",
+      "workingUrl": "https://5bf7b725107e5.streamlock.net/btv/btv/playlist.m3u8",
+      "workingStrategy": "Direct",
+      "timestamp": "2025-11-26T14:48:41.548Z",
+      "id": 14
+    },
+    {
+      "channel": {
+        "name": "Bandung TV (360p)",
+        "url": "http://202.150.153.254:65500/bandungtvWEBSITE.m3u8",
+        "group": "General"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 13,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://202.150.153.254:65500/bandungtvWEBSITE.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a30522cd5fce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:47 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=qPOlWjzCd4QWGbzwheAhkdPdHi7XSrg%2BiCOwGRpl5tmmFOwmDfvKPOZfMqw5krJqV24nIRwdO82SM9dLiASSbtJPIU04pzVHJgx8vwITqji6Sgm3ZMJiAihgwuFRcfpg13uBG%2B3GMXv5WfetDR0O1JeseY8QehF4WoLQYFgwt6x%2BH5Y%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri, cfL4;desc=\"?proto=QUIC&rtt=120415&min_rtt=19963&rtt_var=77172&sent=37&recv=32&lost=0&retrans=4&sent_bytes=12583&recv_bytes=10928&delivery_rate=62694&ipace=1192331&icwnd=30000&ss_exit_cwnd=0&ss_exit_bw=0&ss_exit_reason=0&cwnd=42198&unsent_bytes=0&cid=aed1fba859ccecb3&ts=11153&inflight_dur=1885&x=125\"",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://202.150.153.254:65500/bandungtvWEBSITE.m3u8"
+          },
+          "duration": 109,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://202.150.153.254:65500/bandungtvWEBSITE.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a3052cd31fce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:47 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=ta2SGCKxAxkDPw5aFOth6p0klLs%2BBZXZiD3y%2F6yc6D%2BkmFMp6ICj%2FTiQZAqtebxXGIrUfeVMinN%2FMP1rwOt6RMLnR4kpmf4Ha9pDKsmaBG2SfHHrg9wDJHE6fywf%2BGxlevi%2BXdB6DqoI4HjEhrby9w%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://202.150.153.254:65500/bandungtvWEBSITE.m3u8?mode=direct"
+          },
+          "duration": 101,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://202.150.153.254:65500/bandungtvWEBSITE.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a30535d71fce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:48:47 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=n0CPKQ%2BqKN9a4sxDCaVrzGqsNhSFovKlbewr4f8HlpBHW%2BFKhOKfUorPDPolsvFd0MD30W7GhV50cTRmgYxFE2mKgJRPIwGypRcC3iDsEEFljGd%2Brjb7aVtE6BKu9g7G3k6fjpko45YMeL8%2Frag4Lg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://202.150.153.254:65500/bandungtvWEBSITE.m3u8?mode=self-ref"
+          },
+          "duration": 66,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://202.150.153.254:65500/bandungtvWEBSITE.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "UNKNOWN_ERROR",
+      "recommendation": "Stream failed with status 403. Unknown error",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:48:48.127Z",
+      "id": 15
+    },
+    {
+      "channel": {
+        "name": "Banjar TV (720p) [Not 24/7]",
+        "url": "https://banjartv.siar.us/banjartv/live/playlist.m3u8",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 200,
+          "headers": {
+            "cache-control": "public, max-age=2",
+            "content-length": "222",
+            "content-type": "application/vnd.apple.mpegurl",
+            "last-modified": "Wed, 26 Nov 2025 14:48:50 GMT"
+          },
+          "duration": 84,
+          "success": true,
+          "error": null,
+          "url": "https://banjartv.siar.us/banjartv/live/playlist.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Direct mode. Using: https://banjartv.siar.us/banjartv/live/playlist.m3u8",
+      "workingUrl": "https://banjartv.siar.us/banjartv/live/playlist.m3u8",
+      "workingStrategy": "Direct",
+      "timestamp": "2025-11-26T14:48:52.266Z",
+      "id": 16
+    },
+    {
+      "channel": {
+        "name": "Banten TV (720p) [Not 24/7]",
+        "url": "https://5bf7b725107e5.streamlock.net/bantentv/bantentv/playlist.m3u8",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 200,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "150",
+            "content-type": "application/vnd.apple.mpegurl",
+            "date": "Wed, 26 Nov 2025 14:48:55 GMT",
+            "etag": "\"3OX6zdSayqj96f5P87Jv8pfdKqjHY1JlkDp33qdKByM\""
+          },
+          "duration": 137,
+          "success": true,
+          "error": null,
+          "url": "https://5bf7b725107e5.streamlock.net/bantentv/bantentv/playlist.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Direct mode. Using: https://5bf7b725107e5.streamlock.net/bantentv/bantentv/playlist.m3u8",
+      "workingUrl": "https://5bf7b725107e5.streamlock.net/bantentv/bantentv/playlist.m3u8",
+      "workingStrategy": "Direct",
+      "timestamp": "2025-11-26T14:48:55.567Z",
+      "id": 17
+    },
+    {
+      "channel": {
+        "name": "Banyumas TV (720p) [Not 24/7]",
+        "url": "https://5bf7b725107e5.streamlock.net/bmstv/bmstv/playlist.m3u8",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 200,
+          "headers": {
+            "cache-control": "no-cache",
+            "content-length": "150",
+            "content-type": "application/vnd.apple.mpegurl",
+            "date": "Wed, 26 Nov 2025 14:48:59 GMT",
+            "etag": "\"EeVNNT5rRHa1J/1s14uDUCrE6ZGkd7aM3cy9BHoKvAo\""
+          },
+          "duration": 406,
+          "success": true,
+          "error": null,
+          "url": "https://5bf7b725107e5.streamlock.net/bmstv/bmstv/playlist.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Direct mode. Using: https://5bf7b725107e5.streamlock.net/bmstv/bmstv/playlist.m3u8",
+      "workingUrl": "https://5bf7b725107e5.streamlock.net/bmstv/bmstv/playlist.m3u8",
+      "workingStrategy": "Direct",
+      "timestamp": "2025-11-26T14:48:59.768Z",
+      "id": 18
+    },
+    {
+      "channel": {
+        "name": "Batam TV (480p) [Not 24/7]",
+        "url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8",
+        "group": "General"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 16,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a30bcce0dfce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:49:04 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=wGaKp0zMNRwJYZggRqTeO1oVD9TsfCJ3PSAQr5CTcTFf57FpyVSII7MirJPTgXMHYNb5dpYMzhJmHp23b7wpJNDxdXDagHJHRE1g3xMBAu8N5BmS8VPHIVGNoNyUFeVLLPCO%2FXWlzwCZ8H0J7T0PLw%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8"
+          },
+          "duration": 117,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a30bd8e87fce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:49:04 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=uUL6Cz3dQwolfUHx1hrt7wXV7uJ1FktVY4ZMb%2BXa4w2H0Ih3aLbxIET2tlocCxs5UmYGfKdE7ZawW5YPDYf24tvOCUthrdtsWL6wTc2B5gqL42PRtFIGqTr4rZlbP5UM8u7tzkb%2BdYeO6R6EA3BeYg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8?mode=direct"
+          },
+          "duration": 72,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a30be0efefce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:49:04 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=XLuYaH6ikNgRj3OwglHqAVDcvpqdUsQIh2V%2FTEvf3XAWyb9svP4%2FzGml%2FKWGG%2BI5zK6vvH85pR8RXzmBRprO47HAbWXbsBxj44MWPExQx2hFGDXDtNIuvI%2BWYr8CTNxguf0gjyRtQ77VmrBSlZ3rJA%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8?mode=self-ref"
+          },
+          "duration": 80,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://122.248.43.242:1935/BATAMTV/_definst_/myStream/playlist.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "UNKNOWN_ERROR",
+      "recommendation": "Stream failed with status 403. Unknown error",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:49:05.196Z",
+      "id": 19
+    },
+    {
+      "channel": {
+        "name": "BeritaSatu English",
+        "url": "https://beritasatu.secureswiftcontent.com/han/beritasatu/bsatu10008/srtoutput/manifest.m3u8",
+        "group": "News"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": 200,
+          "headers": {
+            "cache-control": "no-cache, no-store",
+            "content-length": "915",
+            "content-type": "application/vnd.apple.mpegurl",
+            "last-modified": "Wed, 26 Nov 2025 14:49:10 GMT"
+          },
+          "duration": 274,
+          "success": true,
+          "error": null,
+          "url": "https://beritasatu.secureswiftcontent.com/han/beritasatu/bsatu10008/srtoutput/manifest.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Direct mode. Using: https://beritasatu.secureswiftcontent.com/han/beritasatu/bsatu10008/srtoutput/manifest.m3u8",
+      "workingUrl": "https://beritasatu.secureswiftcontent.com/han/beritasatu/bsatu10008/srtoutput/manifest.m3u8",
+      "workingStrategy": "Direct",
+      "timestamp": "2025-11-26T14:49:12.351Z",
+      "id": 20
+    },
+    {
+      "channel": {
+        "name": "Bioskop Indonesia (576p)",
+        "url": "http://103.180.118.5:9981/stream/channelid/1574481607",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 19,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://103.180.118.5:9981/stream/channelid/1574481607"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a3112edb7fce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:49:18 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=s4jFlFq99n%2F8voekQuRXj1mXRNW45QW3zCTWethPUjUvvqbsJZKr1hKd7gBRBBU%2BQh1pRXR%2BbNKNiOwIharD2CwJaQijECIJSHwAqZZaPnwd5jiyY7%2FIhU5dkUZCAzueuUWUm9d77kzMzeOQGBhMFg%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Browser-Direct",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/1574481607"
+          },
+          "duration": 40,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/1574481607"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a31132dd9fce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:49:18 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=gdy6RfC7mwHtmZY5g1tCAyH5pVM3Xhm3kHz0vVSdu25oWR2HzIJDWYyhS0nC%2Fd6DLEVhwTX%2FhMWYMZitWIZNEe96UBQ8xWXkZ5ZFCKOwQVBqULc3925E07DF6iJhEYDFyvthdvkBWP3n8fOEg4fqqw%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Browser-Direct",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/1574481607?mode=direct"
+          },
+          "duration": 39,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/1574481607?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": 403,
+          "headers": {
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "9a4a31135deefce3-SIN",
+            "content-encoding": "zstd",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 26 Nov 2025 14:49:18 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=7CYbR8vMH%2BgVDCp8fOx%2FI0YBNj8gLzwVoAOMp0A5qTetnHqZN1terK8W232YNLMyz61jWg5sG15To4WoNUW37wG8qXdBmGy0drJ2fnBsgc3fU%2BDQVmfN%2BmnmHGazj8fmiivyAXCrTqJDLvqkfRO8wQ%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "Accept-Encoding",
+            "x-debug-proxy-mode": "Browser-Direct",
+            "x-debug-target-status": "403",
+            "x-debug-target-url": "http://103.180.118.5:9981/stream/channelid/1574481607?mode=self-ref"
+          },
+          "duration": 41,
+          "success": false,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://103.180.118.5:9981/stream/channelid/1574481607?mode=self-ref"
+        }
+      ],
+      "verdict": "UNKNOWN_ERROR",
+      "recommendation": "Stream failed with status 403. Unknown error",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:49:18.827Z",
+      "id": 21
+    },
+    {
+      "channel": {
+        "name": "Biznet Adventure (1080p)",
+        "url": "http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 13,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 200,
+          "headers": {
+            "access-control-allow-credentials": "true",
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "no-cache",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a31279c1efce3-SIN",
+            "content-type": "application/vnd.apple.mpegurl",
+            "date": "Wed, 26 Nov 2025 14:49:21 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=V%2FDKMOg044YQX8jnWYzyQSrpNLoHofWmNyG8Sl%2F4e5zTjGPvwcR4eU%2Fx9Z%2BMBgU5QK8%2Bt%2BAEghcaRSnEFgfBvQmg2StwhcNdkf94yag%2Fxau1WwaBhabFd2VbSWeu5TSEmo%2FcfTqnj26%2BcSW4IRym2A%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "200",
+            "x-debug-target-url": "http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8"
+          },
+          "duration": 292,
+          "success": true,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Standard mode. Using: https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8",
+      "workingUrl": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_adventure/smil:adventure.smil/playlist.m3u8",
+      "workingStrategy": "Standard",
+      "timestamp": "2025-11-26T14:49:22.316Z",
+      "id": 22
+    },
+    {
+      "channel": {
+        "name": "Biznet Kids (1080p)",
+        "url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8",
+        "group": "Kids"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 26,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": 200,
+          "headers": {
+            "access-control-allow-credentials": "true",
+            "access-control-allow-headers": "*",
+            "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+            "access-control-allow-origin": "https://frfadhilah1995.github.io",
+            "access-control-expose-headers": "*",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "no-cache",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9a4a31bd5b41fce3-SIN",
+            "content-type": "application/vnd.apple.mpegurl",
+            "date": "Wed, 26 Nov 2025 14:49:45 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "priority": "u=1,i",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=q3KbLHE63KFmaFB2noilcH3D5bp1cxp%2B%2FjTdHO9ClGAcPXw6BT0ZXsLKpJGzBc1Axd3yhztmYinqmgXumpwFAE79YkWOgcYawt4pRJnMVWt4pcknw6gCpXkuxQbv0StH1Z%2FzfoRWgRhXKNDGqgj1WQ%3D%3D\"}]}",
+            "server": "cloudflare",
+            "server-timing": "cfExtPri",
+            "vary": "accept-encoding",
+            "x-debug-proxy-mode": "Standard-Embedded",
+            "x-debug-target-status": "200",
+            "x-debug-target-url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+          },
+          "duration": 151,
+          "success": true,
+          "error": null,
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+        }
+      ],
+      "verdict": "SUCCESS",
+      "recommendation": "Stream works with Standard mode. Using: https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8",
+      "workingUrl": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8",
+      "workingStrategy": "Standard",
+      "timestamp": "2025-11-26T14:49:46.100Z",
+      "id": 23
+    },
+    {
+      "channel": {
+        "name": "Biznet Lifestyle (1080p)",
+        "url": "http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8",
+        "group": "Lifestyle"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 16,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": null,
+          "headers": {},
+          "duration": 414,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": null,
+          "headers": {},
+          "duration": 143,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": null,
+          "headers": {},
+          "duration": 168,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_lifestyle/smil:lifestyle.smil/index.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "NETWORK_ERROR",
+      "recommendation": "Network connection failed. Check internet connection or server may be down.",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:49:54.552Z",
+      "id": 24
+    },
+    {
+      "channel": {
+        "name": "Biznet Kids (1080p)",
+        "url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8",
+        "group": "Kids"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 10,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": null,
+          "headers": {},
+          "duration": 2,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": null,
+          "headers": {},
+          "duration": 8,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": null,
+          "headers": {},
+          "duration": 14,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/http://livestream.biznetvideo.net/biznet_kids/smil:kids.smil/index.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "NETWORK_ERROR",
+      "recommendation": "Network connection failed. Check internet connection or server may be down.",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:49:56.333Z",
+      "id": 25
+    },
+    {
+      "channel": {
+        "name": "BRTV (720p)",
+        "url": "https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8",
+        "group": "Undefined"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 17,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": null,
+          "headers": {},
+          "duration": 2,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": null,
+          "headers": {},
+          "duration": 1,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": null,
+          "headers": {},
+          "duration": 2,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/brtv/brtv/playlist.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "NETWORK_ERROR",
+      "recommendation": "Network connection failed. Check internet connection or server may be down.",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:50:02.865Z",
+      "id": 26
+    },
+    {
+      "channel": {
+        "name": "BTV (720p)",
+        "url": "https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8",
+        "group": "News"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 20,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": null,
+          "headers": {},
+          "duration": 2,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": null,
+          "headers": {},
+          "duration": 2,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": null,
+          "headers": {},
+          "duration": 1,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://btv.secureswiftcontent.com/han/btv/btv10005/srtoutput/manifest.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "NETWORK_ERROR",
+      "recommendation": "Network connection failed. Check internet connection or server may be down.",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:50:05.466Z",
+      "id": 27
+    },
+    {
+      "channel": {
+        "name": "Bungo TV (480p) [Not 24/7]",
+        "url": "https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8",
+        "group": "General"
+      },
+      "attempts": [
+        {
+          "strategy": "Direct",
+          "proxyMode": "none",
+          "statusCode": null,
+          "headers": {},
+          "duration": 17,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8"
+        },
+        {
+          "strategy": "Standard",
+          "proxyMode": "standard",
+          "statusCode": null,
+          "headers": {},
+          "duration": 3,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8"
+        },
+        {
+          "strategy": "BrowserDirect",
+          "proxyMode": "direct",
+          "statusCode": null,
+          "headers": {},
+          "duration": 1,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8?mode=direct"
+        },
+        {
+          "strategy": "SelfRef",
+          "proxyMode": "self-ref",
+          "statusCode": null,
+          "headers": {},
+          "duration": 1,
+          "success": false,
+          "error": "Failed to fetch",
+          "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/https://5bf7b725107e5.streamlock.net/bungotv/bungotv/playlist.m3u8?mode=self-ref"
+        }
+      ],
+      "verdict": "NETWORK_ERROR",
+      "recommendation": "Network connection failed. Check internet connection or server may be down.",
+      "workingUrl": null,
+      "workingStrategy": null,
+      "timestamp": "2025-11-26T14:50:13.963Z",
+      "id": 28
+    }
+  ]
+}

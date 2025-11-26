@@ -1,50 +1,46 @@
 /**
- * Smart Stream Healer - Auto-healing engine with cascading retry strategies
- * Automatically tries multiple proxy modes and logs forensic data
+ * Advanced Smart Stream Healer
+ * Multi-proxy rotation + Alternative sources + Exponential backoff retry
  */
 
 import errorDB from './errorDatabase';
-
-const PROXY_URL = 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev';
-
-// Healing Strategies in priority order
-const HEALING_STRATEGIES = [
-    {
-        name: 'Direct',
-        description: 'Direct connection (no proxy)',
-        mode: 'none',
-        priority: 1,
-        urlBuilder: (streamUrl) => streamUrl
-    },
-    {
-        name: 'Standard',
-        description: 'Standard CORS proxy',
-        mode: 'standard',
-        priority: 2,
-        urlBuilder: (streamUrl) => `${PROXY_URL}/${streamUrl}`
-    },
-    {
-        name: 'BrowserDirect',
-        description: 'Browser Direct Mode (for raw streams)',
-        mode: 'direct',
-        priority: 3,
-        urlBuilder: (streamUrl) => `${PROXY_URL}/${streamUrl}?mode=direct`
-    },
-    {
-        name: 'SelfRef',
-        description: 'Self-Referential Mode (for legacy CDNs)',
-        mode: 'self-ref',
-        priority: 4,
-        urlBuilder: (streamUrl) => `${PROXY_URL}/${streamUrl}?mode=self-ref`
-    }
-];
+import proxyPool from './proxyPool';
+import { getAlternatives } from './alternativeSources';
 
 /**
- * Test a stream URL with specific strategy
+ * Retry with exponential backoff
  */
-async function testStrategy(streamUrl, strategy, signal) {
+async function tryWithRetry(fn, options = {}) {
+    const {
+        maxRetries = 3,
+        baseDelay = 1000,
+        maxDelay = 10000,
+        factor = 2
+    } = options;
+
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            return await fn();
+        } catch (error) {
+            if (i === maxRetries - 1) throw error;
+
+            const delay = Math.min(baseDelay * Math.pow(factor, i), maxDelay);
+            console.log(`[Retry] Attempt ${i + 1} failed, waiting ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+}
+
+/**
+ * Test a stream URL with specific proxy
+ */
+async function testWithProxy(streamUrl, proxy, signal) {
     const startTime = Date.now();
-    const testUrl = strategy.urlBuilder(streamUrl);
+
+    // Build proxy URL
+    const testUrl = proxy.url.endsWith('=')
+        ? `${proxy.url}${streamUrl}`  // CORS Anywhere format
+        : `${proxy.url}/${streamUrl}`; // Standard format
 
     try {
         const response = await fetch(testUrl, {
@@ -63,8 +59,7 @@ async function testStrategy(streamUrl, strategy, signal) {
         });
 
         return {
-            strategy: strategy.name,
-            proxyMode: strategy.mode,
+            proxy: proxy.name,
             statusCode: response.status,
             headers,
             duration,
@@ -77,8 +72,7 @@ async function testStrategy(streamUrl, strategy, signal) {
         const duration = Date.now() - startTime;
 
         return {
-            strategy: strategy.name,
-            proxyMode: strategy.mode,
+            proxy: proxy.name,
             statusCode: null,
             headers: {},
             duration,
@@ -90,48 +84,148 @@ async function testStrategy(streamUrl, strategy, signal) {
 }
 
 /**
- * Analyze attempts and determine verdict
+ * Test direct connection (no proxy)
  */
-function analyzeResults(attempts) {
-    // Check if any succeeded
-    const successful = attempts.find(a => a.success);
+async function testDirect(streamUrl, signal) {
+    const startTime = Date.now();
+
+    try {
+        const response = await fetch(streamUrl, {
+            method: 'HEAD',
+            signal,
+            headers: {
+                'Accept': '*/*'
+            }
+        });
+
+        const duration = Date.now() - startTime;
+        const headers = {};
+        response.headers.forEach((value, key) => {
+            headers[key] = value;
+        });
+
+        return {
+            proxy: 'Direct',
+            statusCode: response.status,
+            headers,
+            duration,
+            success: response.ok,
+            error: null,
+            url: streamUrl
+        };
+
+    } catch (error) {
+        const duration = Date.now() - startTime;
+
+        return {
+            proxy: 'Direct',
+            statusCode: null,
+            headers: {},
+            duration,
+            success: false,
+            error: error.message,
+            url: streamUrl
+        };
+    }
+}
+
+/**
+ * Try all proxies for a single URL
+ */
+async function tryAllProxies(streamUrl, options = {}) {
+    const { timeout = 10000, onProgress = null } = options;
+    const attempts = [];
+
+    // 1. Try direct first (fastest)
+    if (onProgress) onProgress({ proxy: 'Direct', stage: 'testing' });
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    const directResult = await testDirect(streamUrl, controller.signal);
+    clearTimeout(timeoutId);
+
+    attempts.push(directResult);
+
+    if (directResult.success) {
+        proxyPool.reportSuccess('Direct', directResult.duration);
+        return { success: true, result: directResult, attempts };
+    }
+
+    // 2. Try proxies
+    const proxies = proxyPool.getAllProxies();
+
+    for (const proxy of proxies) {
+        if (onProgress) onProgress({ proxy: proxy.name, stage: 'testing' });
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+        const result = await testWithProxy(streamUrl, proxy, controller.signal);
+        clearTimeout(timeoutId);
+
+        attempts.push(result);
+
+        if (result.success) {
+            proxyPool.reportSuccess(proxy.name, result.duration);
+            return { success: true, result, attempts };
+        } else {
+            // Determine error type for better reporting
+            const errorType = result.statusCode === 403 ? '403' :
+                result.statusCode === 404 ? '404' :
+                    result.error === 'Timeout' ? 'timeout' :
+                        'network';
+
+            proxyPool.reportFailure(proxy.name, errorType);
+        }
+    }
+
+    return { success: false, result: null, attempts };
+}
+
+/**
+ * Analyze all attempts and determine verdict
+ */
+function analyzeAttempts(allAttempts, urlsTried) {
+    // Find any successful attempt
+    const successful = allAttempts.find(a => a.success);
     if (successful) {
         return {
             verdict: 'SUCCESS',
-            recommendation: `Stream works with ${successful.strategy} mode. Using: ${successful.url}`,
+            recommendation: `Stream works via ${successful.proxy}. Using: ${successful.url}`,
             workingUrl: successful.url,
-            workingStrategy: successful.strategy
+            workingStrategy: successful.proxy
         };
     }
 
-    // Analyze failure patterns
-    const last = attempts[attempts.length - 1];
+    // All failed - analyze patterns
+    const lastAttempt = allAttempts[allAttempts.length - 1];
 
     // All 404 = Dead link
-    if (attempts.every(a => a.statusCode === 404)) {
+    if (allAttempts.every(a => a.statusCode === 404)) {
         return {
             verdict: 'DEAD_LINK',
-            recommendation: 'Stream file not found on server (404). Content may be offline or moved.',
+            recommendation: `All ${urlsTried.length} URLs returned 404. Content permanently offline.`,
             workingUrl: null,
             workingStrategy: null
         };
     }
 
-    // All 403 = Access forbidden
-    if (attempts.every(a => a.statusCode === 403)) {
+    // All 403 = Geo-blocking / IP blocking
+    if (allAttempts.every(a => a.statusCode === 403)) {
         return {
             verdict: 'FORBIDDEN',
-            recommendation: 'Access forbidden by content provider. Server may require authentication or have geo-restrictions.',
+            recommendation: 'All proxies blocked (403). Server requires Indonesia VPS proxy or IP whitelisting.',
             workingUrl: null,
             workingStrategy: null
         };
     }
 
-    // Network errors
-    if (attempts.every(a => a.error)) {
+    // All network errors
+    if (allAttempts.every(a => a.error)) {
         return {
             verdict: 'NETWORK_ERROR',
-            recommendation: 'Network connection failed. Check internet connection or server may be down.',
+            recommendation: 'Network connection failed on all attempts. Server may be down or geo-restricted.',
             workingUrl: null,
             workingStrategy: null
         };
@@ -140,102 +234,133 @@ function analyzeResults(attempts) {
     // Mixed errors
     return {
         verdict: 'UNKNOWN_ERROR',
-        recommendation: `Stream failed with status ${last.statusCode || 'N/A'}. ${last.error || 'Unknown error'}`,
+        recommendation: `Failed with ${lastAttempt.statusCode || lastAttempt.error}. ${urlsTried.length} URLs tried, all failed.`,
         workingUrl: null,
         workingStrategy: null
     };
 }
 
 /**
- * Smart Healer - Main function
- * Tries all strategies in sequence and returns result
+ * Advanced Smart Healer - Main Function
+ * Multi-proxy + Multi-source with intelligent fallback
  */
 export async function healStream(channel, options = {}) {
     const {
-        timeout = 5000, // 5 seconds per attempt
-        onProgress = null, // Callback for progress updates
-        saveToDatabase = true
+        timeout = 10000,
+        onProgress = null,
+        saveToDatabase = true,
+        useAlternatives = true,
+        maxRetries = 2
     } = options;
 
-    console.log(`[SmartHealer] 🔄 Starting auto-heal for: ${channel.name}`);
+    console.log(`[AdvancedHealer] 🚀 Starting advanced heal for: ${channel.name}`);
 
-    const attempts = [];
-    let successfulResult = null;
+    // Get all URLs to try (original + alternatives)
+    const urlsToTry = useAlternatives
+        ? getAlternatives(channel.name, channel.url)
+        : [channel.url];
 
-    // Try each strategy in order
-    for (let i = 0; i < HEALING_STRATEGIES.length; i++) {
-        const strategy = HEALING_STRATEGIES[i];
+    console.log(`[AdvancedHealer] Will try ${urlsToTry.length} URL(s):`, urlsToTry);
 
-        // Progress callback
+    const allAttempts = [];
+
+    // Try each URL
+    for (let urlIndex = 0; urlIndex < urlsToTry.length; urlIndex++) {
+        const currentUrl = urlsToTry[urlIndex];
+
         if (onProgress) {
             onProgress({
-                current: i + 1,
-                total: HEALING_STRATEGIES.length,
-                strategy: strategy.name,
-                description: strategy.description
+                stage: 'url',
+                current: urlIndex + 1,
+                total: urlsToTry.length,
+                url: currentUrl
             });
         }
 
-        console.log(`[SmartHealer] Trying strategy ${i + 1}/${HEALING_STRATEGIES.length}: ${strategy.name}`);
+        console.log(`[AdvancedHealer] Trying URL ${urlIndex + 1}/${urlsToTry.length}: ${currentUrl}`);
 
-        // Create timeout controller
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        // Try with retry logic
+        const tryUrl = async () => {
+            return await tryAllProxies(currentUrl, { timeout, onProgress });
+        };
 
-        // Test this strategy
-        const result = await testStrategy(channel.url, strategy, controller.signal);
-        clearTimeout(timeoutId);
-
-        attempts.push(result);
-
-        // If successful, stop trying
-        if (result.success) {
-            console.log(`[SmartHealer] ✅ Success with ${strategy.name}!`);
-            successfulResult = result;
-            break;
-        } else {
-            console.log(`[SmartHealer] ❌ ${strategy.name} failed: ${result.statusCode || result.error}`);
-        }
-    }
-
-    // Analyze results
-    const analysis = analyzeResults(attempts);
-
-    // Prepare forensic log
-    const forensicLog = {
-        channel: {
-            name: channel.name,
-            url: channel.url,
-            group: channel.group || 'Uncategorized'
-        },
-        attempts,
-        verdict: analysis.verdict,
-        recommendation: analysis.recommendation,
-        workingUrl: analysis.workingUrl,
-        workingStrategy: analysis.workingStrategy
-    };
-
-    // Save to database
-    if (saveToDatabase) {
         try {
-            await errorDB.saveLog(forensicLog);
-            console.log('[SmartHealer] 💾 Forensic log saved to database');
-        } catch (err) {
-            console.error('[SmartHealer] Failed to save log:', err);
+            const result = await tryWithRetry(tryUrl, { maxRetries });
+
+            allAttempts.push(...result.attempts);
+
+            if (result.success) {
+                console.log(`[AdvancedHealer] ✅ Success with URL ${urlIndex + 1}!`);
+
+                // Analyze and save
+                const analysis = {
+                    verdict: 'SUCCESS',
+                    recommendation: `Stream works via ${result.result.proxy}. Using: ${result.result.url}`,
+                    workingUrl: result.result.url,
+                    workingStrategy: result.result.proxy
+                };
+
+                if (saveToDatabase) {
+                    await saveForensicLog(channel, allAttempts, analysis, urlsToTry);
+                }
+
+                return {
+                    success: true,
+                    ...analysis,
+                    attempts: allAttempts,
+                    urlsTried: urlsToTry.slice(0, urlIndex + 1)
+                };
+            }
+        } catch (error) {
+            console.error(`[AdvancedHealer] Error with URL ${urlIndex + 1}:`, error);
         }
     }
 
-    // Return result
+    // All URLs failed
+    console.error('[AdvancedHealer] ❌ All URLs and proxies failed');
+
+    const analysis = analyzeAttempts(allAttempts, urlsToTry);
+
+    if (saveToDatabase) {
+        await saveForensicLog(channel, allAttempts, analysis, urlsToTry);
+    }
+
     return {
-        success: analysis.verdict === 'SUCCESS',
+        success: false,
         ...analysis,
-        attempts,
-        forensicLog
+        attempts: allAttempts,
+        urlsTried: urlsToTry
     };
 }
 
 /**
- * Quick check - only tests direct connection (fast check)
+ * Save forensic log to database
+ */
+async function saveForensicLog(channel, attempts, analysis, urlsTried) {
+    try {
+        const forensicLog = {
+            channel: {
+                name: channel.name,
+                url: channel.url,
+                group: channel.group || 'Uncategorized'
+            },
+            attempts,
+            urlsTried,
+            verdict: analysis.verdict,
+            recommendation: analysis.recommendation,
+            workingUrl: analysis.workingUrl,
+            workingStrategy: analysis.workingStrategy
+        };
+
+        await errorDB.saveLog(forensicLog);
+        console.log('[AdvancedHealer] 💾 Forensic log saved');
+    } catch (err) {
+        console.error('[AdvancedHealer] Failed to save log:', err);
+    }
+}
+
+/**
+ * Quick health check (for UI status indicators)
  */
 export async function quickCheck(streamUrl) {
     const controller = new AbortController();
@@ -256,7 +381,7 @@ export async function quickCheck(streamUrl) {
 }
 
 /**
- * Batch heal multiple channels (for future use)
+ * Batch heal multiple channels
  */
 export async function batchHeal(channels, options = {}) {
     const results = [];
@@ -268,8 +393,8 @@ export async function batchHeal(channels, options = {}) {
             ...result
         });
 
-        // Add delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     return results;
