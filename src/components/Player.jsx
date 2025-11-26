@@ -57,135 +57,172 @@ const Player = ({ channel }) => {
                 abrBandWidthFactor: 0.95,
                 abrBandWidthUpFactor: 0.7,
                 debug: false,
-                // Check if domain is in whitelist
-                try {
-                    const domain = new URL(channel.url).hostname;
-                    const isCORSSafe = CORS_SAFE_DOMAINS.some(safe => domain.includes(safe));
-                    const isWorkerBlocked = WORKER_BLOCKED_DOMAINS.some(blocked => domain.includes(blocked));
+            });
 
-                    // If worker is blocked, try direct first (HLS chunks often don't need CORS for playback)
-                    if(isWorkerBlocked) {
-                        streamUrl = channel.url;
-                        attemptedDirect = true;
-                        needsProxy = false;
-                        console.log(`[Player] ⚠️ Direct attempt (proxy blocked by server): ${channel.name}`);
-                    } else if(isCORSSafe) {
-                        streamUrl = channel.url;
-                        attemptedDirect = true;
-                        needsProxy = false;
-                        console.log(`[Player] ✅ Direct HTTPS (CORS-safe): ${channel.name}`);
-                    } else {
-                        streamUrl = `${PROXY_URL}${channel.url}`;
-                        console.log(`[Player] 🔀 Proxying stream to bypass CORS: ${channel.name}`);
-                    }
-                } catch(e) {
-                    // If URL parsing fails, use proxy
+            hlsRef.current = hls;
+
+            // CORS-AWARE PROXY LOGIC
+            const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
+
+            // Whitelist of domains known to have proper CORS headers
+            const CORS_SAFE_DOMAINS = [
+                'iptv-org.github.io',
+                'raw.githubusercontent.com',
+                'cdn.jsdelivr.net'
+            ];
+
+            // Domains that block Cloudflare Workers even with proper headers
+            // Cleared: detik.com now works with updated intelligent Referer spoofing
+            const WORKER_BLOCKED_DOMAINS = [];
+
+            let streamUrl = channel.url;
+            let attemptedDirect = false;
+            let needsProxy = true;
+
+            try {
+                const domain = new URL(channel.url).hostname;
+                const isCORSSafe = CORS_SAFE_DOMAINS.some(safe => domain.includes(safe));
+                const isWorkerBlocked = WORKER_BLOCKED_DOMAINS.some(blocked => domain.includes(blocked));
+
+                // If worker is blocked, try direct first (HLS chunks often don't need CORS for playback)
+                if (isWorkerBlocked) {
+                    streamUrl = channel.url;
+                    attemptedDirect = true;
+                    needsProxy = false;
+                    console.log(`[Player] ⚠️ Direct attempt (proxy blocked by server): ${channel.name}`);
+                } else if (isCORSSafe) {
+                    streamUrl = channel.url;
+                    attemptedDirect = true;
+                    needsProxy = false;
+                    console.log(`[Player] ✅ Direct HTTPS (CORS-safe): ${channel.name}`);
+                } else {
                     streamUrl = `${PROXY_URL}${channel.url}`;
-                    console.log(`[Player] 🔀 Proxying stream (fallback): ${channel.name}`);
+                    console.log(`[Player] 🔀 Proxying stream to bypass CORS: ${channel.name}`);
                 }
+            } catch (e) {
+                // If URL parsing fails, use proxy
+                streamUrl = `${PROXY_URL}${channel.url}`;
+                console.log(`[Player] 🔀 Proxying stream (fallback): ${channel.name}`);
+            }
 
             const startTime = performance.now();
-                hls.loadSource(streamUrl);
-                hls.attachMedia(video);
+            hls.loadSource(streamUrl);
+            hls.attachMedia(video);
 
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    const loadTime = (performance.now() - startTime).toFixed(0);
-                    console.log(`[Player] ⚡ Loaded in ${loadTime}ms (${attemptedDirect ? 'direct' : 'proxied'})`);
-                    setLoading(false);
-                    playVideo();
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                const loadTime = (performance.now() - startTime).toFixed(0);
+                console.log(`[Player] ⚡ Loaded in ${loadTime}ms (${attemptedDirect ? 'direct' : 'proxied'})`);
+                setLoading(false);
+                playVideo();
 
-                    import('../utils/m3u.js').then(({ setCachedStatus }) => {
-                        setCachedStatus(channel.url, 'online');
-                    });
+                import('../utils/m3u.js').then(({ setCachedStatus }) => {
+                    setCachedStatus(channel.url, 'online');
                 });
+            });
 
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                if (attemptedDirect && !streamUrl.includes(PROXY_URL)) {
-                                    setCachedStatus(channel.url, 'offline');
-                                });
-                hls.destroy();
-                break;
-            }
+            hls.on(Hls.Events.ERROR, (event, data) => {
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            if (attemptedDirect && !streamUrl.includes(PROXY_URL)) {
+                                console.log('[Player] ⚠️ Direct failed, retrying via proxy...');
+                                attemptedDirect = false;
+                                streamUrl = `${PROXY_URL}${channel.url}`;
+                                hls.loadSource(streamUrl);
+                                hls.startLoad();
+                            } else {
+                                hls.startLoad();
+                            }
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            setLoading(false);
+                            setError("This stream is unavailable.");
+                            import('../utils/m3u.js').then(({ setCachedStatus }) => {
+                                setCachedStatus(channel.url, 'offline');
+                            });
+                            hls.destroy();
+                            break;
                     }
-    });
+                }
+            });
 
-} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
-    const isHttpStream = channel.url.startsWith('http://');
-    const streamUrl = isHttpStream ? `${PROXY_URL}${channel.url}` : channel.url;
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
+            const isHttpStream = channel.url.startsWith('http://');
+            const streamUrl = isHttpStream ? `${PROXY_URL}${channel.url}` : channel.url;
 
-    video.src = streamUrl;
-    console.log(`[Player] 🍎 Safari ${isHttpStream ? 'proxied' : 'direct'}`);
+            video.src = streamUrl;
+            console.log(`[Player] 🍎 Safari ${isHttpStream ? 'proxied' : 'direct'}`);
 
-    video.addEventListener('loadedmetadata', () => {
-        setLoading(false);
-        playVideo();
-    });
-    video.addEventListener('error', () => {
-        setLoading(false);
-        setError("Stream unavailable.");
-    });
-} else {
-    setLoading(false);
-    setError("Browser does not support HLS.");
-}
+            video.addEventListener('loadedmetadata', () => {
+                setLoading(false);
+                playVideo();
+            });
+            video.addEventListener('error', () => {
+                setLoading(false);
+                setError("Stream unavailable.");
+            });
+        } else {
+            setLoading(false);
+            setError("Browser does not support HLS.");
+        }
 
-return () => {
-    if (hlsRef.current) {
-        hlsRef.current.destroy();
-    }
-};
-        }, [channel]);
+        return () => {
+            if (hlsRef.current) {
+                hlsRef.current.destroy();
+            }
+        };
+    }, [channel]);
 
-if (!channel) {
-    return (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-black text-gray-500 p-8 text-center">
-            <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-6 animate-pulse">
-                <Tv size={48} className="opacity-50" />
+    if (!channel) {
+        return (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-black text-gray-500 p-8 text-center">
+                <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-6 animate-pulse">
+                    <Tv size={48} className="opacity-50" />
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2">Ready to Watch</h2>
+                <p className="max-w-md">Select a channel from the sidebar to start streaming.</p>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Ready to Watch</h2>
-            <p className="max-w-md">Select a channel from the sidebar to start streaming.</p>
+        );
+    }
+
+    return (
+        <div className="relative w-full h-full bg-black flex items-center justify-center group">
+            {loading && (
+                <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/50 backdrop-blur-sm">
+                    <div className="flex flex-col items-center text-accent">
+                        <Loader2 size={48} className="animate-spin mb-4" />
+                        <p className="font-medium">Loading Stream...</p>
+                    </div>
+                </div>
+            )}
+
+            {error && (
+                <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/80">
+                    <div className="flex flex-col items-center text-red-500 p-6 text-center max-w-md bg-white/5 rounded-xl border border-red-500/20">
+                        <AlertTriangle size={48} className="mb-4" />
+                        <h3 className="text-xl font-bold mb-2">Playback Error</h3>
+                        <p className="text-sm text-gray-300">{error}</p>
+                    </div>
+                </div>
+            )}
+
+            <video
+                ref={videoRef}
+                controls
+                className="w-full h-full max-h-[100dvh] object-contain focus:outline-none"
+                poster={channel.logo || ""}
+            />
+
+            <div className="absolute top-0 left-0 w-full p-6 bg-gradient-to-b from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <h2 className="text-2xl font-bold text-white drop-shadow-md">{channel.name}</h2>
+                <p className="text-accent text-sm font-medium">{channel.group}</p>
+            </div>
         </div>
     );
-}
-
-return (
-    <div className="relative w-full h-full bg-black flex items-center justify-center group">
-        {loading && (
-            <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/50 backdrop-blur-sm">
-                <div className="flex flex-col items-center text-accent">
-                    <Loader2 size={48} className="animate-spin mb-4" />
-                    <p className="font-medium">Loading Stream...</p>
-                </div>
-            </div>
-        )}
-
-        {error && (
-            <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/80">
-                <div className="flex flex-col items-center text-red-500 p-6 text-center max-w-md bg-white/5 rounded-xl border border-red-500/20">
-                    <AlertTriangle size={48} className="mb-4" />
-                    <h3 className="text-xl font-bold mb-2">Playback Error</h3>
-                    <p className="text-sm text-gray-300">{error}</p>
-                </div>
-            </div>
-        )}
-
-        <video
-            ref={videoRef}
-            controls
-            className="w-full h-full max-h-[100dvh] object-contain focus:outline-none"
-            poster={channel.logo || ""}
-        />
-
-        <div className="absolute top-0 left-0 w-full p-6 bg-gradient-to-b from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <h2 className="text-2xl font-bold text-white drop-shadow-md">{channel.name}</h2>
-            <p className="text-accent text-sm font-medium">{channel.group}</p>
-        </div>
-    </div>
-);
 };
 
 export default Player;
