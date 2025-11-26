@@ -69,79 +69,51 @@ export default {
 
         // Prepare Request Headers
         const modifiedHeaders = new Headers();
+        modifiedHeaders.set(key, value);
+    }
+}
 
-        // 1. Apply Default Spoofed Headers
-        Object.entries(DEFAULT_HEADERS).forEach(([key, value]) => {
-            modifiedHeaders.set(key, value);
-        });
+// 4. Handle Custom Headers passed via Query Params (Advanced)
+// Example: ?url=...&_header_Referer=https://mysite.com
+for (const [key, value] of url.searchParams) {
+    if (key.startsWith('_header_')) {
+        const headerName = key.substring(8); // Remove '_header_'
+        modifiedHeaders.set(headerName, value);
+    }
+}
 
-        // 2. CRITICAL: Set intelligent Referer based on target domain
-        // This makes the request look like it came from the target site itself
-        const targetOrigin = `${targetUrlObj.protocol}//${targetUrlObj.hostname}`;
+try {
+    // FETCH TARGET
+    const response = await fetch(targetUrl, {
+        method: request.method,
+        headers: modifiedHeaders,
+        redirect: 'follow'
+    });
 
-        // For specific domains, set referer to their own domain
-        if (targetUrlObj.hostname.includes('detik.com')) {
-            // Set referer to the master playlist URL for detik.com
-            const refererPath = targetUrl.includes('index.m3u8')
-                ? targetUrl
-                : targetUrl.substring(0, targetUrl.lastIndexOf('/')) + '/index.m3u8';
-            modifiedHeaders.set('Referer', refererPath);
-            modifiedHeaders.set('Origin', targetOrigin);
-        } else {
-            // For other domains, use their origin
-            modifiedHeaders.set('Referer', targetOrigin + '/');
-            modifiedHeaders.set('Origin', targetOrigin);
-        }
+    // Prepare Response Headers (CORS)
+    const responseHeaders = new Headers(response.headers);
+    responseHeaders.set('Access-Control-Allow-Origin', origin || '*');
+    responseHeaders.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
+    responseHeaders.set('Access-Control-Allow-Headers', '*');
+    responseHeaders.set('Access-Control-Expose-Headers', '*');
 
-        // 3. Forward specific important headers from client
-        const allowedForwardHeaders = ['range', 'if-modified-since', 'cache-control'];
-        for (const [key, value] of request.headers) {
-            if (allowedForwardHeaders.includes(key.toLowerCase())) {
-                modifiedHeaders.set(key, value);
-            }
-        }
+    // Remove troublesome headers
+    responseHeaders.delete('X-Frame-Options');
+    responseHeaders.delete('Content-Security-Policy');
 
-        // 4. Handle Custom Headers passed via Query Params (Advanced)
-        // Example: ?url=...&_header_Referer=https://mysite.com
-        for (const [key, value] of url.searchParams) {
-            if (key.startsWith('_header_')) {
-                const headerName = key.substring(8); // Remove '_header_'
-                modifiedHeaders.set(headerName, value);
-            }
-        }
+    // Return Stream (Pass-through)
+    return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: responseHeaders
+    });
 
-        try {
-            // FETCH TARGET
-            const response = await fetch(targetUrl, {
-                method: request.method,
-                headers: modifiedHeaders,
-                redirect: 'follow'
-            });
-
-            // Prepare Response Headers (CORS)
-            const responseHeaders = new Headers(response.headers);
-            responseHeaders.set('Access-Control-Allow-Origin', origin || '*');
-            responseHeaders.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
-            responseHeaders.set('Access-Control-Allow-Headers', '*');
-            responseHeaders.set('Access-Control-Expose-Headers', '*');
-
-            // Remove troublesome headers
-            responseHeaders.delete('X-Frame-Options');
-            responseHeaders.delete('Content-Security-Policy');
-
-            // Return Stream (Pass-through)
-            return new Response(response.body, {
-                status: response.status,
-                statusText: response.statusText,
-                headers: responseHeaders
-            });
-
-        } catch (error) {
-            return new Response(`Proxy Error: ${error.message}`, {
-                status: 500,
-                headers: { 'Access-Control-Allow-Origin': '*' }
-            });
-        }
+} catch (error) {
+    return new Response(`Proxy Error: ${error.message}`, {
+        status: 500,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+    });
+}
     }
 };
 
