@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X, Bookmark, Trash2 } from 'lucide-react';
+import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X, Bookmark, Trash2, BarChart3 } from 'lucide-react';
 import ChannelItem from './ChannelItem';
 import { statusRefreshService } from '../utils/statusRefresh.js';
 import { getSavedUrls, savePlaylistUrl, deletePlaylistUrl, updateChannelCount } from '../utils/savedPlaylists.js';
@@ -372,10 +372,16 @@ const Sidebar = ({
 
             {/* Footer */}
             <div className="p-4 border-t border-glass-border text-center text-xs text-gray-600 bg-black/20">
-                <RouterLink to="/debug" className="flex items-center justify-center gap-2 mb-2 text-accent hover:text-white transition-colors">
-                    <Globe size={12} />
-                    <span>Stream Debugger</span>
-                </RouterLink>
+                <div className="flex justify-center gap-4 mb-2">
+                    <RouterLink to="/debug" className="flex items-center gap-2 text-accent hover:text-white transition-colors">
+                        <Globe size={12} />
+                        <span>Debugger</span>
+                    </RouterLink>
+                    <RouterLink to="/analytics" className="flex items-center gap-2 text-accent hover:text-white transition-colors">
+                        <BarChart3 size={12} />
+                        <span>Analytics</span>
+                    </RouterLink>
+                </div>
                 <p>&copy; {new Date().getFullYear()} VectaStream</p>
                 <p className="mt-1 font-medium text-gray-500">Developed by RMD TECH</p>
             </div>

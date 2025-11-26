@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Player from './components/Player';
 import StreamDebugger from './pages/StreamDebugger';
+import ErrorAnalytics from './pages/ErrorAnalytics';
 import useStreamStatus from './hooks/useStreamStatus';
 import useDevice from './hooks/useDevice';
 import { statusRefreshService } from './utils/statusRefresh';
@@ -170,6 +171,7 @@ function App() {
                     <main className="flex-1 relative bg-black w-full h-full">
                         <Routes>
                             <Route path="/debug" element={<StreamDebugger />} />
+                            <Route path="/analytics" element={<ErrorAnalytics />} />
                             <Route path="/" element={
                                 <Player channel={currentChannel} />
                             } />

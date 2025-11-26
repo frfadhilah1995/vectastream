@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
-import { Tv, AlertTriangle, Loader2 } from 'lucide-react';
+import { Tv, AlertTriangle, Loader2, Activity, CheckCircle, XCircle } from 'lucide-react';
+import { healStream } from '../utils/smartHealer';
 
 const Player = ({ channel }) => {
     const videoRef = useRef(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [healingProgress, setHealingProgress] = useState(null);
+    const [healingResult, setHealingResult] = useState(null);
     const hlsRef = useRef(null);
 
     useEffect(() => {
@@ -16,159 +19,135 @@ const Player = ({ channel }) => {
 
         setLoading(true);
         setError(null);
+        setHealingProgress(null);
+        setHealingResult(null);
 
         const playVideo = () => {
             video.play().catch(() => { });
         };
 
-        if (Hls.isSupported()) {
-            if (hlsRef.current) {
-                hlsRef.current.destroy();
-            }
+        // SMART HEALER - Auto-heal stream on channel selection
+        const initializeStream = async () => {
+            console.log(`[Player] 🔄 Starting Smart Healer for: ${channel.name}`);
 
-            const hls = new Hls({
-                // LL-HLS INSTANT PLAYBACK
-                enableWorker: true,
-                lowLatencyMode: true, liveSyncDurationCount: 2,
-
-                // ULTRA-LOW BUFFER
-                maxBufferLength: 3,
-                maxMaxBufferLength: 10,
-                backBufferLength: 30,
-                maxBufferSize: 15 * 1000 * 1000,
-                maxBufferHole: 0.3,
-
-                // FAST FAILURE DETECTION
-                fragLoadingTimeOut: 8000,
-                fragLoadingMaxRetry: 2,
-                fragLoadingRetryDelay: 300,
-                fragLoadingMaxRetryTimeout: 16000,
-                manifestLoadingTimeOut: 5000,
-                manifestLoadingMaxRetry: 1,
-                manifestLoadingRetryDelay: 300,
-                manifestLoadingMaxRetryTimeout: 8000,
-                levelLoadingTimeOut: 5000,
-                levelLoadingMaxRetry: 2,
-                levelLoadingRetryDelay: 300,
-                levelLoadingMaxRetryTimeout: 10000,
-
-                startLevel: -1,
-                abrEwmaDefaultEstimate: 500000,
-                abrBandWidthFactor: 0.95,
-                abrBandWidthUpFactor: 0.7,
-                debug: false,
+            // Trigger healing process
+            const result = await healStream(channel, {
+                timeout: 5000,
+                onProgress: (progress) => {
+                    setHealingProgress(progress);
+                    console.log(`[Player] Healing ${progress.current}/${progress.total}: ${progress.strategy}`);
+                }
             });
 
-            hlsRef.current = hls;
+            setHealingResult(result);
 
-            // CORS-AWARE PROXY LOGIC
-            const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
-
-            // Whitelist of domains known to have proper CORS headers
-            const CORS_SAFE_DOMAINS = [
-                'iptv-org.github.io',
-                'raw.githubusercontent.com',
-                'cdn.jsdelivr.net'
-            ];
-
-            // Domains that block Cloudflare Workers even with proper headers
-            // Cleared: detik.com now works with updated intelligent Referer spoofing
-            const WORKER_BLOCKED_DOMAINS = [];
-
-            let streamUrl = channel.url;
-            let attemptedDirect = false;
-            let needsProxy = true;
-
-            try {
-                const domain = new URL(channel.url).hostname;
-                const isCORSSafe = CORS_SAFE_DOMAINS.some(safe => domain.includes(safe));
-                const isWorkerBlocked = WORKER_BLOCKED_DOMAINS.some(blocked => domain.includes(blocked));
-
-                // If worker is blocked, try direct first (HLS chunks often don't need CORS for playback)
-                if (isWorkerBlocked) {
-                    streamUrl = channel.url;
-                    attemptedDirect = true;
-                    needsProxy = false;
-                    console.log(`[Player] ⚠️ Direct attempt (proxy blocked by server): ${channel.name}`);
-                } else if (isCORSSafe) {
-                    streamUrl = channel.url;
-                    attemptedDirect = true;
-                    needsProxy = false;
-                    console.log(`[Player] ✅ Direct HTTPS (CORS-safe): ${channel.name}`);
-                } else {
-                    streamUrl = `${PROXY_URL}${channel.url}`;
-                    console.log(`[Player] 🔀 Proxying stream to bypass CORS: ${channel.name}`);
-                }
-            } catch (e) {
-                // If URL parsing fails, use proxy
-                streamUrl = `${PROXY_URL}${channel.url}`;
-                console.log(`[Player] 🔀 Proxying stream (fallback): ${channel.name}`);
+            if (!result.success) {
+                // All strategies failed
+                setLoading(false);
+                setError(result.recommendation);
+                console.error('[Player] ❌ All healing strategies failed:', result.verdict);
+                return;
             }
 
-            const startTime = performance.now();
-            hls.loadSource(streamUrl);
-            hls.attachMedia(video);
+            // Success! Use the working URL
+            const workingUrl = result.workingUrl;
+            console.log(`[Player] ✅ Stream healed successfully with ${result.workingStrategy}`);
 
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                const loadTime = (performance.now() - startTime).toFixed(0);
-                console.log(`[Player] ⚡ Loaded in ${loadTime}ms (${attemptedDirect ? 'direct' : 'proxied'})`);
-                setLoading(false);
-                playVideo();
+            if (Hls.isSupported()) {
+                if (hlsRef.current) {
+                    hlsRef.current.destroy();
+                }
 
-                import('../utils/m3u.js').then(({ setCachedStatus }) => {
-                    setCachedStatus(channel.url, 'online');
+                const hls = new Hls({
+                    // LL-HLS INSTANT PLAYBACK
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    liveSyncDurationCount: 2,
+
+                    // ULTRA-LOW BUFFER
+                    maxBufferLength: 3,
+                    maxMaxBufferLength: 10,
+                    backBufferLength: 30,
+                    maxBufferSize: 15 * 1000 * 1000,
+                    maxBufferHole: 0.3,
+
+                    // FAST FAILURE DETECTION
+                    fragLoadingTimeOut: 8000,
+                    fragLoadingMaxRetry: 2,
+                    fragLoadingRetryDelay: 300,
+                    fragLoadingMaxRetryTimeout: 16000,
+                    manifestLoadingTimeOut: 5000,
+                    manifestLoadingMaxRetry: 1,
+                    manifestLoadingRetryDelay: 300,
+                    manifestLoadingMaxRetryTimeout: 8000,
+                    levelLoadingTimeOut: 5000,
+                    levelLoadingMaxRetry: 2,
+                    levelLoadingRetryDelay: 300,
+                    levelLoadingMaxRetryTimeout: 10000,
+
+                    startLevel: -1,
+                    abrEwmaDefaultEstimate: 500000,
+                    abrBandWidthFactor: 0.95,
+                    abrBandWidthUpFactor: 0.7,
+                    debug: false,
                 });
-            });
 
-            hls.on(Hls.Events.ERROR, (event, data) => {
-                if (data.fatal) {
-                    switch (data.type) {
-                        case Hls.ErrorTypes.NETWORK_ERROR:
-                            if (attemptedDirect && !streamUrl.includes(PROXY_URL)) {
-                                console.log('[Player] ⚠️ Direct failed, retrying via proxy...');
-                                attemptedDirect = false;
-                                streamUrl = `${PROXY_URL}${channel.url}`;
-                                hls.loadSource(streamUrl);
+                hlsRef.current = hls;
+
+                const startTime = performance.now();
+                hls.loadSource(workingUrl);
+                hls.attachMedia(video);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    const loadTime = (performance.now() - startTime).toFixed(0);
+                    console.log(`[Player] ⚡ Loaded in ${loadTime}ms via ${result.workingStrategy}`);
+                    setLoading(false);
+                    setHealingProgress(null);
+                    playVideo();
+                });
+
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                console.error('[Player] Network error, attempting recovery...');
                                 hls.startLoad();
-                            } else {
-                                hls.startLoad();
-                            }
-                            break;
-                        case Hls.ErrorTypes.MEDIA_ERROR:
-                            hls.recoverMediaError();
-                            break;
-                        default:
-                            setLoading(false);
-                            setError("This stream is unavailable.");
-                            import('../utils/m3u.js').then(({ setCachedStatus }) => {
-                                setCachedStatus(channel.url, 'offline');
-                            });
-                            hls.destroy();
-                            break;
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                console.error('[Player] Media error, attempting recovery...');
+                                hls.recoverMediaError();
+                                break;
+                            default:
+                                setLoading(false);
+                                setError(`Stream error: ${data.details || 'Unknown error'}`);
+                                hls.destroy();
+                                break;
+                        }
                     }
-                }
-            });
+                });
 
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            const PROXY_URL = localStorage.getItem('vectastream_custom_proxy') || 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev/';
-            const isHttpStream = channel.url.startsWith('http://');
-            const streamUrl = isHttpStream ? `${PROXY_URL}${channel.url}` : channel.url;
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Safari native HLS support
+                video.src = workingUrl;
+                console.log(`[Player] 🍎 Safari playback via ${result.workingStrategy}`);
 
-            video.src = streamUrl;
-            console.log(`[Player] 🍎 Safari ${isHttpStream ? 'proxied' : 'direct'}`);
+                video.addEventListener('loadedmetadata', () => {
+                    setLoading(false);
+                    setHealingProgress(null);
+                    playVideo();
+                });
 
-            video.addEventListener('loadedmetadata', () => {
+                video.addEventListener('error', () => {
+                    setLoading(false);
+                    setError("Stream playback failed.");
+                });
+            } else {
                 setLoading(false);
-                playVideo();
-            });
-            video.addEventListener('error', () => {
-                setLoading(false);
-                setError("Stream unavailable.");
-            });
-        } else {
-            setLoading(false);
-            setError("Browser does not support HLS.");
-        }
+                setError("Browser does not support HLS playback.");
+            }
+        };
+
+        initializeStream();
 
         return () => {
             if (hlsRef.current) {
@@ -191,7 +170,28 @@ const Player = ({ channel }) => {
 
     return (
         <div className="relative w-full h-full bg-black flex items-center justify-center group">
-            {loading && (
+            {/* Healing Progress Overlay */}
+            {healingProgress && (
+                <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/80 backdrop-blur-sm">
+                    <div className="flex flex-col items-center text-white bg-glass p-8 rounded-2xl border border-accent/30 max-w-md">
+                        <Activity size={48} className="text-accent mb-4 animate-pulse" />
+                        <h3 className="text-xl font-bold mb-2">Auto-Healing Stream</h3>
+                        <p className="text-sm text-gray-400 mb-4 text-center">{healingProgress.description}</p>
+                        <div className="w-full bg-black/50 rounded-full h-2 overflow-hidden mb-2">
+                            <div
+                                className="bg-accent h-full transition-all duration-300"
+                                style={{ width: `${(healingProgress.current / healingProgress.total) * 100}%` }}
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500 font-mono">
+                            Strategy {healingProgress.current} / {healingProgress.total}: {healingProgress.strategy}
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* Loading Overlay */}
+            {loading && !healingProgress && (
                 <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/50 backdrop-blur-sm">
                     <div className="flex flex-col items-center text-accent">
                         <Loader2 size={48} className="animate-spin mb-4" />
@@ -200,12 +200,37 @@ const Player = ({ channel }) => {
                 </div>
             )}
 
+            {/* Error Overlay with Forensic Report */}
             {error && (
-                <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/80">
-                    <div className="flex flex-col items-center text-red-500 p-6 text-center max-w-md bg-white/5 rounded-xl border border-red-500/20">
-                        <AlertTriangle size={48} className="mb-4" />
-                        <h3 className="text-xl font-bold mb-2">Playback Error</h3>
-                        <p className="text-sm text-gray-300">{error}</p>
+                <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/80 p-6">
+                    <div className="flex flex-col items-center text-red-500 p-6 text-center max-w-lg bg-glass rounded-2xl border border-red-500/30">
+                        <XCircle size={64} className="mb-4" />
+                        <h3 className="text-2xl font-bold mb-2">Stream Unavailable</h3>
+                        <p className="text-sm text-gray-300 mb-4">{error}</p>
+
+                        {healingResult && (
+                            <div className="w-full bg-black/50 p-4 rounded-lg border border-white/10 text-left mb-4">
+                                <p className="text-xs text-gray-400 mb-2">Diagnostic Report:</p>
+                                <ul className="text-xs space-y-1">
+                                    {healingResult.attempts.map((attempt, idx) => (
+                                        <li key={idx} className="flex items-center gap-2">
+                                            {attempt.success ? (
+                                                <CheckCircle size={12} className="text-green-400" />
+                                            ) : (
+                                                <XCircle size={12} className="text-red-400" />
+                                            )}
+                                            <span className="text-gray-300">
+                                                {attempt.strategy}: {attempt.statusCode || attempt.error || 'Failed'}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        <p className="text-xs text-gray-500">
+                            📊 Error logged to <span className="text-accent">Analytics Dashboard</span>
+                        </p>
                     </div>
                 </div>
             )}
@@ -220,6 +245,11 @@ const Player = ({ channel }) => {
             <div className="absolute top-0 left-0 w-full p-6 bg-gradient-to-b from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                 <h2 className="text-2xl font-bold text-white drop-shadow-md">{channel.name}</h2>
                 <p className="text-accent text-sm font-medium">{channel.group}</p>
+                {healingResult?.workingStrategy && (
+                    <p className="text-xs text-green-400 mt-1">
+                        ✓ Auto-healed via {healingResult.workingStrategy}
+                    </p>
+                )}
             </div>
         </div>
     );
