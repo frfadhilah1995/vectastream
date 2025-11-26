@@ -16,11 +16,16 @@ const BLOCKED_AGENTS = ['curl', 'python', 'wget']; // Block bots if needed
 
 // DEFAULT HEADERS TO SPOOF (Makes requests look like a real browser)
 const DEFAULT_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
     'Accept': '*/*',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.google.com/', // Generic referer, can be overridden by query param
-    'Origin': 'https://www.google.com'
+    'Accept-Encoding': 'identity;q=1, *;q=0',
+    'sec-ch-ua': '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'video',
+    'sec-fetch-mode': 'no-cors',
+    'sec-fetch-site': 'same-origin'
 };
 
 export default {
@@ -49,8 +54,9 @@ export default {
         }
 
         // Validate URL
+        let targetUrlObj;
         try {
-            new URL(targetUrl);
+            targetUrlObj = new URL(targetUrl);
         } catch (e) {
             return new Response('Invalid URL specified', { status: 400 });
         }
@@ -69,15 +75,33 @@ export default {
             modifiedHeaders.set(key, value);
         });
 
-        // 2. Forward specific important headers from client, but override Host/Origin
-        const allowedForwardHeaders = ['accept', 'accept-encoding', 'range'];
+        // 2. CRITICAL: Set intelligent Referer based on target domain
+        // This makes the request look like it came from the target site itself
+        const targetOrigin = `${targetUrlObj.protocol}//${targetUrlObj.hostname}`;
+
+        // For specific domains, set referer to their own domain
+        if (targetUrlObj.hostname.includes('detik.com')) {
+            // Set referer to the master playlist URL for detik.com
+            const refererPath = targetUrl.includes('index.m3u8')
+                ? targetUrl
+                : targetUrl.substring(0, targetUrl.lastIndexOf('/')) + '/index.m3u8';
+            modifiedHeaders.set('Referer', refererPath);
+            modifiedHeaders.set('Origin', targetOrigin);
+        } else {
+            // For other domains, use their origin
+            modifiedHeaders.set('Referer', targetOrigin + '/');
+            modifiedHeaders.set('Origin', targetOrigin);
+        }
+
+        // 3. Forward specific important headers from client
+        const allowedForwardHeaders = ['range', 'if-modified-since', 'cache-control'];
         for (const [key, value] of request.headers) {
             if (allowedForwardHeaders.includes(key.toLowerCase())) {
                 modifiedHeaders.set(key, value);
             }
         }
 
-        // 3. Handle Custom Headers passed via Query Params (Advanced)
+        // 4. Handle Custom Headers passed via Query Params (Advanced)
         // Example: ?url=...&_header_Referer=https://mysite.com
         for (const [key, value] of url.searchParams) {
             if (key.startsWith('_header_')) {
