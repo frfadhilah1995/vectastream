@@ -71,54 +71,86 @@ export default {
         const modifiedHeaders = new Headers();
 
         // 1. Apply Default Spoofed Headers
-        modifiedHeaders.set(key, value);
-    }
-}
+        Object.entries(DEFAULT_HEADERS).forEach(([key, value]) => {
+            modifiedHeaders.set(key, value);
+        });
 
-// 4. Handle Custom Headers passed via Query Params
-for (const [key, value] of url.searchParams) {
-    if (key.startsWith('_header_')) {
-        const headerName = key.substring(8);
-        modifiedHeaders.set(headerName, value);
-    }
-}
+        // 2. CRITICAL: Universal Intelligent Referer & Origin Spoofing
+        const targetOrigin = `${targetUrlObj.protocol}//${targetUrlObj.hostname}`;
 
-try {
-    // FETCH TARGET
-    const response = await fetch(targetUrl, {
-        method: request.method,
-        headers: modifiedHeaders,
-        redirect: 'follow'
-    });
+        // Origin Handling:
+        // - HTTPS targets: Send Origin (mimic CORS/Same-Origin)
+        // - HTTP targets: Omit Origin (mimic standard request) to avoid confusing legacy servers
+        if (targetUrlObj.protocol === 'https:') {
+            modifiedHeaders.set('Origin', targetOrigin);
+        }
 
-    // Prepare Response Headers (CORS)
-    const responseHeaders = new Headers(response.headers);
-    responseHeaders.set('Access-Control-Allow-Origin', origin || '*');
-    responseHeaders.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
-    responseHeaders.set('Access-Control-Allow-Headers', '*');
-    responseHeaders.set('Access-Control-Expose-Headers', '*');
+        // Smart Referer Strategy (The "Anti-Mainstream" Fix):
+        // Legacy servers (Wowza, Adobe) and some strict CDNs check if the Referer matches the file itself.
+        // Instead of the "folder" (directory), we set Referer to the FULL TARGET URL.
+        // This is "Self-Referential" and tricks the server into thinking it's a direct player access.
+        const smartReferer = targetUrl;
+        modifiedHeaders.set('Referer', smartReferer);
 
-    // Debug Headers (Helpful for diagnosing 403/404s)
-    responseHeaders.set('X-Debug-Target-Status', response.status);
-    responseHeaders.set('X-Debug-Target-Url', targetUrl);
+        // Special handling for known strict sites
+        // Detik logic is now effectively covered by the universal "Full URL" strategy,
+        // but we'll keep the block if we need specific tweaks later.
+        if (targetUrlObj.hostname.includes('detik.com')) {
+            modifiedHeaders.set('Origin', targetOrigin); // Force Origin for Detik
+        }
 
-    // Remove troublesome headers
-    responseHeaders.delete('X-Frame-Options');
-    responseHeaders.delete('Content-Security-Policy');
+        // 3. Forward specific important headers from client
+        const allowedForwardHeaders = ['range', 'if-modified-since', 'cache-control'];
+        for (const [key, value] of request.headers) {
+            if (allowedForwardHeaders.includes(key.toLowerCase())) {
+                modifiedHeaders.set(key, value);
+            }
+        }
 
-    // Return Stream
-    return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: responseHeaders
-    });
+        // 4. Handle Custom Headers passed via Query Params
+        for (const [key, value] of url.searchParams) {
+            if (key.startsWith('_header_')) {
+                const headerName = key.substring(8);
+                modifiedHeaders.set(headerName, value);
+            }
+        }
 
-} catch (error) {
-    return new Response(`Proxy Error: ${error.message}`, {
-        status: 500,
-        headers: { 'Access-Control-Allow-Origin': '*' }
-    });
-}
+        try {
+            // FETCH TARGET
+            const response = await fetch(targetUrl, {
+                method: request.method,
+                headers: modifiedHeaders,
+                redirect: 'follow'
+            });
+
+            // Prepare Response Headers (CORS)
+            const responseHeaders = new Headers(response.headers);
+            responseHeaders.set('Access-Control-Allow-Origin', origin || '*');
+            responseHeaders.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
+            responseHeaders.set('Access-Control-Allow-Headers', '*');
+            responseHeaders.set('Access-Control-Expose-Headers', '*');
+
+            // Debug Headers (Helpful for diagnosing 403/404s)
+            responseHeaders.set('X-Debug-Target-Status', response.status);
+            responseHeaders.set('X-Debug-Target-Url', targetUrl);
+
+            // Remove troublesome headers
+            responseHeaders.delete('X-Frame-Options');
+            responseHeaders.delete('Content-Security-Policy');
+
+            // Return Stream
+            return new Response(response.body, {
+                status: response.status,
+                statusText: response.statusText,
+                headers: responseHeaders
+            });
+
+        } catch (error) {
+            return new Response(`Proxy Error: ${error.message}`, {
+                status: 500,
+                headers: { 'Access-Control-Allow-Origin': '*' }
+            });
+        }
     }
 };
 
