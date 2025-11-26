@@ -1,6 +1,17 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import Player from './components/Player';
+import StreamDebugger from './pages/StreamDebugger';
 import useStreamStatus from './hooks/useStreamStatus';
-
+import useDevice from './hooks/useDevice';
 import { statusRefreshService } from './utils/statusRefresh';
+import { fetchWithCorsProxy } from './utils/corsProxy';
+import { parseM3U } from './utils/m3u';
+import { getCachedPlaylist, cachePlaylist } from './utils/playlistCache';
+import { addToHistory } from './utils/history';
 
 function App() {
     const { isMobile, isTablet } = useDevice();
@@ -109,68 +120,64 @@ function App() {
     // Status checking is now handled in Sidebar.jsx for visible items only (Pagination Scoped)
 
     return (
-        <div className="flex flex-col h-full bg-background text-white font-sans overflow-hidden">
-            {/* Mobile/Tablet Header Overlay for Menu Toggle */}
-            {(isMobile || isTablet) && (
-                <div className="fixed top-4 left-4 z-50">
-                    <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="p-2 bg-black/50 backdrop-blur-md border border-glass-border rounded-lg text-white shadow-lg active:scale-95 transition-transform"
-                    >
-                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                </div>
-            )}
+        <Router>
+            <div className="flex flex-col h-full bg-background text-white font-sans overflow-hidden">
+                {/* Mobile/Tablet Header Overlay for Menu Toggle */}
+                {(isMobile || isTablet) && (
+                    <div className="fixed top-4 left-4 z-50">
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="p-2 bg-black/50 backdrop-blur-md border border-glass-border rounded-lg text-white shadow-lg active:scale-95 transition-transform"
+                        >
+                            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </div>
+                )}
 
-            <div className="flex flex-1 overflow-hidden relative">
-                {/* Sidebar Logic */}
-                <div className={`
-          z-40 h-full transition-transform duration-300 ease-in-out
-          ${(isMobile || isTablet) ? 'absolute inset-y-0 left-0' : 'relative'}
-          ${(isMobile || isTablet) && !isMobileMenuOpen ? '-translate-x-full' : 'translate-x-0'}
-        `}>
-                    <div className="h-full flex flex-col w-80 bg-background border-r border-glass-border shadow-2xl md:shadow-none">
-                        <Header />
-                        <Sidebar
-                            channels={channels}
-                            currentChannel={currentChannel}
-                            onChannelSelect={(channel) => {
-                                setCurrentChannel(channel);
-                                addToHistory(channel);
-                                if (isMobile || isTablet) setIsMobileMenuOpen(false);
-                            }}
-                            onLoadPlaylist={handleLoadPlaylist}
-                            isLoading={isLoading}
-                            playlistUrl={playlistUrl}
-                            setPlaylistUrl={setPlaylistUrl}
-                            getChannelStatus={getStatus}
-                            checkStreamStatus={checkStreamStatus} // Pass this for scoped checking
-                            onRefreshChannel={handleRefreshChannel}
-                            onClearChannels={() => {
-                                setChannels([]);
-                                setCurrentChannel(null);
-                            }}
-                        />
-
-                        {/* Footer */}
-                        <div className="p-4 border-t border-glass-border text-center text-xs text-gray-600 bg-black/20">
-                            <p>&copy; {new Date().getFullYear()} VectaStream</p>
-                            <p className="mt-1 font-medium text-gray-500">Developed by RMD TECH</p>
+                <div className="flex flex-1 overflow-hidden relative">
+                    {/* Sidebar Logic */}
+                    <div className={`
+              z-40 h-full transition-transform duration-300 ease-in-out
+              ${(isMobile || isTablet) ? 'absolute inset-y-0 left-0' : 'relative'}
+              ${(isMobile || isTablet) && !isMobileMenuOpen ? '-translate-x-full' : 'translate-x-0'}
+            `}>
+                        <div className="h-full flex flex-col w-80 bg-background border-r border-glass-border shadow-2xl md:shadow-none">
+                            <Header />
+                            <Sidebar
+                                channels={channels}
+                                currentChannel={currentChannel}
+                                onChannelSelect={(channel) => {
+                                    setCurrentChannel(channel);
+                                    addToHistory(channel);
+                                    if (isMobile || isTablet) setIsMobileMenuOpen(false);
+                                }}
+                                onLoadPlaylist={handleLoadPlaylist}
+                                isLoading={isLoading}
+                                playlistUrl={playlistUrl}
+                                setPlaylistUrl={setPlaylistUrl}
+                                getChannelStatus={getStatus}
+                                checkStreamStatus={checkStreamStatus} // Pass this for scoped checking
+                                onRefreshChannel={handleRefreshChannel}
+                                onClearChannels={() => {
+                                    setChannels([]);
+                                    setCurrentChannel(null);
+                                }}
+                            />
                         </div>
                     </div>
-                </div>
 
-                {/* Main Content (Player) */}
-                <main className="flex-1 relative bg-black w-full h-full">
-                    <Routes>
-                        <Route path="/debug" element={<StreamDebugger />} />
-                        <Route path="/" element={
-                            <Player channel={currentChannel} />
-                        } />
-                    </Routes>
-                </main>
+                    {/* Main Content (Player) */}
+                    <main className="flex-1 relative bg-black w-full h-full">
+                        <Routes>
+                            <Route path="/debug" element={<StreamDebugger />} />
+                            <Route path="/" element={
+                                <Player channel={currentChannel} />
+                            } />
+                        </Routes>
+                    </main>
+                </div>
             </div>
-        </div>
+        </Router>
     );
 }
 
