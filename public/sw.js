@@ -1,9 +1,12 @@
 /**
  * Ghost Worker - Service Worker for Stream Interception
  * Intercepts HLS requests and applies "Smart Healing" invisibly
+ * Features:
+ * 1. Protocol Upgrade (HTTP -> HTTPS Proxy) to fix Mixed Content
+ * 2. Race Mode (Exponential Speed)
  */
 
-const CACHE_NAME = 'vectastream-ghost-v1';
+const CACHE_NAME = 'vectastream-ghost-v2';
 const PROXY_URL = 'https://vectastream-proxy.frfadhilah-1995-ok.workers.dev';
 
 self.addEventListener('install', (event) => {
@@ -30,39 +33,57 @@ self.addEventListener('fetch', (event) => {
  */
 async function handleStreamRequest(request) {
     const url = request.url;
+    const isMixedContent = self.location.protocol === 'https:' && url.startsWith('http:');
 
-    // 1. Try Direct First (Fastest)
+    // Strategies to race
+    const strategies = [];
+
+    // 1. Direct Strategy (Only if NOT Mixed Content)
+    if (!isMixedContent) {
+        strategies.push(
+            fetch(request, { mode: 'cors', credentials: 'omit' })
+                .then(res => {
+                    if (!res.ok) throw new Error('Direct failed');
+                    return res;
+                })
+        );
+    }
+
+    // 2. Cloudflare Proxy Strategy (Primary)
+    // Handles Mixed Content by upgrading to HTTPS via proxy
+    const proxyUrl = `${PROXY_URL}/${url}`;
+    strategies.push(
+        fetch(proxyUrl)
+            .then(res => {
+                if (!res.ok) throw new Error('Proxy failed');
+                return res;
+            })
+    );
+
+    // 3. CORS Anywhere Strategy (Backup)
+    const corsUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    strategies.push(
+        fetch(corsUrl)
+            .then(res => {
+                if (!res.ok) throw new Error('CORS Anywhere failed');
+                return res;
+            })
+    );
+
     try {
-        const directResponse = await fetch(request, {
-            mode: 'cors',
-            credentials: 'omit'
+        // 🏁 RACE! First successful response wins
+        // This is "Exponential" - we don't wait for timeouts
+        const winner = await Promise.any(strategies);
+
+        // Clone response to be safe
+        return new Response(winner.body, {
+            status: 200,
+            statusText: 'OK',
+            headers: winner.headers
         });
 
-        if (directResponse.ok) return directResponse;
-    } catch (e) {
-        // Ignore direct failure
+    } catch (aggregateError) {
+        console.error('[GhostWorker] ❌ All strategies failed:', aggregateError);
+        return new Response('Stream unavailable via Ghost Worker', { status: 404 });
     }
-
-    // 2. Try via Cloudflare Proxy (Standard)
-    try {
-        const proxyUrl = `${PROXY_URL}/${url}`;
-        const proxyResponse = await fetch(proxyUrl);
-
-        if (proxyResponse.ok) return proxyResponse;
-    } catch (e) {
-        // Ignore proxy failure
-    }
-
-    // 3. Try via CORS Anywhere (Backup)
-    try {
-        const corsUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-        const corsResponse = await fetch(corsUrl);
-
-        if (corsResponse.ok) return corsResponse;
-    } catch (e) {
-        // Ignore backup failure
-    }
-
-    // 4. If all fail, return a 404 or custom error
-    return new Response('Stream unavailable via Ghost Worker', { status: 404 });
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import { Tv, AlertTriangle, Loader2, Activity, CheckCircle, XCircle } from 'lucide-react';
 import { healStream } from '../utils/smartHealer';
+import P2PLoader from '../utils/p2pLoader';
 
 const Player = ({ channel }) => {
     const videoRef = useRef(null);
@@ -59,6 +60,10 @@ const Player = ({ channel }) => {
                 }
 
                 const hls = new Hls({
+                    // P2P & Custom Loader Config
+                    fLoader: P2PLoader,
+                    pLoader: P2PLoader,
+
                     // LL-HLS INSTANT PLAYBACK
                     enableWorker: true,
                     lowLatencyMode: true,
