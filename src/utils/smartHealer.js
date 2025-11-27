@@ -34,6 +34,25 @@ async function tryWithRetry(fn, options = {}) {
 }
 
 /**
+ * Generate "Spoofed" Headers to bypass blocks
+ */
+function generateSpoofedHeaders(targetUrl) {
+    let origin = '';
+    try {
+        const urlObj = new URL(targetUrl);
+        origin = urlObj.origin;
+    } catch (e) {
+        origin = targetUrl;
+    }
+
+    return {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': origin + '/',
+        'Origin': origin
+    };
+}
+
+/**
  * Test a stream URL with specific proxy
  */
 async function testWithProxy(streamUrl, proxy, signal) {
@@ -44,26 +63,29 @@ async function testWithProxy(streamUrl, proxy, signal) {
         ? `${proxy.url}${streamUrl}`  // CORS Anywhere format
         : `${proxy.url}/${streamUrl}`; // Standard format
 
+    // 🔧 FIX: Add spoofed headers to bypass 403/Geo-blocks
+    const headers = {
+        'Accept': '*/*',
+        ...generateSpoofedHeaders(streamUrl)
+    };
+
     try {
         const response = await fetch(testUrl, {
             method: 'HEAD',
             signal,
-            headers: {
-                'Accept': '*/*',
-                'Origin': window.location.origin
-            }
+            headers: headers
         });
 
         const duration = Date.now() - startTime;
-        const headers = {};
+        const respHeaders = {};
         response.headers.forEach((value, key) => {
-            headers[key] = value;
+            respHeaders[key] = value;
         });
 
         return {
             proxy: proxy.name,
             statusCode: response.status,
-            headers,
+            headers: respHeaders,
             duration,
             success: response.ok,
             error: null,

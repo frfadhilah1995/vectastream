@@ -30,6 +30,27 @@ self.addEventListener('fetch', (event) => {
 });
 
 /**
+ * Generate "Spoofed" Headers to bypass blocks
+ * Mimics a real browser visiting the stream's origin
+ */
+function generateSpoofedHeaders(targetUrl) {
+    let origin = '';
+    try {
+        const urlObj = new URL(targetUrl);
+        origin = urlObj.origin;
+    } catch (e) {
+        origin = targetUrl;
+    }
+
+    return {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': origin + '/',
+        'Origin': origin,
+        'X-Requested-With': 'XMLHttpRequest'
+    };
+}
+
+/**
  * Handle stream request with "Race Logic"
  */
 async function handleStreamRequest(request) {
@@ -53,10 +74,18 @@ async function handleStreamRequest(request) {
         console.log('[GhostWorker] ⚠️ Skipping direct (Mixed Content)');
     }
 
-    // 2. Cloudflare Proxy Strategy (Primary)
+    // 2. Cloudflare Proxy Strategy (Primary) with Header Spoofing
+    // We pass the target URL and our spoofed headers
+    const spoofHeaders = generateSpoofedHeaders(url);
+
+    // Construct proxy URL with query params for headers (if supported) or just standard fetch
+    // Assuming the proxy forwards headers we send to it
     const proxyUrl = `${PROXY_URL}/${url}`;
+
     strategies.push(
-        fetch(proxyUrl)
+        fetch(proxyUrl, {
+            headers: spoofHeaders
+        })
             .then(res => {
                 if (!res.ok) throw new Error(`Cloudflare Proxy failed: ${res.status}`);
                 console.log('[GhostWorker] ✅ Cloudflare Proxy success');
@@ -64,7 +93,20 @@ async function handleStreamRequest(request) {
             })
     );
 
-    // 3. REMOVED: allorigins.win (unreliable, CORS issues)
+    // 3. Fallback: CORS Anywhere (Last Resort)
+    // Only use if Cloudflare fails (we can't easily race this due to rate limits, but for robustness we add it)
+    // Note: We don't race it to save quota, but we add it if strategies is empty
+    if (strategies.length === 0) {
+        const corsAnywhereUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        strategies.push(
+            fetch(corsAnywhereUrl)
+                .then(res => {
+                    if (!res.ok) throw new Error(`CORS Anywhere failed: ${res.status}`);
+                    console.log('[GhostWorker] ✅ CORS Anywhere success');
+                    return res;
+                })
+        );
+    }
 
     // If no strategies available (shouldn't happen), return error
     if (strategies.length === 0) {
