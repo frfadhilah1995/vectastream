@@ -12,11 +12,18 @@ const Player = ({ channel }) => {
     const [healingResult, setHealingResult] = useState(null);
     const hlsRef = useRef(null);
 
+    // 🔧 FIX: Track player active state to prevent background interference
+    const isPlayerActiveRef = useRef(true);
+    const healingAbortControllerRef = useRef(null);
+
     useEffect(() => {
         if (!channel || !channel.url) return;
 
         const video = videoRef.current;
         if (!video) return;
+
+        // Mark player as active for this channel
+        isPlayerActiveRef.current = true;
 
         setLoading(true);
         setError(null);
@@ -31,14 +38,26 @@ const Player = ({ channel }) => {
         const initializeStream = async () => {
             console.log(`[Player] 🔄 Starting Smart Healer for: ${channel.name}`);
 
+            // Create abort controller for this healing operation
+            healingAbortControllerRef.current = new AbortController();
+
             // Trigger healing process
             const result = await healStream(channel, {
                 timeout: 5000,
                 onProgress: (progress) => {
-                    setHealingProgress(progress);
-                    console.log(`[Player] Healing ${progress.current}/${progress.total}: ${progress.strategy}`);
+                    // Only update UI if player is still active
+                    if (isPlayerActiveRef.current) {
+                        setHealingProgress(progress);
+                        console.log(`[Player] Healing ${progress.current || '?'}/${progress.total || '?'}: ${progress.strategy || 'unknown'}`);
+                    }
                 }
             });
+
+            // Check if player is still active before showing results
+            if (!isPlayerActiveRef.current) {
+                console.log('[Player] 🛑 Player closed during healing, aborting display');
+                return;
+            }
 
             setHealingResult(result);
 
@@ -113,6 +132,12 @@ const Player = ({ channel }) => {
                 });
 
                 hls.on(Hls.Events.ERROR, (event, data) => {
+                    // Only handle errors if player is still active
+                    if (!isPlayerActiveRef.current) {
+                        console.log('[Player] 🛑 Error occurred but player is inactive, ignoring');
+                        return;
+                    }
+
                     if (data.fatal) {
                         switch (data.type) {
                             case Hls.ErrorTypes.NETWORK_ERROR:
@@ -144,8 +169,10 @@ const Player = ({ channel }) => {
                 });
 
                 video.addEventListener('error', () => {
-                    setLoading(false);
-                    setError("Stream playback failed.");
+                    if (isPlayerActiveRef.current) {
+                        setLoading(false);
+                        setError("Stream playback failed.");
+                    }
                 });
             } else {
                 setLoading(false);
@@ -155,9 +182,21 @@ const Player = ({ channel }) => {
 
         initializeStream();
 
+        // 🔧 FIX: Enhanced cleanup - abort ongoing operations when channel changes
         return () => {
+            console.log('[Player] 🧹 Cleaning up player for channel:', channel.name);
+            isPlayerActiveRef.current = false;
+
+            // Abort ongoing healing operation
+            if (healingAbortControllerRef.current) {
+                healingAbortControllerRef.current.abort();
+                healingAbortControllerRef.current = null;
+            }
+
+            // Destroy HLS instance
             if (hlsRef.current) {
                 hlsRef.current.destroy();
+                hlsRef.current = null;
             }
         };
     }, [channel]);

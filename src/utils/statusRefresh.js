@@ -13,6 +13,8 @@ class StatusRefreshService {
         this.refreshTimer = null;
         this.isRunning = false;
         this.onStatusUpdate = null;
+        // 🔧 FIX: Add silent mode for background operations
+        this.silentMode = false;
     }
 
     /**
@@ -61,11 +63,20 @@ class StatusRefreshService {
             .slice(0, 10); // Only check top 10 to avoid rate limits
 
         if (offlineStreams.length === 0) {
-            console.log('[Background Refresh] No offline streams to check');
+            // 🔧 FIX: Only log if not in silent mode
+            if (!this.silentMode) {
+                console.log('[Background Refresh] No offline streams to check');
+            }
             return;
         }
 
-        console.log(`[Background Refresh] Checking ${offlineStreams.length} offline streams...`);
+        // 🔧 FIX: Enable silent mode for background checks
+        const wasSilent = this.silentMode;
+        this.silentMode = true;
+
+        if (!wasSilent) {
+            console.log(`[Background Refresh] Checking ${offlineStreams.length} offline streams...`);
+        }
 
         for (const channel of offlineStreams) {
             try {
@@ -73,9 +84,15 @@ class StatusRefreshService {
                 // Rate limiting: wait 2 seconds between checks
                 await new Promise(resolve => setTimeout(resolve, 2000));
             } catch (error) {
-                console.warn(`[Background Refresh] Error checking ${channel.name}:`, error);
+                // Silent fail in background mode
+                if (!this.silentMode) {
+                    console.warn(`[Background Refresh] Error checking ${channel.name}:`, error);
+                }
             }
         }
+
+        // Restore previous silent mode state
+        this.silentMode = wasSilent;
     }
 
     async checkSingleStream(channel) {
@@ -96,7 +113,11 @@ class StatusRefreshService {
             if (response.ok) {
                 // Stream is online!
                 setCachedStatus(channel.url, 'online');
-                console.log(`[Status Check] ✅ ${channel.name} is ONLINE`);
+
+                // 🔧 FIX: Only log if not in silent mode
+                if (!this.silentMode) {
+                    console.log(`[Status Check] ✅ ${channel.name} is ONLINE`);
+                }
 
                 // Notify callback
                 if (this.onStatusUpdate) {
@@ -105,7 +126,11 @@ class StatusRefreshService {
             } else {
                 // Stream returned non-OK status (404, 403, etc.)
                 setCachedStatus(channel.url, 'offline');
-                console.log(`[Status Check] ❌ ${channel.name} is OFFLINE (${response.status})`);
+
+                // 🔧 FIX: Only log if not in silent mode
+                if (!this.silentMode) {
+                    console.log(`[Status Check] ❌ ${channel.name} is OFFLINE (${response.status})`);
+                }
 
                 // Notify callback
                 if (this.onStatusUpdate) {
@@ -115,7 +140,11 @@ class StatusRefreshService {
         } catch (error) {
             // Network error, timeout, or CORS - mark as offline
             setCachedStatus(channel.url, 'offline');
-            console.log(`[Status Check] ❌ ${channel.name} is OFFLINE (${error.message})`);
+
+            // 🔧 FIX: Only log if not in silent mode
+            if (!this.silentMode) {
+                console.log(`[Status Check] ❌ ${channel.name} is OFFLINE (${error.message})`);
+            }
 
             // Notify callback
             if (this.onStatusUpdate) {
@@ -129,6 +158,10 @@ class StatusRefreshService {
      */
     async refreshChannel(channel, callback) {
         console.log(`[Manual Refresh] Checking ${channel.name}...`);
+
+        // 🔧 FIX: Disable silent mode for manual user-triggered refreshes
+        const wasSilent = this.silentMode;
+        this.silentMode = false;
 
         try {
             await this.checkSingleStream(channel);
@@ -144,6 +177,9 @@ class StatusRefreshService {
         } catch (error) {
             console.error(`[Manual Refresh] Failed for ${channel.name}:`, error);
             return getCachedStatus(channel.url) || 'unknown';
+        } finally {
+            // Restore previous silent mode state
+            this.silentMode = wasSilent;
         }
     }
 }

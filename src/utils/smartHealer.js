@@ -172,7 +172,15 @@ async function tryAllProxies(streamUrl, options = {}) {
     const proxies = proxyPool.getAllProxies();
 
     for (const proxy of proxies) {
-        if (onProgress) onProgress({ proxy: proxy.name, stage: 'testing' });
+        // 🔧 FIX: Enhanced progress tracking with strategy name
+        if (onProgress) {
+            onProgress({
+                proxy: proxy.name,
+                stage: 'testing',
+                strategy: proxy.name,
+                description: `Testing ${proxy.name}...`
+            });
+        }
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -186,13 +194,18 @@ async function tryAllProxies(streamUrl, options = {}) {
             proxyPool.reportSuccess(proxy.name, result.duration);
             return { success: true, result, attempts };
         } else {
-            // Determine error type for better reporting
-            const errorType = result.statusCode === 403 ? '403' :
-                result.statusCode === 404 ? '404' :
+            // 🔧 FIX: Smart proxy health reporting - don't penalize for legitimate offline streams
+            if (result.statusCode === 404) {
+                // Don't penalize proxy for dead links - this is stream issue, not proxy issue
+                console.log(`[ProxyPool] ${proxy.name} returned 404 (stream offline, not proxy fault)`);
+            } else {
+                // Determine error type for better reporting
+                const errorType = result.statusCode === 403 ? '403' :
                     result.error === 'Timeout' ? 'timeout' :
                         'network';
 
-            proxyPool.reportFailure(proxy.name, errorType);
+                proxyPool.reportFailure(proxy.name, errorType);
+            }
         }
     }
 
@@ -284,12 +297,15 @@ export async function healStream(channel, options = {}) {
     for (let urlIndex = 0; urlIndex < urlsToTry.length; urlIndex++) {
         const currentUrl = urlsToTry[urlIndex];
 
+        // 🔧 FIX: Enhanced progress tracking with proper strategy field
         if (onProgress) {
             onProgress({
                 stage: 'url',
                 current: urlIndex + 1,
                 total: urlsToTry.length,
-                url: currentUrl
+                url: currentUrl,
+                strategy: `URL ${urlIndex + 1}/${urlsToTry.length}`,
+                description: `Testing URL ${urlIndex + 1} of ${urlsToTry.length}...`
             });
         }
 

@@ -31,10 +31,20 @@ class FetchLoader {
         this.context = context;
         this.config = config;
         this.callbacks = callbacks;
-        this.stats = { trequest: performance.now(), tfirst: 0, tload: 0, mtime: null };
+
+        // 🔧 FIX: Safe stats initialization - prevent "Cannot set properties of undefined"
+        this.stats = context.stats || {
+            trequest: 0,
+            tfirst: 0,
+            tload: 0,
+            loaded: 0,
+            total: 0
+        };
+
         this.abortController = new AbortController();
 
         const url = context.url;
+        const startTime = performance.now();
 
         // Use fetch (which Service Worker CAN intercept)
         fetch(url, {
@@ -47,8 +57,7 @@ class FetchLoader {
                     throw new Error(`HTTP ${response.status} ${response.statusText}`);
                 }
 
-                this.stats.tfirst = Math.max(performance.now(), this.stats.trequest);
-                this.stats.total = parseInt(response.headers.get('content-length') || '0');
+                const firstByteTime = performance.now();
 
                 // Get response as ArrayBuffer or text
                 let data;
@@ -58,15 +67,28 @@ class FetchLoader {
                     data = await response.text();
                 }
 
-                this.stats.tload = performance.now();
+                const endTime = performance.now();
+
+                // 🔧 FIX: Safe stats.loading assignment with null check
+                if (!this.stats.loading) {
+                    this.stats.loading = {};
+                }
+                this.stats.loading.start = startTime;
+                this.stats.loading.first = firstByteTime;
+                this.stats.loading.end = endTime;
+
                 this.stats.loaded = data.byteLength || data.length;
+                this.stats.total = parseInt(response.headers.get('content-length') || '0') || this.stats.loaded;
 
                 const successData = {
                     url: url,
                     data: data,
                 };
 
-                callbacks.onSuccess(successData, this.stats, context, response);
+                // 🔧 FIX: Verify callbacks exist before calling
+                if (callbacks && callbacks.onSuccess) {
+                    callbacks.onSuccess(successData, this.stats, context, response);
+                }
             })
             .catch((error) => {
                 if (error.name === 'AbortError') {
@@ -81,7 +103,10 @@ class FetchLoader {
                     text: error.message || 'Fetch failed',
                 };
 
-                callbacks.onError(errorData, context, null, this.stats);
+                // 🔧 FIX: Verify callbacks exist before calling
+                if (callbacks && callbacks.onError) {
+                    callbacks.onError(errorData, context, null, this.stats);
+                }
             });
     }
 
