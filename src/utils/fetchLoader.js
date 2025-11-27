@@ -29,27 +29,6 @@ class FetchLoader {
 
     load(context, config, callbacks) {
         this.context = context;
-        this.config = config;
-        this.callbacks = callbacks;
-
-        // 🔧 FIX: Robust stats initialization
-        // Ensure all substructures expected by HLS.js exist to prevent "Cannot set properties of undefined"
-        this.stats = context.stats || {};
-
-        if (!this.stats.trequest) this.stats.trequest = performance.now();
-        if (!this.stats.retry) this.stats.retry = 0;
-
-        // Ensure substructures exist
-        if (!this.stats.loading) this.stats.loading = { start: 0, first: 0, end: 0 };
-        if (!this.stats.parsing) this.stats.parsing = { start: 0, end: 0 };
-        if (!this.stats.buffering) this.stats.buffering = { start: 0, first: 0, end: 0 };
-
-        this.abortController = new AbortController();
-
-        const url = context.url;
-        const startTime = performance.now();
-
-        // Use fetch (which Service Worker CAN intercept)
         fetch(url, {
             signal: this.abortController.signal,
             credentials: 'omit',
