@@ -9,8 +9,19 @@ class FetchLoader {
         this.context = null;
         this.config = config;
         this.callbacks = null;
-        this.stats = { trequest: 0, tfirst: 0, tload: 0, loaded: 0, total: 0 };
+        // 🔧 FIX: Initialize FULL stats structure in constructor
+        this.stats = {
+            trequest: 0,
+            tfirst: 0,
+            tload: 0,
+            loaded: 0,
+            total: 0,
+            loading: { start: 0, first: 0, end: 0 },
+            parsing: { start: 0, end: 0 },
+            buffering: { start: 0, first: 0, end: 0 }
+        };
         this.abortController = null;
+        console.log('[FetchLoader] v1.3 - Robust Stats & Sync Start');
     }
 
     destroy() {
@@ -29,6 +40,34 @@ class FetchLoader {
 
     load(context, config, callbacks) {
         this.context = context;
+        this.config = config;
+        this.callbacks = callbacks;
+
+        // 🔧 FIX: Robust stats initialization
+        // Ensure all substructures expected by HLS.js exist
+        this.stats = context.stats || this.stats;
+
+        if (!this.stats.trequest) this.stats.trequest = performance.now();
+        if (!this.stats.retry) this.stats.retry = 0;
+
+        // Ensure substructures exist (if context.stats was passed but empty)
+        if (!this.stats.loading) this.stats.loading = { start: 0, first: 0, end: 0 };
+        if (!this.stats.parsing) this.stats.parsing = { start: 0, end: 0 };
+        if (!this.stats.buffering) this.stats.buffering = { start: 0, first: 0, end: 0 };
+
+        // Sync back to context
+        context.stats = this.stats;
+
+        this.abortController = new AbortController();
+
+        const url = context.url;
+        const startTime = performance.now();
+
+        // 🔧 FIX: Set start time SYNCHRONOUSLY
+        // HLS.js monitors this while request is in progress
+        this.stats.loading.start = startTime;
+
+        // Use fetch (which Service Worker CAN intercept)
         fetch(url, {
             signal: this.abortController.signal,
             credentials: 'omit',
@@ -52,7 +91,6 @@ class FetchLoader {
                 const endTime = performance.now();
 
                 // Update stats
-                this.stats.loading.start = startTime;
                 this.stats.loading.first = firstByteTime;
                 this.stats.loading.end = endTime;
 
