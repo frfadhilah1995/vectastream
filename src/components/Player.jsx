@@ -3,6 +3,7 @@ import Hls from 'hls.js';
 import { Tv, AlertTriangle, Loader2, Activity, CheckCircle, XCircle } from 'lucide-react';
 import { healStream } from '../utils/smartHealer';
 import FetchLoader from '../utils/fetchLoader';
+import backgroundPlayback from '../utils/backgroundPlayback';
 
 const Player = ({ channel }) => {
     const videoRef = useRef(null);
@@ -123,11 +124,21 @@ const Player = ({ channel }) => {
                 hls.loadSource(workingUrl);
                 hls.attachMedia(video);
 
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                hls.on(Hls.Events.MANIFEST_PARSED, async () => {
                     const loadTime = (performance.now() - startTime).toFixed(0);
                     console.log(`[Player] ⚡ Loaded in ${loadTime}ms via ${result.workingStrategy}`);
                     setLoading(false);
                     setHealingProgress(null);
+
+                    // 📱 Initialize background playback for Android
+                    try {
+                        await backgroundPlayback.initialize(video);
+                        backgroundPlayback.updateMetadata(channel.name, channel.logo);
+                        console.log('[Player] 📱 Background playback enabled');
+                    } catch (error) {
+                        console.warn('[Player] Background playback init failed:', error);
+                    }
+
                     playVideo();
                 });
 
@@ -192,6 +203,11 @@ const Player = ({ channel }) => {
                 healingAbortControllerRef.current.abort();
                 healingAbortControllerRef.current = null;
             }
+
+            // Cleanup background playback
+            backgroundPlayback.cleanup().catch(err =>
+                console.warn('[Player] Background cleanup error:', err)
+            );
 
             // Destroy HLS instance
             if (hlsRef.current) {
