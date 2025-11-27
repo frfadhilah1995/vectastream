@@ -1,0 +1,100 @@
+[
+    {
+        "name": "Cloudflare Worker",
+        "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev",
+        "priority": 1,
+        "geo": "global",
+        "healthScore": 100,
+        "features": [
+            "cors",
+            "http-upgrade",
+            "headers-manipulation",
+            "referer-spoofing"
+        ],
+        "description": "Custom Cloudflare Worker with advanced header manipulation",
+        "enabled": true
+    },
+    {
+        "name": "AllOrigins",
+        "url": "https://api.allorigins.win/raw?url=",
+        "priority": 2,
+        "geo": "global",
+        "healthScore": 85,
+        "features": [
+            "cors",
+            "simple",
+            "fast"
+        ],
+        "rateLimit": 200,
+        "description": "Fast and reliable CORS proxy",
+        "enabled": true
+    },
+    {
+        "name": "CORS.SH",
+        "url": "https://cors.sh/",
+        "priority": 3,
+        "geo": "global",
+        "healthScore": 80,
+        "features": [
+            "cors",
+            "headers-manipulation"
+        ],
+        "description": "Modern CORS proxy with header support",
+        "enabled": true
+    },
+    {
+        "name": "Corsproxy.io",
+        "url": "https://corsproxy.io/?",
+        "priority": 4,
+        "geo": "global",
+        "healthScore": 75,
+        "features": [
+            "cors",
+            "simple"
+        ],
+        "description": "Simple CORS proxy service",
+        "enabled": true
+    },
+    {
+        "name": "ThingProxy",
+        "url": "https://thingproxy.freeboard.io/fetch/",
+        "priority": 5,
+        "geo": "global",
+        "healthScore": 70,
+        "features": [
+            "cors",
+            "legacy"
+        ],
+        "rateLimit": 100,
+        "description": "Legacy but stable CORS proxy",
+        "enabled": true
+    },
+    {
+        "name": "CORS Proxy (CodeTabs)",
+        "url": "https://api.codetabs.com/v1/proxy?quest=",
+        "priority": 6,
+        "geo": "global",
+        "healthScore": 65,
+        "features": [
+            "cors",
+            "simple"
+        ],
+        "rateLimit": 50,
+        "description": "Code snippet service CORS proxy",
+        "enabled": false
+    },
+    {
+        "name": "Cloudflare Worker Backup",
+        "url": "https://workers.cloudflare.com/",
+        "priority": 99,
+        "geo": "global",
+        "healthScore": 50,
+        "features": [
+            "cors",
+            "backup"
+        ],
+        "description": "Backup Cloudflare Worker endpoint (replace with your own)",
+        "enabled": false,
+        "notes": "Replace URL with your own Cloudflare Worker deployment"
+    }
+]

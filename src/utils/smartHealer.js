@@ -8,6 +8,8 @@ import errorDB from './errorDatabase';
 import proxyPool from './proxyPool';
 import { getAlternatives } from './alternativeSources';
 import { smartHead, isNativePlatform } from './nativeHttp';
+import { generateSpoofedHeaders } from './headerUtils';
+import { getCachedHeal, setCachedHeal } from './healCache';
 
 /**
  * Retry with exponential backoff
@@ -31,52 +33,6 @@ async function tryWithRetry(fn, options = {}) {
             await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
-}
-
-/**
- * 🕵️‍♂️ HIGH-TECH STEALTH MODE
- * Generates advanced browser fingerprints to bypass sophisticated anti-bot systems.
- */
-const USER_AGENTS = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-];
-
-function getRandomUserAgent() {
-    return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
-}
-
-function generateSpoofedHeaders(targetUrl) {
-    let origin = '';
-    try {
-        const urlObj = new URL(targetUrl);
-        origin = urlObj.origin;
-    } catch (e) {
-        origin = targetUrl;
-    }
-
-    const ua = getRandomUserAgent();
-    const isWindows = ua.includes('Windows');
-    const platform = isWindows ? '"Windows"' : (ua.includes('Mac') ? '"macOS"' : '"Linux"');
-
-    return {
-        // Standard Identity
-        'User-Agent': ua,
-        'Referer': origin + '/',
-        'Origin': origin,
-
-        // Modern Sec-CH-UA Headers
-        'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-        'Sec-Ch-Ua-Mobile': '?0',
-        'Sec-Ch-Ua-Platform': platform,
-
-        // Fetch Metadata
-        'Sec-Fetch-Dest': 'empty',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Site': 'cross-site'
-    };
 }
 
 /**
@@ -193,12 +149,13 @@ async function testDirect(streamUrl, signal) {
 
 /**
  * Try all proxies for a single URL
+ * 🚀 OPTIMIZED: All proxies race in PARALLEL (not sequential)
  */
 async function tryAllProxies(streamUrl, options = {}) {
     const { timeout = 10000, onProgress = null } = options;
     const attempts = [];
 
-    // 1. Try direct first (fastest)
+    // 1. Try direct first (fastest, if it works)
     if (onProgress) onProgress({ proxy: 'Direct', stage: 'testing' });
 
     const controller = new AbortController();
@@ -214,48 +171,74 @@ async function tryAllProxies(streamUrl, options = {}) {
         return { success: true, result: directResult, attempts };
     }
 
-    // 2. Try proxies (only if direct failed)
-    // On native, we might want to skip proxies if the error was definitely not geo-blocking
-    // But for now, let's keep it robust and try proxies if direct fails
-
+    // 2. Race all proxies in PARALLEL 🏁
     const proxies = proxyPool.getAllProxies();
 
-    for (const proxy of proxies) {
-        // 🔧 FIX: Enhanced progress tracking with strategy name
-        if (onProgress) {
-            onProgress({
-                proxy: proxy.name,
-                stage: 'testing',
-                strategy: proxy.name,
-                description: `Testing ${proxy.name}...`
-            });
-        }
+    if (proxies.length === 0) {
+        return { success: false, result: null, attempts };
+    }
 
+    console.log(`[SmartHealer] 🏁 Racing ${proxies.length} proxies in PARALLEL...`);
+
+    // Create array of promises for each proxy test
+    const proxyPromises = proxies.map(proxy => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-        const result = await testWithProxy(streamUrl, proxy, controller.signal);
-        clearTimeout(timeoutId);
+        return testWithProxy(streamUrl, proxy, controller.signal)
+            .then(result => {
+                clearTimeout(timeoutId);
+                return result;
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                // Return a failed result instead of throwing
+                return {
+                    proxy: proxy.name,
+                    statusCode: null,
+                    headers: {},
+                    duration: timeout,
+                    success: false,
+                    error: error.message,
+                    url: `${proxy.url}/${streamUrl}`
+                };
+            });
+    });
 
-        attempts.push(result);
+    // Race them! First successful response wins
+    try {
+        // Wait for all to complete (or at least one to succeed)
+        const results = await Promise.allSettled(proxyPromises);
 
-        if (result.success) {
-            proxyPool.reportSuccess(proxy.name, result.duration);
-            return { success: true, result, attempts };
-        } else {
-            // 🔧 FIX: Smart proxy health reporting - don't penalize for legitimate offline streams
-            if (result.statusCode === 404) {
-                // Don't penalize proxy for dead links - this is stream issue, not proxy issue
-                console.log(`[ProxyPool] ${proxy.name} returned 404 (stream offline, not proxy fault)`);
-            } else {
-                // Determine error type for better reporting
-                const errorType = result.statusCode === 403 ? '403' :
-                    result.error === 'Timeout' ? 'timeout' :
-                        'network';
+        // Extract the actual results
+        const proxyResults = results.map(r => r.status === 'fulfilled' ? r.value : null).filter(Boolean);
+        attempts.push(...proxyResults);
 
-                proxyPool.reportFailure(proxy.name, errorType);
-            }
+        // Find first successful result
+        const winner = proxyResults.find(r => r.success);
+
+        if (winner) {
+            proxyPool.reportSuccess(winner.proxy, winner.duration);
+            console.log(`[SmartHealer] 🏆 Winner: ${winner.proxy} (${winner.duration}ms)`);
+            return { success: true, result: winner, attempts };
         }
+
+        // All failed - report failures
+        proxyResults.forEach(result => {
+            if (!result.success) {
+                // Smart proxy health reporting
+                if (result.statusCode === 404) {
+                    console.log(`[ProxyPool] ${result.proxy} returned 404 (stream offline, not proxy fault)`);
+                } else {
+                    const errorType = result.statusCode === 403 ? '403' :
+                        result.error === 'Timeout' ? 'timeout' : 'network';
+                    proxyPool.reportFailure(result.proxy, errorType);
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('[SmartHealer] Proxy race error:', error);
     }
 
     return { success: false, result: null, attempts };
@@ -321,6 +304,7 @@ function analyzeAttempts(allAttempts, urlsTried) {
 /**
  * Advanced Smart Healer - Main Function
  * Multi-proxy + Multi-source with intelligent fallback
+ * 🚀 NOW WITH CACHING for instant re-playback!
  */
 export async function healStream(channel, options = {}) {
     const {
@@ -332,6 +316,13 @@ export async function healStream(channel, options = {}) {
     } = options;
 
     console.log(`[AdvancedHealer] 🚀 Starting advanced heal for: ${channel.name}`);
+
+    // 🔥 NEW: Check cache first for instant playback
+    const cached = getCachedHeal(channel.url);
+    if (cached && cached.success) {
+        console.log(`[AdvancedHealer] ⚡ CACHE HIT! Instant playback for: ${channel.name}`);
+        return cached;
+    }
 
     // Get all URLs to try (original + alternatives)
     const urlsToTry = useAlternatives
@@ -381,16 +372,21 @@ export async function healStream(channel, options = {}) {
                     workingStrategy: result.result.proxy
                 };
 
-                if (saveToDatabase) {
-                    await saveForensicLog(channel, allAttempts, analysis, urlsToTry);
-                }
-
-                return {
+                const finalResult = {
                     success: true,
                     ...analysis,
                     attempts: allAttempts,
                     urlsTried: urlsToTry.slice(0, urlIndex + 1)
                 };
+
+                // 🔥 NEW: Save to cache for next time
+                setCachedHeal(channel.url, finalResult);
+
+                if (saveToDatabase) {
+                    await saveForensicLog(channel, allAttempts, analysis, urlsToTry);
+                }
+
+                return finalResult;
             }
         } catch (error) {
             console.error(`[AdvancedHealer] Error with URL ${urlIndex + 1}:`, error);

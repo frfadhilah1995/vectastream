@@ -33,6 +33,9 @@ self.addEventListener('fetch', (event) => {
  * 🕵️‍♂️ HIGH-TECH STEALTH MODE
  * Generates advanced browser fingerprints to bypass sophisticated anti-bot systems.
  * Rotates User-Agents and injects modern Sec-CH-UA headers.
+ * 
+ * ⚠️ NOTE: This code is synchronized with src/utils/headerUtils.js
+ * Any changes here should be mirrored there for consistency!
  */
 const USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

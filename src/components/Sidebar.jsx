@@ -29,6 +29,7 @@ const Sidebar = ({
     onClearChannels
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [currentPage, setCurrentPage] = useState(1);
     const [savedPlaylists, setSavedPlaylists] = useState([]);
@@ -37,6 +38,15 @@ const Sidebar = ({
     // Initialize state from localStorage
     const [sourceMode, setSourceMode] = useState(() => localStorage.getItem('vectastream_source_mode') || 'default');
     const [selectedDefault, setSelectedDefault] = useState(() => localStorage.getItem('vectastream_selected_default') || 'all');
+
+    // 🚀 NEW: Debounced search to prevent UI freeze with 9000+ channels
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 300); // 300ms delay
+
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
 
     // Load saved playlists on mount
     useEffect(() => {
@@ -88,18 +98,18 @@ const Sidebar = ({
 
     const filteredChannels = useMemo(() => {
         const filtered = channels.filter(c => {
-            const matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                c.group.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = c.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                c.group.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
             const matchesCategory = selectedCategory === 'All' || c.group === selectedCategory;
             return matchesSearch && matchesCategory;
         });
         return filtered;
-    }, [channels, searchTerm, selectedCategory]);
+    }, [channels, debouncedSearchTerm, selectedCategory]);
 
     // Reset to first page when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm, selectedCategory]);
+    }, [debouncedSearchTerm, selectedCategory]);
 
     const totalPages = Math.ceil(filteredChannels.length / CHANNELS_PER_PAGE);
     const startIndex = (currentPage - 1) * CHANNELS_PER_PAGE;

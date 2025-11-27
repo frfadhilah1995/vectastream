@@ -31,8 +31,56 @@ class ProxyPool {
         this.lastHealthCheck = {};
         this.requestCount = {};
 
-        // Auto health check every 5 minutes
-        this.startHealthMonitor();
+        // 🔥 NEW: Try to load remote proxy config
+        this.loadRemoteConfig().then(() => {
+            console.log('[ProxyPool] Config loaded, starting health monitor');
+            this.startHealthMonitor();
+        }).catch(() => {
+            console.log('[ProxyPool] Using default config, starting health monitor');
+            this.startHealthMonitor();
+        });
+    }
+
+    /**
+     * 🔥 NEW: Load proxy configuration from remote JSON
+     * Allows zero-downtime proxy updates without redeploying the app
+     */
+    async loadRemoteConfig() {
+        const configUrl = './config/proxies.json';
+
+        try {
+            console.log('[ProxyPool] 🌐 Fetching remote proxy config...');
+            const response = await fetch(configUrl);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const remoteProxies = await response.json();
+
+            // Validate and merge with defaults
+            if (Array.isArray(remoteProxies) && remoteProxies.length > 0) {
+                // Only use enabled proxies
+                const enabledProxies = remoteProxies.filter(p => p.enabled !== false);
+
+                if (enabledProxies.length > 0) {
+                    this.proxies = enabledProxies.map(p => ({
+                        ...p,
+                        healthScore: p.healthScore || 100
+                    }));
+
+                    console.log(`[ProxyPool] ✅ Loaded ${this.proxies.length} proxies from remote config`);
+                    return true;
+                }
+            }
+
+            throw new Error('Invalid remote config format');
+
+        } catch (error) {
+            console.warn('[ProxyPool] ⚠️ Failed to load remote config:', error.message);
+            console.log('[ProxyPool] Using hardcoded default proxies');
+            return false;
+        }
     }
 
     /**
