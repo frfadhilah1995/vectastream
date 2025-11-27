@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
 import { PWAProvider } from './context/PWAContext.jsx';
+import { consoleCollector } from './utils/consoleCollector';
+
+// Start collecting logs immediately
+consoleCollector.init();
 
 // Register Ghost Worker (Service Worker)
 if ('serviceWorker' in navigator) {

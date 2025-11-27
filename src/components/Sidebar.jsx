@@ -382,6 +382,12 @@ const Sidebar = ({
                         <span>Analytics</span>
                     </RouterLink>
                 </div>
+                <button
+                    onClick={() => import('../utils/consoleCollector').then(m => m.consoleCollector.downloadLogs())}
+                    className="mb-2 text-[10px] text-gray-500 hover:text-accent underline decoration-dotted"
+                >
+                    Download Debug Logs
+                </button>
                 <p>&copy; {new Date().getFullYear()} VectaStream</p>
                 <p className="mt-1 font-medium text-gray-500">Developed by RMD TECH</p>
             </div>
