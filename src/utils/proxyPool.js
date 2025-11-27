@@ -184,7 +184,7 @@ class ProxyPool {
                     : `${proxy.url}/${testUrl}`; // Standard format
 
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(new Error('Timeout (5s)')), 5000);
 
                 const start = Date.now();
                 const response = await fetch(proxyUrl, {

@@ -21,7 +21,7 @@ class FetchLoader {
             buffering: { start: 0, first: 0, end: 0 }
         };
         this.abortController = null;
-        console.log('[FetchLoader] v1.3 - Robust Stats & Sync Start');
+        console.log('[FetchLoader] v1.4 - Debug & Robust Stats');
     }
 
     destroy() {
@@ -44,19 +44,24 @@ class FetchLoader {
         this.callbacks = callbacks;
 
         // 🔧 FIX: Robust stats initialization
+        // console.log('[FetchLoader] Context stats before init:', context.stats);
+
         // Ensure all substructures expected by HLS.js exist
+        // If context.stats exists, we merge into it. If not, we use our default.
         this.stats = context.stats || this.stats;
 
         if (!this.stats.trequest) this.stats.trequest = performance.now();
         if (!this.stats.retry) this.stats.retry = 0;
 
-        // Ensure substructures exist (if context.stats was passed but empty)
+        // Force-ensure substructures exist
         if (!this.stats.loading) this.stats.loading = { start: 0, first: 0, end: 0 };
         if (!this.stats.parsing) this.stats.parsing = { start: 0, end: 0 };
         if (!this.stats.buffering) this.stats.buffering = { start: 0, first: 0, end: 0 };
 
-        // Sync back to context
-        context.stats = this.stats;
+        // Sync back to context explicitly
+        if (context.stats !== this.stats) {
+            context.stats = this.stats;
+        }
 
         this.abortController = new AbortController();
 
