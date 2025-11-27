@@ -1,0 +1,289 @@
+import React, { useState, useEffect } from 'react';
+import { BarChart3, Download, Trash2, RefreshCw, CheckCircle, XCircle, AlertTriangle, Database, Search, Filter } from 'lucide-react';
+import errorDB from '../utils/errorDatabase';
+
+const ErrorAnalytics = () => {
+    const [stats, setStats] = useState(null);
+    const [logs, setLogs] = useState([]);
+    const [filter, setFilter] = useState({ verdict: '', channelName: '' });
+    const [loading, setLoading] = useState(true);
+
+    // Load data on mount
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = async () => {
+        setLoading(true);
+        try {
+            const [statistics, errorLogs] = await Promise.all([
+                errorDB.getStatistics(),
+                errorDB.getLogs(filter)
+            ]);
+            setStats(statistics);
+            setLogs(errorLogs);
+        } catch (err) {
+            console.error('[ErrorAnalytics] Load failed:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleExport = async (format) => {
+        try {
+            await errorDB.downloadExport(format);
+        } catch (err) {
+            console.error('[ErrorAnalytics] Export failed:', err);
+            alert(`Export failed: ${err.message}`);
+        }
+    };
+
+    const handleClearAll = async () => {
+        if (!confirm('⚠️ Delete all error logs? This cannot be undone.')) return;
+
+        try {
+            await errorDB.clearAll();
+            await loadData();
+        } catch (err) {
+            console.error('[ErrorAnalytics] Clear failed:', err);
+        }
+    };
+
+    const handleDeleteLog = async (id) => {
+        try {
+            await errorDB.deleteLog(id);
+            await loadData();
+        } catch (err) {
+            console.error('[ErrorAnalytics] Delete failed:', err);
+        }
+    };
+
+    const getVerdictIcon = (verdict) => {
+        switch (verdict) {
+            case 'SUCCESS': return <CheckCircle className="text-green-400" size={14} />;
+            case 'DEAD_LINK': return <XCircle className="text-red-400" size={14} />;
+            case 'FORBIDDEN': return <AlertTriangle className="text-yellow-400" size={14} />;
+            default: return <XCircle className="text-gray-400" size={14} />;
+        }
+    };
+
+    const getVerdictColor = (verdict) => {
+        switch (verdict) {
+            case 'SUCCESS': return 'bg-green-500/10 border-green-500/30 text-green-400';
+            case 'DEAD_LINK': return 'bg-red-500/10 border-red-500/30 text-red-400';
+            case 'FORBIDDEN': return 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400';
+            default: return 'bg-gray-500/10 border-gray-500/30 text-gray-400';
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-full bg-background">
+                <div className="text-center">
+                    <RefreshCw className="animate-spin text-accent mx-auto mb-4" size={48} />
+                    <p className="text-gray-400">Loading analytics...</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="h-full flex flex-col bg-background text-white overflow-hidden">
+            {/* Header - Fixed Height */}
+            <div className="flex-none p-4 border-b border-white/10 bg-glass-bg backdrop-blur-xl z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <BarChart3 className="text-accent" size={20} />
+                        <h1 className="text-xl font-bold">Error Analytics</h1>
+                    </div>
+                    <p className="text-gray-400 text-xs">Forensic analysis of stream healing attempts</p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <button onClick={() => handleExport('json')} className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-all" title="Export JSON">
+                        <Download size={16} />
+                    </button>
+                    <button onClick={loadData} className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-all" title="Refresh">
+                        <RefreshCw size={16} />
+                    </button>
+                    <button onClick={handleClearAll} className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-red-400 hover:text-red-300 transition-all" title="Clear All">
+                        <Trash2 size={16} />
+                    </button>
+                </div>
+            </div>
+
+            {/* Main Content - Flex Grow with Split View */}
+            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+
+                {/* Left Panel: Stats & Charts (Compact Width) */}
+                <div className="flex-none lg:w-[320px] xl:w-[360px] p-4 border-b lg:border-b-0 lg:border-r border-white/10 overflow-y-auto custom-scrollbar bg-black/20">
+                    {stats && (
+                        <div className="space-y-4">
+                            {/* Key Metrics Grid */}
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="bg-glass p-3 rounded-xl border border-white/5">
+                                    <div className="flex items-center gap-1.5 mb-1 text-blue-400">
+                                        <Database size={14} />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">Attempts</span>
+                                    </div>
+                                    <span className="text-xl font-bold text-white">{stats.totalAttempts}</span>
+                                </div>
+                                <div className="bg-glass p-3 rounded-xl border border-white/5">
+                                    <div className="flex items-center gap-1.5 mb-1 text-green-400">
+                                        <CheckCircle size={14} />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">Success</span>
+                                    </div>
+                                    <span className="text-xl font-bold text-white">{stats.successRate}%</span>
+                                </div>
+                                <div className="bg-glass p-3 rounded-xl border border-white/5">
+                                    <div className="flex items-center gap-1.5 mb-1 text-red-400">
+                                        <XCircle size={14} />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">Failures</span>
+                                    </div>
+                                    <span className="text-xl font-bold text-white">{stats.failureCount}</span>
+                                </div>
+                                <div className="bg-glass p-3 rounded-xl border border-white/5">
+                                    <div className="flex items-center gap-1.5 mb-1 text-accent">
+                                        <AlertTriangle size={14} />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">Best Strat</span>
+                                    </div>
+                                    <span className="text-sm font-bold text-white truncate block" title={Object.entries(stats.strategySuccess).reduce((best, [name, data]) => {
+                                        const rate = data.total > 0 ? data.success / data.total : 0;
+                                        return rate > best.rate ? { name, rate } : best;
+                                    }, { name: 'N/A', rate: 0 }).name}>
+                                        {Object.entries(stats.strategySuccess).reduce((best, [name, data]) => {
+                                            const rate = data.total > 0 ? data.success / data.total : 0;
+                                            return rate > best.rate ? { name, rate } : best;
+                                        }, { name: 'N/A', rate: 0 }).name}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Strategy Performance List */}
+                            <div className="bg-glass rounded-xl border border-white/5 p-4">
+                                <h3 className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Strategy Performance</h3>
+                                <div className="space-y-3">
+                                    {Object.entries(stats.strategySuccess).map(([name, data]) => {
+                                        const successRate = data.total > 0 ? Math.round((data.success / data.total) * 100) : 0;
+                                        return (
+                                            <div key={name}>
+                                                <div className="flex justify-between text-[10px] mb-1">
+                                                    <span className="text-gray-300 font-medium">{name}</span>
+                                                    <span className="font-mono text-accent">{successRate}%</span>
+                                                </div>
+                                                <div className="h-1 bg-black/50 rounded-full overflow-hidden">
+                                                    <div
+                                                        className="h-full bg-accent transition-all duration-500"
+                                                        style={{ width: `${successRate}%` }}
+                                                    />
+                                                </div>
+                                                <div className="text-[9px] text-gray-600 mt-0.5 text-right">
+                                                    {data.success}/{data.total}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Right Panel: Logs Table (Flex Grow & Internal Scroll) */}
+                <div className="flex-1 flex flex-col min-w-0 bg-black/10">
+                    {/* Filters Bar */}
+                    <div className="flex-none p-3 border-b border-white/10 flex gap-2 bg-white/5">
+                        <div className="relative flex-1 max-w-sm">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={12} />
+                            <input
+                                type="text"
+                                placeholder="Search logs..."
+                                value={filter.channelName}
+                                onChange={(e) => setFilter({ ...filter, channelName: e.target.value })}
+                                className="w-full bg-black/40 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-gray-600 focus:border-accent outline-none"
+                            />
+                        </div>
+                        <div className="relative w-32">
+                            <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500" size={12} />
+                            <select
+                                value={filter.verdict}
+                                onChange={(e) => setFilter({ ...filter, verdict: e.target.value })}
+                                className="w-full bg-black/40 border border-white/10 rounded-lg pl-7 pr-2 py-1.5 text-xs text-white appearance-none focus:border-accent outline-none cursor-pointer"
+                            >
+                                <option value="">All Verdicts</option>
+                                <option value="SUCCESS">Success</option>
+                                <option value="DEAD_LINK">Dead Link</option>
+                                <option value="FORBIDDEN">Forbidden</option>
+                            </select>
+                        </div>
+                        <button onClick={loadData} className="px-3 py-1.5 bg-accent text-black font-bold rounded-lg text-xs hover:bg-accent/90 transition-colors">
+                            Apply
+                        </button>
+                    </div>
+
+                    {/* Table Container */}
+                    <div className="flex-1 overflow-auto custom-scrollbar p-3">
+                        {logs.length === 0 ? (
+                            <div className="h-full flex flex-col items-center justify-center text-gray-500">
+                                <Database size={32} className="mb-3 opacity-20" />
+                                <p className="text-sm">No logs found</p>
+                            </div>
+                        ) : (
+                            <div className="bg-glass border border-white/5 rounded-xl overflow-hidden">
+                                <table className="w-full text-left border-collapse">
+                                    <thead className="bg-white/5 sticky top-0 z-10 backdrop-blur-md">
+                                        <tr>
+                                            <th className="p-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-24">Time</th>
+                                            <th className="p-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider">Channel</th>
+                                            <th className="p-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-28">Verdict</th>
+                                            <th className="p-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider">Details</th>
+                                            <th className="p-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-10"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/5">
+                                        {logs.map((log) => (
+                                            <tr key={log.id} className="hover:bg-white/5 transition-colors group">
+                                                <td className="p-3 text-[10px] text-gray-500 font-mono whitespace-nowrap">
+                                                    {new Date(log.timestamp).toLocaleTimeString()}
+                                                </td>
+                                                <td className="p-3">
+                                                    <div className="font-medium text-xs text-white">{log.channel.name}</div>
+                                                    <div className="text-[9px] text-gray-500 truncate max-w-[150px]" title={log.channel.url}>{log.channel.url}</div>
+                                                </td>
+                                                <td className="p-3">
+                                                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[9px] font-bold uppercase tracking-wider ${getVerdictColor(log.verdict)}`}>
+                                                        {getVerdictIcon(log.verdict)}
+                                                        {log.verdict}
+                                                    </span>
+                                                </td>
+                                                <td className="p-3">
+                                                    <div className="text-[10px] text-gray-400">
+                                                        <span className="text-gray-600">Tried:</span> {log.attempts.length} strategies
+                                                    </div>
+                                                    <div className="text-[10px] text-gray-500 truncate max-w-[200px]" title={log.recommendation}>
+                                                        {log.recommendation}
+                                                    </div>
+                                                </td>
+                                                <td className="p-3 text-right">
+                                                    <button
+                                                        onClick={() => handleDeleteLog(log.id)}
+                                                        className="p-1 hover:bg-red-500/20 rounded text-gray-600 hover:text-red-400 transition-all opacity-0 group-hover:opacity-100"
+                                                        title="Delete log"
+                                                    >
+                                                        <Trash2 size={12} />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ErrorAnalytics;
