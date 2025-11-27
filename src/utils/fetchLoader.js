@@ -32,14 +32,17 @@ class FetchLoader {
         this.config = config;
         this.callbacks = callbacks;
 
-        // 🔧 FIX: Safe stats initialization - prevent "Cannot set properties of undefined"
-        this.stats = context.stats || {
-            trequest: 0,
-            tfirst: 0,
-            tload: 0,
-            loaded: 0,
-            total: 0
-        };
+        // 🔧 FIX: Robust stats initialization
+        // Ensure all substructures expected by HLS.js exist to prevent "Cannot set properties of undefined"
+        this.stats = context.stats || {};
+
+        if (!this.stats.trequest) this.stats.trequest = performance.now();
+        if (!this.stats.retry) this.stats.retry = 0;
+
+        // Ensure substructures exist
+        if (!this.stats.loading) this.stats.loading = { start: 0, first: 0, end: 0 };
+        if (!this.stats.parsing) this.stats.parsing = { start: 0, end: 0 };
+        if (!this.stats.buffering) this.stats.buffering = { start: 0, first: 0, end: 0 };
 
         this.abortController = new AbortController();
 
@@ -69,30 +72,33 @@ class FetchLoader {
 
                 const endTime = performance.now();
 
-                // 🔧 FIX: Safe stats.loading assignment with null check
-                if (!this.stats.loading) {
-                    this.stats.loading = {};
-                }
+                // Update stats
                 this.stats.loading.start = startTime;
                 this.stats.loading.first = firstByteTime;
                 this.stats.loading.end = endTime;
 
                 this.stats.loaded = data.byteLength || data.length;
                 this.stats.total = parseInt(response.headers.get('content-length') || '0') || this.stats.loaded;
+                this.stats.tload = endTime;
 
                 const successData = {
                     url: url,
                     data: data,
                 };
 
-                // 🔧 FIX: Verify callbacks exist before calling
+                // 🔧 FIX: Verify callbacks exist and wrap in try-catch
                 if (callbacks && callbacks.onSuccess) {
-                    callbacks.onSuccess(successData, this.stats, context, response);
+                    try {
+                        callbacks.onSuccess(successData, this.stats, context, response);
+                    } catch (err) {
+                        console.error('[FetchLoader] Error in onSuccess callback:', err);
+                        // Don't re-throw, just log. HLS.js might handle it or we might need to trigger onError
+                    }
                 }
             })
             .catch((error) => {
                 if (error.name === 'AbortError') {
-                    console.log('[FetchLoader] Request aborted:', url);
+                    // console.log('[FetchLoader] Request aborted:', url);
                     return;
                 }
 
@@ -103,9 +109,13 @@ class FetchLoader {
                     text: error.message || 'Fetch failed',
                 };
 
-                // 🔧 FIX: Verify callbacks exist before calling
+                // 🔧 FIX: Verify callbacks exist and wrap in try-catch
                 if (callbacks && callbacks.onError) {
-                    callbacks.onError(errorData, context, null, this.stats);
+                    try {
+                        callbacks.onError(errorData, context, null, this.stats);
+                    } catch (err) {
+                        console.error('[FetchLoader] Error in onError callback:', err);
+                    }
                 }
             });
     }
