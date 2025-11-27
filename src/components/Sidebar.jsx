@@ -140,6 +140,26 @@ const Sidebar = ({
 
     return (
         <aside className="w-full h-full flex flex-col overflow-hidden bg-glass-bg backdrop-blur-xl">
+            {/* 🆕 Now Playing Card */}
+            {currentChannel && (
+                <div className="p-4 pb-0">
+                    <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3 shadow-[0_0_15px_rgba(0,242,255,0.1)]">
+                        <div className="w-10 h-10 rounded-lg bg-black/40 flex items-center justify-center flex-shrink-0">
+                            {currentChannel.logo ? (
+                                <img src={currentChannel.logo} alt={`${currentChannel.name} logo`} className="w-full h-full object-cover rounded-lg" />
+                            ) : (
+                                <Tv size={20} className="text-accent" />
+                            )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="text-[10px] text-accent font-bold uppercase tracking-wider mb-0.5">Now Playing</div>
+                            <div className="text-sm font-medium text-white truncate">{currentChannel.name}</div>
+                        </div>
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_rgba(34,197,94,0.5)]"></div>
+                    </div>
+                </div>
+            )}
+
             {/* Source Mode Tabs */}
             <div className="p-4 pb-0">
                 <div className="flex gap-2 mb-3">
@@ -302,11 +322,19 @@ const Sidebar = ({
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search channels..."
                             className="w-full bg-white/5 border border-transparent rounded-lg py-2 pl-9 pr-3 text-sm text-white focus:bg-black/40 focus:border-glass-border outline-none transition-all"
+                            aria-label="Search channels"
                         />
                         {searchTerm && selectedCategory !== 'All' && (
                             <span className="text-accent font-normal normal-case absolute right-3 top-1/2 -translate-y-1/2 text-xs">in {selectedCategory}</span>
                         )}
                     </div>
+
+                    {/* Search Result Counter */}
+                    {searchTerm && (
+                        <div className="text-xs text-gray-400 px-1 mt-2" role="status" aria-live="polite">
+                            Found {filteredChannels.length} {filteredChannels.length === 1 ? 'channel' : 'channels'}
+                        </div>
+                    )}
                 </div>
             )}
 

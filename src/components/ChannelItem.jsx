@@ -91,13 +91,13 @@ const ChannelItem = ({ channel, isActive, onClick, status, onRefresh }) => {
                 {channel.logo && !logoError ? (
                     <img
                         src={channel.logo}
-                        alt=""
+                        alt={`${channel.name} logo`}
                         className="w-full h-full object-cover"
                         onError={() => setLogoError(true)}
                         loading="lazy"
                     />
                 ) : (
-                    isActive ? <Play size={14} fill="currentColor" /> : <Tv size={14} />
+                    isActive ? <Play size={16} fill="currentColor" /> : <Tv size={16} />
                 )}
             </div>
 
@@ -134,28 +134,30 @@ const ChannelItem = ({ channel, isActive, onClick, status, onRefresh }) => {
                 <button
                     onClick={handleFavorite}
                     className={`
-            p-1.5 rounded-lg transition-all flex-shrink-0
+            p-2 rounded-lg transition-all flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center
             ${favorite ? 'text-yellow-400' : 'text-gray-400 hover:text-yellow-300'}
             hover:bg-white/10 active:scale-95
           `}
+                    aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
                     title={favorite ? "Remove from favorites" : "Add to favorites"}
                 >
-                    <Star size={14} fill={favorite ? "currentColor" : "none"} />
+                    <Star size={16} fill={favorite ? "currentColor" : "none"} />
                 </button>
 
                 <button
                     onClick={handleRefresh}
                     disabled={status?.status === 'checking'}
                     className={`
-            p-1.5 rounded-lg transition-all flex-shrink-0
+            p-2 rounded-lg transition-all flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center
             ${status?.status === 'checking' ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 active:scale-95'}
           `}
+                    aria-label="Check stream status"
                     title="Check stream status"
                 >
                     {status?.status === 'checking' ? (
-                        <Loader2 size={14} className="animate-spin text-gray-400" />
+                        <Loader2 size={16} className="animate-spin text-gray-400" />
                     ) : (
-                        <RefreshCw size={14} className="text-gray-400 hover:text-white" />
+                        <RefreshCw size={16} className="text-gray-400 hover:text-white" />
                     )}
                 </button>
             </div>

@@ -24,6 +24,7 @@ const Header = () => {
                     <button
                         onClick={installApp}
                         className="flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors font-medium text-sm"
+                        aria-label="Install VectaStream as an app"
                     >
                         <Download size={18} />
                         <span className="hidden sm:inline">Install App</span>
@@ -31,7 +32,10 @@ const Header = () => {
                 )}
 
                 <div className="group relative">
-                    <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white">
+                    <button
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
+                        aria-label="About VectaStream"
+                    >
                         <Info size={20} />
                     </button>
 
