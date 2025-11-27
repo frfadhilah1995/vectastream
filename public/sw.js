@@ -30,23 +30,58 @@ self.addEventListener('fetch', (event) => {
 });
 
 /**
- * Generate "Spoofed" Headers to bypass blocks
- * Mimics a real browser visiting the stream's origin
+ * 🕵️‍♂️ HIGH-TECH STEALTH MODE
+ * Generates advanced browser fingerprints to bypass sophisticated anti-bot systems.
+ * Rotates User-Agents and injects modern Sec-CH-UA headers.
  */
+const USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+];
+
+function getRandomUserAgent() {
+    return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+}
+
 function generateSpoofedHeaders(targetUrl) {
     let origin = '';
+    let hostname = '';
     try {
         const urlObj = new URL(targetUrl);
         origin = urlObj.origin;
+        hostname = urlObj.hostname;
     } catch (e) {
         origin = targetUrl;
     }
 
+    const ua = getRandomUserAgent();
+    const isWindows = ua.includes('Windows');
+    const platform = isWindows ? '"Windows"' : (ua.includes('Mac') ? '"macOS"' : '"Linux"');
+
     return {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        // Standard Identity
+        'User-Agent': ua,
         'Referer': origin + '/',
         'Origin': origin,
-        'X-Requested-With': 'XMLHttpRequest'
+
+        // Modern Sec-CH-UA Headers (The "High Tech" part)
+        // These tell the server we are a real modern browser, not a script
+        'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': platform,
+
+        // Fetch Metadata (Critical for CORS checks)
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'cross-site',
+
+        // Standard Headers
+        'Accept': '*/*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
     };
 }
 
