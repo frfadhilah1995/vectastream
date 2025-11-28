@@ -99,6 +99,20 @@ async function testDirect(streamUrl, signal) {
     const isNative = isNativePlatform();
 
     try {
+        // Mixed Content Check: If we are on HTTPS and stream is HTTP, direct fetch will fail.
+        // Skip it immediately to save time and avoid console errors.
+        const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+        const isHttpStream = streamUrl.toLowerCase().startsWith('http:');
+
+        if (isHttps && isHttpStream) {
+            console.warn(`[SmartHealer] ⚠️ Mixed Content: Skipping direct check for HTTP stream on HTTPS page`);
+            return {
+                ok: false,
+                status: 0,
+                error: 'Mixed Content: Cannot load HTTP stream on HTTPS page'
+            };
+        }
+
         // Use smart HTTP (native on mobile, fetch on web)
         const response = await smartHead(streamUrl, {
             signal,

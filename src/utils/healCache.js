@@ -12,7 +12,8 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
  */
 export function getCachedHeal(channelUrl) {
     try {
-        const key = CACHE_KEY_PREFIX + btoa(channelUrl).substring(0, 50);
+        // 🔧 FIX: Remove substring limit to prevent collisions
+        const key = CACHE_KEY_PREFIX + btoa(channelUrl);
         const cached = sessionStorage.getItem(key);
 
         if (!cached) return null;
@@ -39,7 +40,8 @@ export function getCachedHeal(channelUrl) {
  */
 export function setCachedHeal(channelUrl, result) {
     try {
-        const key = CACHE_KEY_PREFIX + btoa(channelUrl).substring(0, 50);
+        // 🔧 FIX: Remove substring limit to prevent collisions
+        const key = CACHE_KEY_PREFIX + btoa(channelUrl);
         const data = {
             result: result,
             timestamp: Date.now()

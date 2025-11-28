@@ -23,8 +23,8 @@ const Player = ({ channel }) => {
         const video = videoRef.current;
         if (!video) return;
 
-        // Mark player as active for this channel
-        isPlayerActiveRef.current = true;
+        // 🔧 FIX: Use local variable for closure-safe cancellation
+        let isActive = true;
 
         setLoading(true);
         setError(null);
@@ -46,17 +46,17 @@ const Player = ({ channel }) => {
             const result = await healStream(channel, {
                 timeout: 5000,
                 onProgress: (progress) => {
-                    // Only update UI if player is still active
-                    if (isPlayerActiveRef.current) {
+                    // Only update UI if this specific effect is still active
+                    if (isActive) {
                         setHealingProgress(progress);
                         console.log(`[Player] Healing ${progress.current || '?'}/${progress.total || '?'}: ${progress.strategy || 'unknown'}`);
                     }
                 }
             });
 
-            // Check if player is still active before showing results
-            if (!isPlayerActiveRef.current) {
-                console.log('[Player] 🛑 Player closed during healing, aborting display');
+            // Check if this effect is still active
+            if (!isActive) {
+                console.log(`[Player] 🛑 Player closed/switched during healing for ${channel.name}, aborting display`);
                 return;
             }
 
@@ -125,6 +125,9 @@ const Player = ({ channel }) => {
                 hls.attachMedia(video);
 
                 hls.on(Hls.Events.MANIFEST_PARSED, async () => {
+                    // Double check active state before playing
+                    if (!isActive) return;
+
                     const loadTime = (performance.now() - startTime).toFixed(0);
                     console.log(`[Player] ⚡ Loaded in ${loadTime}ms via ${result.workingStrategy}`);
                     setLoading(false);
@@ -144,8 +147,7 @@ const Player = ({ channel }) => {
 
                 hls.on(Hls.Events.ERROR, (event, data) => {
                     // Only handle errors if player is still active
-                    if (!isPlayerActiveRef.current) {
-                        console.log('[Player] 🛑 Error occurred but player is inactive, ignoring');
+                    if (!isActive) {
                         return;
                     }
 
@@ -173,18 +175,28 @@ const Player = ({ channel }) => {
                 video.src = workingUrl;
                 console.log(`[Player] 🍎 Safari playback via ${result.workingStrategy}`);
 
-                video.addEventListener('loadedmetadata', () => {
+                const onLoadedMetadata = () => {
+                    if (!isActive) return;
                     setLoading(false);
                     setHealingProgress(null);
                     playVideo();
-                });
+                };
 
-                video.addEventListener('error', () => {
-                    if (isPlayerActiveRef.current) {
+                const onError = () => {
+                    if (isActive) {
                         setLoading(false);
                         setError("Stream playback failed.");
                     }
-                });
+                };
+
+                video.addEventListener('loadedmetadata', onLoadedMetadata);
+                video.addEventListener('error', onError);
+
+                // Cleanup listeners when effect ends
+                return () => {
+                    video.removeEventListener('loadedmetadata', onLoadedMetadata);
+                    video.removeEventListener('error', onError);
+                };
             } else {
                 setLoading(false);
                 setError("Browser does not support HLS playback.");
@@ -196,7 +208,7 @@ const Player = ({ channel }) => {
         // 🔧 FIX: Enhanced cleanup - abort ongoing operations when channel changes
         return () => {
             console.log('[Player] 🧹 Cleaning up player for channel:', channel.name);
-            isPlayerActiveRef.current = false;
+            isActive = false; // Mark this effect instance as inactive
 
             // Abort ongoing healing operation
             if (healingAbortControllerRef.current) {

@@ -33,47 +33,6 @@
         "name": "CORS.SH",
         "url": "https://cors.sh/",
         "priority": 3,
-        "geo": "global",
-        "healthScore": 80,
-        "features": [
-            "cors",
-            "headers-manipulation"
-        ],
-        "description": "Modern CORS proxy with header support",
-        "enabled": true
-    },
-    {
-        "name": "Corsproxy.io",
-        "url": "https://corsproxy.io/?",
-        "priority": 4,
-        "geo": "global",
-        "healthScore": 75,
-        "features": [
-            "cors",
-            "simple"
-        ],
-        "description": "Simple CORS proxy service",
-        "enabled": true
-    },
-    {
-        "name": "ThingProxy",
-        "url": "https://thingproxy.freeboard.io/fetch/",
-        "priority": 5,
-        "geo": "global",
-        "healthScore": 70,
-        "features": [
-            "cors",
-            "legacy"
-        ],
-        "rateLimit": 100,
-        "description": "Legacy but stable CORS proxy",
-        "enabled": true
-    },
-    {
-        "name": "CORS Proxy (CodeTabs)",
-        "url": "https://api.codetabs.com/v1/proxy?quest=",
-        "priority": 6,
-        "geo": "global",
         "healthScore": 65,
         "features": [
             "cors",
