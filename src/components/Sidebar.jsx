@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X, Bookmark, Trash2, BarChart3 } from 'lucide-react';
+import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X, Bookmark, Trash2, BarChart3, Tv } from 'lucide-react';
 import ChannelItem from './ChannelItem';
 import { statusRefreshService } from '../utils/statusRefresh.js';
 import { getSavedUrls, savePlaylistUrl, deletePlaylistUrl, updateChannelCount } from '../utils/savedPlaylists.js';

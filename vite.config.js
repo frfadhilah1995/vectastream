@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon-192.png', 'icon-512.png'],
+      includeAssets: ['icon.svg', 'icon-192.png', 'icon-512.png'],
       manifest: {
         name: 'VectaStream - IPTV Platform',
         short_name: 'VectaStream',
@@ -18,6 +18,12 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'any',
         icons: [
+          {
+            src: 'icon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
+            purpose: 'any maskable'
+          },
           {
             src: 'icon-192.png',
             sizes: '192x192',
