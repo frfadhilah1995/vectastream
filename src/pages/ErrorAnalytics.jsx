@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, Download, Trash2, RefreshCw, CheckCircle, XCircle, AlertTriangle, Database, Search, Filter, Layout } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { BarChart3, Download, Trash2, RefreshCw, CheckCircle, XCircle, AlertTriangle, Database, Search, Filter, Layout, ArrowLeft } from 'lucide-react';
 import errorDB from '../utils/errorDatabase';
 
 const ErrorAnalytics = () => {
@@ -90,33 +91,41 @@ const ErrorAnalytics = () => {
 
     return (
         <div className="h-full flex flex-col bg-background text-white overflow-hidden font-sans text-xs">
-            {/* Header - Ultra Compact */}
-            <div className="flex-none p-2 md:p-3 border-b border-white/10 bg-glass-bg backdrop-blur-xl z-10 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
+            {/* Header - Responsive */}
+            <div className="flex-none p-3 md:p-4 lg:p-6 border-b border-white/10 bg-glass-bg backdrop-blur-xl z-10 flex items-center justify-between gap-2 md:gap-3">
+                <div className="flex items-center gap-2 md:gap-3">
+                    <Link
+                        to="/"
+                        className="p-2 md:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all flex items-center gap-1.5 md:gap-2 text-xs md:text-sm"
+                        title="Back to Player"
+                    >
+                        <ArrowLeft size={16} className="md:w-[18px] md:h-[18px] lg:w-5 lg:h-5" />
+                        <span className="hidden sm:inline">Back</span>
+                    </Link>
                     <button
                         onClick={() => setShowSidebar(!showSidebar)}
-                        className={`p-1.5 rounded-lg transition-colors ${showSidebar ? 'bg-accent text-black' : 'bg-white/5 text-gray-400 hover:text-white'}`}
+                        className={`p-1.5 md:p-2 rounded-lg transition-colors ${showSidebar ? 'bg-accent text-black' : 'bg-white/5 text-gray-400 hover:text-white'}`}
                         title="Toggle Stats Panel"
                     >
-                        <Layout size={14} />
+                        <Layout size={14} className="md:w-4 md:h-4 lg:w-5 lg:h-5" />
                     </button>
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                            <BarChart3 className="text-accent" size={16} />
-                            <h1 className="text-sm font-bold">Error Analytics</h1>
+                            <BarChart3 className="text-accent w-5 md:w-6 lg:w-7" size={18} />
+                            <h1 className="text-base md:text-lg lg:text-xl font-bold">Error Analytics</h1>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-1">
-                    <button onClick={() => handleExport('json')} className="p-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-all" title="Export JSON">
-                        <Download size={14} />
+                <div className="flex items-center gap-1 md:gap-2">
+                    <button onClick={() => handleExport('json')} className="p-1.5 md:p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-all" title="Export JSON">
+                        <Download size={14} className="md:w-4 md:h-4 lg:w-5 lg:h-5" />
                     </button>
-                    <button onClick={loadData} className="p-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-all" title="Refresh">
-                        <RefreshCw size={14} />
+                    <button onClick={loadData} className="p-1.5 md:p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-all" title="Refresh">
+                        <RefreshCw size={14} className="md:w-4 md:h-4 lg:w-5 lg:h-5" />
                     </button>
-                    <button onClick={handleClearAll} className="p-1.5 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-red-400 hover:text-red-300 transition-all" title="Clear All">
-                        <Trash2 size={14} />
+                    <button onClick={handleClearAll} className="p-1.5 md:p-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-red-400 hover:text-red-300 transition-all" title="Clear All">
+                        <Trash2 size={14} className="md:w-4 md:h-4 lg:w-5 lg:h-5" />
                     </button>
                 </div>
             </div>
@@ -126,26 +135,26 @@ const ErrorAnalytics = () => {
 
                 {/* Left Panel: Stats (Collapsible) */}
                 {showSidebar && (
-                    <div className="flex-none w-full md:w-[200px] lg:w-[240px] md:border-r border-b md:border-b-0 border-white/10 overflow-y-auto custom-scrollbar bg-black/20 flex flex-col max-h-[40vh] md:max-h-none">
+                    <div className="flex-none w-full md:w-64 lg:w-72 xl:w-80 md:border-r border-b md:border-b-0 border-white/10 overflow-y-auto custom-scrollbar bg-black/20 flex flex-col max-h-[40vh] md:max-h-none">
                         {stats && (
                             <div className="p-3 space-y-3">
-                                {/* Key Metrics Grid - 2x2 */}
-                                <div className="grid grid-cols-2 lg:grid-cols-2 gap-2">
-                                    <div className="bg-glass p-2 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-blue-400 font-bold uppercase mb-0.5">Attempts</div>
-                                        <div className="text-lg font-bold text-white leading-none">{stats.totalAttempts}</div>
+                                {/* Key Metrics Grid - Responsive */}
+                                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-1 gap-2 md:gap-3">
+                                    <div className="bg-glass p-2 md:p-3 rounded-lg border border-white/5">
+                                        <div className="text-[10px] md:text-xs text-blue-400 font-bold uppercase mb-0.5 md:mb-1">Attempts</div>
+                                        <div className="text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-white leading-none">{stats.totalAttempts}</div>
                                     </div>
-                                    <div className="bg-glass p-2 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-green-400 font-bold uppercase mb-0.5">Success</div>
-                                        <div className="text-lg font-bold text-white leading-none">{stats.successRate}%</div>
+                                    <div className="bg-glass p-2 md:p-3 rounded-lg border border-white/5">
+                                        <div className="text-[10px] md:text-xs text-green-400 font-bold uppercase mb-0.5 md:mb-1">Success</div>
+                                        <div className="text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-white leading-none">{stats.successRate}%</div>
                                     </div>
-                                    <div className="bg-glass p-2 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-red-400 font-bold uppercase mb-0.5">Failures</div>
-                                        <div className="text-lg font-bold text-white leading-none">{stats.failureCount}</div>
+                                    <div className="bg-glass p-2 md:p-3 rounded-lg border border-white/5">
+                                        <div className="text-[10px] md:text-xs text-red-400 font-bold uppercase mb-0.5 md:mb-1">Failures</div>
+                                        <div className="text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-white leading-none">{stats.failureCount}</div>
                                     </div>
-                                    <div className="bg-glass p-2 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-accent font-bold uppercase mb-0.5">Best Strat</div>
-                                        <div className="text-xs font-bold text-white truncate" title={Object.entries(stats.strategySuccess).reduce((best, [name, data]) => {
+                                    <div className="bg-glass p-2 md:p-3 rounded-lg border border-white/5">
+                                        <div className="text-[10px] md:text-xs text-accent font-bold uppercase mb-0.5 md:mb-1">Best Strat</div>
+                                        <div className="text-xs md:text-sm font-bold text-white truncate" title={Object.entries(stats.strategySuccess).reduce((best, [name, data]) => {
                                             const rate = data.total > 0 ? data.success / data.total : 0;
                                             return rate > best.rate ? { name, rate } : best;
                                         }, { name: 'N/A', rate: 0 }).name}>
@@ -225,21 +234,21 @@ const ErrorAnalytics = () => {
                                 <table className="w-full text-left border-collapse">
                                     <thead className="bg-white/5 sticky top-0 z-10 backdrop-blur-md">
                                         <tr>
-                                            <th className="p-1.5 md:p-2 text-[9px] font-bold text-gray-500 uppercase w-12 md:w-16">Time</th>
-                                            <th className="p-1.5 md:p-2 text-[9px] font-bold text-gray-500 uppercase">Channel</th>
-                                            <th className="p-1.5 md:p-2 text-[9px] font-bold text-gray-500 uppercase w-16 md:w-20">Verdict</th>
-                                            <th className="p-1.5 md:p-2 text-[9px] font-bold text-gray-500 uppercase hidden sm:table-cell">Details</th>
-                                            <th className="p-1.5 md:p-2 w-6 md:w-8"></th>
+                                            <th className="p-1.5 md:p-2 lg:p-3 text-[9px] md:text-xs lg:text-sm font-bold text-gray-500 uppercase w-12 md:w-16 lg:w-20">Time</th>
+                                            <th className="p-1.5 md:p-2 lg:p-3 text-[9px] md:text-xs lg:text-sm font-bold text-gray-500 uppercase">Channel</th>
+                                            <th className="p-1.5 md:p-2 lg:p-3 text-[9px] md:text-xs lg:text-sm font-bold text-gray-500 uppercase w-16 md:w-20 lg:w-24">Verdict</th>
+                                            <th className="p-1.5 md:p-2 lg:p-3 text-[9px] md:text-xs lg:text-sm font-bold text-gray-500 uppercase hidden sm:table-cell">Details</th>
+                                            <th className="p-1.5 md:p-2 lg:p-3 w-6 md:w-8 lg:w-10"></th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/5">
                                         {logs.map((log) => (
                                             <tr key={log.id} className="hover:bg-white/5 transition-colors group">
-                                                <td className="p-1.5 md:p-2 text-[9px] md:text-[10px] text-gray-500 font-mono whitespace-nowrap">
+                                                <td className="p-1.5 md:p-2 lg:p-3 text-[9px] md:text-[10px] lg:text-xs text-gray-500 font-mono whitespace-nowrap">
                                                     {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                                                 </td>
-                                                <td className="p-1.5 md:p-2">
-                                                    <div className="font-medium text-[9px] md:text-[10px] text-white truncate max-w-[80px] sm:max-w-[100px] md:max-w-[120px] lg:max-w-[150px]">{log.channel.name}</div>
+                                                <td className="p-1.5 md:p-2 lg:p-3">
+                                                    <div className="font-medium text-[9px] md:text-[10px] lg:text-xs xl:text-sm text-white truncate max-w-[80px] sm:max-w-[120px] md:max-w-[150px] lg:max-w-[200px] xl:max-w-[250px]">{log.channel.name}</div>
                                                 </td>
                                                 <td className="p-1.5 md:p-2">
                                                     <span className={`inline-flex items-center gap-0.5 md:gap-1 px-1 md:px-1.5 py-0.5 rounded border text-[8px] md:text-[9px] font-bold uppercase ${getVerdictColor(log.verdict)}`}>

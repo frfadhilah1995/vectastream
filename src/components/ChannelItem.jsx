@@ -77,7 +77,7 @@ const ChannelItem = ({ channel, isActive, onClick, status, onRefresh }) => {
         <div
             onClick={onClick}
             className={`
-        group flex items-center p-3 mb-2 rounded-lg cursor-pointer transition-all duration-300 border
+        group flex items-center p-2 mb-1.5 md:p-3 md:mb-2 lg:p-4 lg:mb-2.5 rounded-lg cursor-pointer transition-all duration-300 border
         ${isActive
                     ? 'bg-accent/10 border-accent text-accent shadow-[0_0_15px_rgba(0,242,255,0.2)]'
                     : 'bg-transparent border-transparent hover:bg-white/5 hover:border-white/10 text-gray-300'
@@ -85,7 +85,7 @@ const ChannelItem = ({ channel, isActive, onClick, status, onRefresh }) => {
       `}
         >
             <div className={`
-        mr-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors overflow-hidden flex-shrink-0
+        mr-2 md:mr-3 w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center transition-colors overflow-hidden flex-shrink-0
         ${isActive ? 'bg-accent/20 text-accent' : 'bg-white/5 text-gray-500 group-hover:bg-white/10 group-hover:text-white'}
       `}>
                 {channel.logo && !logoError ? (
@@ -102,25 +102,25 @@ const ChannelItem = ({ channel, isActive, onClick, status, onRefresh }) => {
             </div>
 
             <div className="flex-1 min-w-0">
-                <h3 className={`text-sm font-medium truncate ${isActive ? 'text-accent' : 'text-gray-200'}`}>
+                <h3 className={`text-xs md:text-sm lg:text-base font-medium truncate ${isActive ? 'text-accent' : 'text-gray-200'}`}>
                     {channel.name}
                 </h3>
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <p className="text-xs text-gray-500 truncate">{channel.group}</p>
+                <div className="flex items-center gap-1.5 md:gap-2 mt-1 flex-wrap">
+                    <p className="text-[10px] md:text-xs text-gray-500 truncate">{channel.group}</p>
 
-                    {/* Metadata badges */}
+                    {/* Metadata badges - Responsive */}
                     {channel.resolution && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-medium">
+                        <span className="text-[9px] px-1 py-0.5 md:text-[10px] md:px-1.5 lg:text-xs lg:px-2 lg:py-1 rounded bg-purple-500/20 text-purple-300 font-medium">
                             {channel.resolution}
                         </span>
                     )}
                     {channel.country && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">
+                        <span className="text-[9px] px-1 py-0.5 md:text-[10px] md:px-1.5 lg:text-xs lg:px-2 lg:py-1 rounded bg-blue-500/20 text-blue-300">
                             {channel.country}
                         </span>
                     )}
                     {channel.language && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-300">
+                        <span className="text-[9px] px-1 py-0.5 md:text-[10px] md:px-1.5 lg:text-xs lg:px-2 lg:py-1 rounded bg-green-500/20 text-green-300">
                             {channel.language}
                         </span>
                     )}
@@ -134,30 +134,30 @@ const ChannelItem = ({ channel, isActive, onClick, status, onRefresh }) => {
                 <button
                     onClick={handleFavorite}
                     className={`
-            p-2 rounded-lg transition-all flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center
+            p-1.5 md:p-2 rounded-lg transition-all flex-shrink-0 min-w-[36px] min-h-[36px] md:min-w-[40px] md:min-h-[40px] lg:min-w-[44px] lg:min-h-[44px] flex items-center justify-center
             ${favorite ? 'text-yellow-400' : 'text-gray-400 hover:text-yellow-300'}
             hover:bg-white/10 active:scale-95
           `}
                     aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
                     title={favorite ? "Remove from favorites" : "Add to favorites"}
                 >
-                    <Star size={16} fill={favorite ? "currentColor" : "none"} />
+                    <Star size={14} className="md:w-4 md:h-4 lg:w-5 lg:h-5" fill={favorite ? "currentColor" : "none"} />
                 </button>
 
                 <button
                     onClick={handleRefresh}
                     disabled={status?.status === 'checking'}
                     className={`
-            p-2 rounded-lg transition-all flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center
+            p-1.5 md:p-2 rounded-lg transition-all flex-shrink-0 min-w-[36px] min-h-[36px] md:min-w-[40px] md:min-h-[40px] lg:min-w-[44px] lg:min-h-[44px] flex items-center justify-center
             ${status?.status === 'checking' ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 active:scale-95'}
           `}
                     aria-label="Check stream status"
                     title="Check stream status"
                 >
                     {status?.status === 'checking' ? (
-                        <Loader2 size={16} className="animate-spin text-gray-400" />
+                        <Loader2 size={14} className="animate-spin text-gray-400 md:w-4 md:h-4 lg:w-5 lg:h-5" />
                     ) : (
-                        <RefreshCw size={16} className="text-gray-400 hover:text-white" />
+                        <RefreshCw size={14} className="text-gray-400 hover:text-white md:w-4 md:h-4 lg:w-5 lg:h-5" />
                     )}
                 </button>
             </div>

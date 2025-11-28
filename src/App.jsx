@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -14,7 +14,9 @@ import { parseM3U } from './utils/m3u';
 import { getCachedPlaylist, cachePlaylist } from './utils/playlistCache';
 import { addToHistory } from './utils/history';
 
-function App() {
+// Wrapper component to access useLocation
+function AppContent() {
+    const location = useLocation();
     const { isMobile, isTablet } = useDevice();
     const { checkStreamStatus, getStatus } = useStreamStatus();
     const [channels, setChannels] = useState([]);
@@ -120,29 +122,32 @@ function App() {
     // NOTE: Removed global status check loop to prevent lag on large playlists (9000+ items)
     // Status checking is now handled in Sidebar.jsx for visible items only (Pagination Scoped)
 
-    return (
-        <Router>
-            <div className="flex flex-col h-full bg-background text-white font-sans overflow-hidden">
-                {/* Mobile/Tablet Header Overlay for Menu Toggle */}
-                {(isMobile || isTablet) && (
-                    <div className="fixed top-4 left-4 z-50">
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="p-2 bg-black/50 backdrop-blur-md border border-glass-border rounded-lg text-white shadow-lg active:scale-95 transition-transform"
-                        >
-                            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                        </button>
-                    </div>
-                )}
+    // Detect if we're on a tool page (Analytics or Debugger) - hide sidebar
+    const isToolPage = location.pathname === '/analytics' || location.pathname === '/debug';
 
-                <div className="flex flex-1 overflow-hidden relative">
-                    {/* Sidebar Logic */}
+    return (
+        <div className="flex flex-col h-full bg-background text-white font-sans overflow-hidden">
+            {/* Mobile/Tablet Header Overlay for Menu Toggle - Only show on main player page */}
+            {(isMobile || isTablet) && !isToolPage && (
+                <div className="fixed top-4 left-4 z-50">
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="p-2 bg-black/50 backdrop-blur-md border border-glass-border rounded-lg text-white shadow-lg active:scale-95 transition-transform"
+                    >
+                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
+            )}
+
+            <div className="flex flex-1 overflow-hidden relative">
+                {/* Sidebar Logic - Hide on tool pages */}
+                {!isToolPage && (
                     <div className={`
-              z-40 h-full transition-transform duration-300 ease-in-out
-              ${(isMobile || isTablet) ? 'absolute inset-y-0 left-0' : 'relative'}
-              ${(isMobile || isTablet) && !isMobileMenuOpen ? '-translate-x-full' : 'translate-x-0'}
-            `}>
-                        <div className="h-full flex flex-col w-80 bg-background border-r border-glass-border shadow-2xl md:shadow-none">
+                        z-40 h-full transition-transform duration-300 ease-in-out
+                        ${(isMobile || isTablet) ? 'absolute inset-y-0 left-0' : 'relative'}
+                        ${(isMobile || isTablet) && !isMobileMenuOpen ? '-translate-x-full' : 'translate-x-0'}
+                    `}>
+                        <div className="h-full flex flex-col w-80 md:w-96 lg:w-80 bg-background border-r border-glass-border shadow-2xl md:shadow-none">
                             <Header />
                             <Sidebar
                                 channels={channels}
@@ -166,21 +171,28 @@ function App() {
                             />
                         </div>
                     </div>
+                )}
 
-                    {/* Main Content (Player) */}
-                    <main className="flex-1 relative bg-black w-full h-full">
-                        <Routes>
-                            <Route path="/debug" element={<StreamDebugger />} />
-                            <Route path="/analytics" element={<ErrorAnalytics />} />
-                            <Route path="/" element={
-                                <Player channel={currentChannel} />
-                            } />
-                        </Routes>
-                    </main>
-                </div>
+                {/* Main Content (Player / Analytics / Debugger) */}
+                <main className="flex-1 relative bg-black w-full h-full">
+                    <Routes>
+                        <Route path="/debug" element={<StreamDebugger />} />
+                        <Route path="/analytics" element={<ErrorAnalytics />} />
+                        <Route path="/" element={
+                            <Player channel={currentChannel} />
+                        } />
+                    </Routes>
+                </main>
             </div>
-        </Router>
+        </div>
     );
 }
 
-export default App;
+// Main App wrapper with Router
+export default function App() {
+    return (
+        <Router>
+            <AppContent />
+        </Router>
+    );
+}
