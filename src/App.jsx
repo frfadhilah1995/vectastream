@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import { Toaster, toast } from 'sonner';
+import ErrorBoundary from './components/ErrorBoundary';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Player from './components/Player';
@@ -71,7 +73,9 @@ function AppContent() {
 
 
                 if (parsedChannels.length === 0) {
-                    alert("No channels found in playlist.");
+                    toast.warning('No channels found', {
+                        description: 'The playlist appears to be empty or invalid.',
+                    });
                     setIsLoading(false);
                     return;
                 }
@@ -84,6 +88,10 @@ function AppContent() {
             setChannels(loadedChannels);
             localStorage.setItem('vectastream_last_url', urlToLoad);
             console.log(`[App] ✅ Successfully loaded ${loadedChannels.length} channels!`);
+            toast.success('Playlist loaded successfully!', {
+                description: `${loadedChannels.length} channels available`,
+                duration: 3000,
+            });
 
             // Auto-resume last played channel if it exists in the new list
             const lastChannelJson = localStorage.getItem('vectastream_last_channel');
@@ -103,7 +111,14 @@ function AppContent() {
 
         } catch (error) {
             console.error("[App] ❌ Error loading playlist:", error);
-            alert(`Failed to load playlist.\n\n${error.message}\n\nPlease check:\n1. The URL is correct\n2. The playlist is publicly accessible\n3. Your internet connection`);
+            toast.error('Failed to load playlist', {
+                description: error.message,
+                action: {
+                    label: 'Retry',
+                    onClick: () => handleLoadPlaylist(urlToLoad),
+                },
+                duration: 5000,
+            });
         } finally {
             setIsLoading(false);
         }
@@ -127,6 +142,8 @@ function AppContent() {
 
     return (
         <div className="flex flex-col h-full bg-background text-white font-sans overflow-hidden">
+            {/* Toast Notifications */}
+            <Toaster position="top-right" theme="dark" richColors closeButton />
             {/* Mobile/Tablet Header Overlay for Menu Toggle - Only show on main player page */}
             {(isMobile || isTablet) && !isToolPage && (
                 <div className="fixed top-4 left-4 z-50">
@@ -188,11 +205,13 @@ function AppContent() {
     );
 }
 
-// Main App wrapper with Router
+// Main App wrapper with Router and ErrorBoundary
 export default function App() {
     return (
-        <Router>
-            <AppContent />
-        </Router>
+        <ErrorBoundary>
+            <Router>
+                <AppContent />
+            </Router>
+        </ErrorBoundary>
     );
 }
