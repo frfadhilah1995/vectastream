@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Cloudflare Worker",
+        "url": "https://vectastream-proxy.frfadhilah-1995-ok.workers.dev",
+        "priority": 1,
+        "geo": "global",
+        "healthScore": 100,
+        "features": [
+            "cors",
+            "http-upgrade",
+            "headers-manipulation",
+            "referer-spoofing"
+        ],
+        "description": "Custom Cloudflare Worker with advanced header manipulation",
+        "enabled": true
+    },
+    {
+        "name": "AllOrigins",
+        "url": "https://api.allorigins.win/raw?url=",
+        "priority": 2,
+        "geo": "global",
+        "healthScore": 85,
+        "features": [
+            "cors",
+            "simple",
+            "fast"
+        ],
+        "rateLimit": 200,
+        "description": "Fast and reliable CORS proxy",
+        "enabled": true
+    },
+    {
+        "name": "CORS.SH",
+        "url": "https://cors.sh/",
+        "priority": 3,
+        "healthScore": 65,
+        "features": [
+            "cors",
+            "simple"
+        ],
+        "rateLimit": 50,
+        "description": "Code snippet service CORS proxy",
+        "enabled": false
+    },
+    {
+        "name": "Cloudflare Worker Backup",
+        "url": "https://workers.cloudflare.com/",
+        "priority": 99,
+        "geo": "global",
+        "healthScore": 50,
+        "features": [
+            "cors",
+            "backup"
+        ],
+        "description": "Backup Cloudflare Worker endpoint (replace with your own)",
+        "enabled": false,
+        "notes": "Replace URL with your own Cloudflare Worker deployment"
+    }
+]
