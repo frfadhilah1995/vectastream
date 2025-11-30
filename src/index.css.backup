@@ -1,0 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+
+    /* Design Tokens */
+    --color-primary: 0 242 255;
+    --color-success: 16 185 129;
+    --color-warning: 245 158 11;
+    --color-error: 239 68 68;
+
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-blur: 20px;
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    /* 10-Foot UI Typography (TV/Large Screen Optimized) */
+    --fs-10ft-base: 22px;
+    /* Minimum font size for TV readability */
+    --fs-10ft-lg: 28px;
+    /* Large text */
+    --fs-10ft-xl: 36px;
+    /* Extra large (headings) */
+    --fs-10ft-2xl: 48px;
+    /* Hero text */
+
+    /* Player-First Layout Proportions */
+    --sidebar-width-full: 280px;
+    /* Expanded sidebar */
+    --sidebar-width-collapsed: 60px;
+    /* Icon-only mode */
+    --player-area-margin: 280px;
+    /* Player margin when sidebar expanded */
+    --player-area-margin-collapsed: 60px;
+    /* Player margin when sidebar collapsed */
+
+    /* TV Safe Zones (5% viewport margin for TV displays) */
+    --safe-zone-x: 5vw;
+    --safe-zone-y: 5vh;
+
+    /* Enhanced Focus States for Keyboard/Remote Navigation */
+    --focus-ring-width: 4px;
+    /* Thick outline for visibility from distance */
+    --focus-ring-color: rgb(var(--color-primary));
+    --focus-ring-offset: 4px;
+    --focus-ring-shadow: 0 0 0 calc(var(--focus-ring-width) + 2px) rgba(var(--color-primary), 0.2);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Outfit', sans-serif;
+  background-color: #050505;
+  color: #ffffff;
+  overflow: hidden;
+
+  /* Dynamic Viewport Height for Mobile Browsers */
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  width: 100vw;
+  min-width: 320px;
+  /* Minimum mobile width */
+
+  /* Prevent content from being cut off */
+  box-sizing: border-box;
+}
+
+/* Ensure all elements use border-box */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Root container should fill viewport */
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ACCESSIBILITY: Focus Indicators (10-Foot UI Enhanced for TV/Remote) */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: 6px;
+  box-shadow: var(--focus-ring-shadow);
+  transition: outline 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Remove default outline for mouse users */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Custom Scrollbar - Thicker and more visible */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 255, 0.3);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 255, 0.5);
+  background-clip: padding-box;
+}
+
+/* Thin scrollbar utility */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 255, 0.2);
+  border-radius: 3px;
+}
+
+padding: inherit;
+margin: inherit;
+overflow: visible;
+clip: auto;
+white-space: normal;
+}
+
+@layer utilities {
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(0 217 230) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* ========================================
+   PLAYER-FIRST LAYOUT UTILITIES
+   ======================================== */
+
+/* TV Safe Zone Container */
+.tv-safe-zone {
+  padding: var(--safe-zone-y) var(--safe-zone-x);
+}
+
+/* Sidebar Transitions */
+.sidebar-transition {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Player Area Transitions */
+.player-area-transition {
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Auto-hide Controls Animation */
+.controls-fade {
+  transition: opacity 0.3s ease-in-out,
+    visibility 0.3s ease-in-out;
+}
+
+.controls-fade.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.controls-fade.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Enhanced Button Focus for Remote/Keyboard */
+.btn-focus-enhanced {
+  position: relative;
+}
+
+.btn-focus-enhanced:focus-visible::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: var(--focus-ring-width) solid var(--focus-ring-color);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* 10-Foot UI Typography Classes */
+.text-10ft-base {
+  font-size: var(--fs-10ft-base);
+  line-height: 1.5;
+}
+
+.text-10ft-lg {
+  font-size: var(--fs-10ft-lg);
+  line-height: 1.4;
+}
+
+.text-10ft-xl {
+  font-size: var(--fs-10ft-xl);
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.text-10ft-2xl {
+  font-size: var(--fs-10ft-2xl);
+  line-height: 1.2;
+  font-weight: 700;
+}
