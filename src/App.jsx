@@ -6,6 +6,7 @@ import Player from './components/Player';
 import EPGOverlay from './components/EPGOverlay';
 import StreamDebugger from './pages/StreamDebugger';
 import ErrorAnalytics from './pages/ErrorAnalytics';
+import { Tv, Search, Grid3x3 } from 'lucide-react';
 
 // V2.0 Revolutionary Shell Components
 import {
