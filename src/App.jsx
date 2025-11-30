@@ -128,7 +128,7 @@ function AppContent() {
             const cached = await getCachedPlaylist(urlToLoad);
             if (cached) {
                 console.log('[App V2] ✅ Using cached playlist');
-                loadedChannels = cached;
+                loadedChannels = cached.channels || [];
             } else {
                 // Fetch and parse
                 console.log('[App V2] 📡 Fetching playlist...');
