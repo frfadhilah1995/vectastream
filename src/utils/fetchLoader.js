@@ -21,7 +21,7 @@ class FetchLoader {
             buffering: { start: 0, first: 0, end: 0 }
         };
         this.abortController = null;
-        console.log('[FetchLoader] v1.4 - Debug & Robust Stats');
+        // Debug log removed to prevent spam (was logging on every segment load)
     }
 
     destroy() {

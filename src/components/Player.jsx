@@ -379,58 +379,10 @@ const Player = ({ channel }) => {
 
             <video
                 ref={videoRef}
-                controls={false}
+                controls={true}
                 className="w-full h-full max-h-[100dvh] object-contain focus:outline-none"
                 poster={channel.logo || ""}
             />
-
-            {/* Custom Controls Overlay (Auto-hide after 3s) */}
-            <div className={`
-                absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent
-                transition-all duration-300
-                ${controlsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}
-            `}>
-                <div className="flex items-center gap-3 mb-2">
-                    {/* Native Controls Toggle */}
-                    <button
-                        onClick={() => {
-                            const video = videoRef.current;
-                            video.controls = !video.controls;
-                        }}
-                        className="px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-xs font-medium transition-all"
-                        title="Toggle controls"
-                    >
-                        Controls
-                    </button>
-
-                    {/* PIP Button */}
-                    {pipSupported && (
-                        <button
-                            onClick={togglePIP}
-                            className={`
-                                px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2
-                                ${isPipActive
-                                    ? 'bg-accent text-white'
-                                    : 'bg-white/10 hover:bg-white/20 text-white'
-                                }
-                            `}
-                            title="Picture in Picture"
-                        >
-                            <PictureInPicture size={16} />
-                            PIP
-                        </button>
-                    )}
-
-                    <div className="flex-1"></div>
-
-                    {/* Healing Badge */}
-                    {healingResult?.workingStrategy && (
-                        <span className="px-2 py-1 bg-green-500/20 text-green-400 text-[10px] font-mono rounded border border-green-500/30">
-                            ✓ {healingResult.workingStrategy}
-                        </span>
-                    )}
-                </div>
-            </div>
 
             {/* Channel Info Overlay (Auto-hide) */}
             <div className={`
