@@ -141,7 +141,7 @@ const CommandPalette = ({
                         animate={{ scale: 1, y: 0, opacity: 1 }}
                         exit={{ scale: 0.95, y: -20, opacity: 0 }}
                         transition={{ duration: 0.2, ease: [0.4, 0.0, 0.2, 1] }}
-                        className="fixed left-1/2 top-[20%] -translate-x-1/2 w-full max-w-2xl z-[var(--z-command)]"
+                        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[90vw] md:w-[85vw] lg:w-[75vw] xl:w-[65vw] max-w-3xl z-[var(--z-command)]"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <Command
@@ -171,7 +171,7 @@ const CommandPalette = ({
                             </div>
 
                             {/* Results */}
-                            <Command.List className="max-h-[400px] overflow-y-auto p-2 custom-scrollbar">
+                            <Command.List className="max-h-[60vh] overflow-y-auto p-2 custom-scrollbar">
                                 {/* Empty State */}
                                 <Command.Empty className="py-8 text-center text-text-secondary text-sm">
                                     No results found for "{search}"
