@@ -1,11 +1,11 @@
 {
-    "name": "VectaStream",
+    "name": "VectaStream V2.0 - Revolutionary IPTV",
     "short_name": "VectaStream",
-    "description": "Professional IPTV Streaming Platform - Watch live TV channels from around the world",
+    "description": "Revolutionary IPTV Streaming Platform with AI-powered discovery, command palette navigation, and immersive content experience. Watch 9000+ live TV channels from around the world.",
     "start_url": "./",
     "display": "standalone",
-    "background_color": "#0a0a0a",
-    "theme_color": "#00f2ff",
+    "background_color": "#000000",
+    "theme_color": "#06B6D4",
     "orientation": "any",
     "scope": "./",
     "icons": [
