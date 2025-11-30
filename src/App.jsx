@@ -264,6 +264,14 @@ function AppContent() {
                             <Header />
                             <Sidebar
                                 collapsed={!(isMobile || isTablet) && sidebarCollapsed}
+                                onToggleCollapsed={(expand) => {
+                                    if (expand === false) {
+                                        setSidebarCollapsed(false); // Expand sidebar
+                                        setSidebarVisible(true);
+                                    } else if (expand === true) {
+                                        setSidebarCollapsed(true); // Collapse sidebar
+                                    }
+                                }}
                                 channels={channels}
                                 currentChannel={currentChannel}
                                 onChannelSelect={(channel) => {

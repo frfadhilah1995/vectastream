@@ -27,7 +27,8 @@ const Sidebar = ({
     checkStreamStatus, // Received from App
     onRefreshChannel,
     onClearChannels,
-    collapsed = false // NEW: Collapsed mode prop
+    collapsed = false, // Collapsed mode prop
+    onToggleCollapsed // NEW: Callback to expand/collapse sidebar
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -154,19 +155,20 @@ const Sidebar = ({
                     {channels.length > 0 && (
                         <div className="group relative">
                             <button
-                                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all relative"
-                                title="Channels"
+                                onClick={() => onToggleCollapsed?.(false)}
+                                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all relative cursor-pointer"
+                                title="Click to expand channels"
+                                aria-label="Expand sidebar to view all channels"
                             >
                                 <List size={20} className="text-gray-400" />
-                                {channels.length > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-accent text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                                        {channels.length > 99 ? '99+' : channels.length}
-                                    </span>
-                                )}
+                                {/* Removed duplicate condition check */}
+                                <span className="absolute -top-1 -right-1 bg-accent text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                    {channels.length > 99 ? '99+' : channels.length}
+                                </span>
                             </button>
                             {/* Tooltip */}
-                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity">
-                                {channels.length} Channels
+                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300">
+                                {channels.length} Channels • Click to expand
                             </div>
                         </div>
                     )}
@@ -174,17 +176,22 @@ const Sidebar = ({
                     {/* Now Playing Indicator */}
                     {currentChannel && (
                         <div className="group relative">
-                            <div className="w-10 h-10 rounded-lg bg-green-500/20 border border-green-500/30 flex items-center justify-center relative">
+                            <button
+                                onClick={() => onToggleCollapsed?.(false)}
+                                className="w-10 h-10 rounded-lg bg-green-500/20 border border-green-500/30 flex items-center justify-center relative cursor-pointer hover:bg-green-500/30 transition-all"
+                                title="Click to view in channel list"
+                                aria-label={`Now playing: ${currentChannel.name}. Click to expand.`}
+                            >
                                 {currentChannel.logo ? (
                                     <img src={currentChannel.logo} alt="" className="w-6 h-6 object-cover rounded" />
                                 ) : (
                                     <Tv size={18} className="text-green-500" />
                                 )}
                                 <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            </div>
+                            </button>
                             {/* Tooltip */}
-                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity max-w-[200px]">
-                                <div className="font-medium">Now Playing</div>
+                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300 max-w-[200px]">
+                                <div className="font-medium">Now Playing • Click to expand</div>
                                 <div className="text-gray-400 truncate">{currentChannel.name}</div>
                             </div>
                         </div>
@@ -193,11 +200,16 @@ const Sidebar = ({
                     {/* Search Icon */}
                     {channels.length > 0 && (
                         <div className="group relative">
-                            <button className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all">
+                            <button
+                                onClick={() => onToggleCollapsed?.(false)}
+                                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all cursor-pointer"
+                                title="Click to search channels"
+                                aria-label="Expand sidebar and search channels"
+                            >
                                 <Search size={20} className="text-gray-400" />
                             </button>
-                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity">
-                                Search
+                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300">
+                                Search • Click to expand
                             </div>
                         </div>
                     )}
@@ -206,21 +218,29 @@ const Sidebar = ({
                 {/* Bottom Icons */}
                 <div className="flex flex-col gap-2 items-center">
                     {/* Analytics */}
-                    <RouterLink to="/analytics" className="group relative">
+                    <RouterLink
+                        to="/analytics"
+                        className="group relative"
+                        aria-label="View analytics dashboard"
+                    >
                         <div className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all">
                             <BarChart3 size={20} className="text-gray-400" />
                         </div>
-                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity">
+                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300">
                             Analytics
                         </div>
                     </RouterLink>
 
                     {/* Debugger */}
-                    <RouterLink to="/debug" className="group relative">
+                    <RouterLink
+                        to="/debug"
+                        className="group relative"
+                        aria-label="Open stream debugger"
+                    >
                         <div className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all">
                             <Globe size={20} className="text-gray-400" />
                         </div>
-                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity">
+                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300">
                             Debug
                         </div>
                     </RouterLink>
