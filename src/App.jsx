@@ -24,6 +24,8 @@ import { fetchWithCorsProxy } from './utils/corsProxy';
 import { parseM3U } from './utils/m3u';
 import { getCachedPlaylist, cachePlaylist } from './utils/playlistCache';
 import { addToHistory, getHistory } from './utils/history';
+import { useContentDiscovery } from './hooks/useContentDiscovery';
+import ContentRow from './components/discovery/ContentRow';
 
 // Wrapper component to access useLocation
 function AppContent() {
@@ -34,7 +36,7 @@ function AppContent() {
     // Channel & Playlist State
     const [channels, setChannels] = useState([]);
     const [currentChannel, setCurrentChannel] = useState(null);
-    const [playlistUrl, setPlaylistUrl] = useState('');
+    const [playlistUrl, setPlaylistUrl] = useState('https://iptv-org.github.io/iptv/countries/id.m3u');
     const [isLoading, setIsLoading] = useState(false);
 
     // V2.0 Revolutionary UI State
@@ -47,6 +49,9 @@ function AppContent() {
     const [volume, setVolume] = useState(1);
     const [isMuted, setIsMuted] = useState(false);
     const [quality, setQuality] = useState('Auto');
+
+    // Content Discovery (Phase 3)
+    const { continueWatching, trending, recommendations } = useContentDiscovery(channels);
 
     // Gesture Handler Integration
     const gestures = useGestures({
@@ -302,58 +307,74 @@ function AppContent() {
                     <Route path="/debug" element={<StreamDebugger />} />
                     <Route path="/analytics" element={<ErrorAnalytics />} />
                     <Route path="/" element={
-                        <div className="h-full w-full flex items-center justify-center">
+                        <div className="h-full w-full overflow-y-auto bg-background">
                             {currentChannel ? (
-                                <Player
-                                    channel={currentChannel}
-                                    isPlaying={isPlaying}
-                                    onPlayingChange={setIsPlaying}
-                                    volume={volume}
-                                    isMuted={isMuted}
-                                />
+                                <div className="h-full flex items-center justify-center">
+                                    <Player
+                                        channel={currentChannel}
+                                        isPlaying={isPlaying}
+                                        onPlayingChange={setIsPlaying}
+                                        volume={volume}
+                                        isMuted={isMuted}
+                                    />
+                                </div>
                             ) : (
-                                <div className="text-center space-y-6 px-4">
-                                    <div className="w-24 h-24 mx-auto bg-accent-500/10 rounded-full flex items-center justify-center">
-                                        <svg className="w-12 h-12 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h2 className="text-2xl font-bold text-text-primary mb-2">
-                                            Welcome to VectaStream V2.0
-                                        </h2>
-                                        <p className="text-text-secondary mb-6">
-                                            Revolutionary IPTV with command palette, gestures, and voice control
-                                        </p>
-                                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                                            <button
-                                                onClick={() => setCommandPaletteOpen(true)}
-                                                className="px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2"
-                                            >
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                                </svg>
-                                                Search Channels (⌘K)
-                                            </button>
-                                            <button
-                                                onClick={() => setDrawerOpen(true)}
-                                                className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all"
-                                            >
-                                                Browse All Channels
-                                            </button>
+                                <div className="min-h-full pb-20">
+                                    {/* Hero Section */}
+                                    <div className="relative h-[50vh] flex items-center justify-center bg-gradient-to-b from-accent-900/20 to-background">
+                                        <div className="text-center space-y-6 px-4 z-10">
+                                            <div className="w-20 h-20 mx-auto bg-accent-500/10 rounded-full flex items-center justify-center mb-4">
+                                                <Tv className="w-10 h-10 text-accent-500" />
+                                            </div>
+                                            <div>
+                                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                                                    Welcome to VectaStream V2.0
+                                                </h2>
+                                                <p className="text-white/60 max-w-md mx-auto">
+                                                    Revolutionary IPTV with command palette, gestures, and voice control.
+                                                    <br />
+                                                    <span className="text-accent-400 text-sm mt-2 block">
+                                                        Loaded: {channels.length} Channels (ID)
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div className="flex flex-wrap gap-3 justify-center">
+                                                <button
+                                                    onClick={() => setCommandPaletteOpen(true)}
+                                                    className="px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                                                >
+                                                    <Search className="w-5 h-5" />
+                                                    Search (⌘K)
+                                                </button>
+                                                <button
+                                                    onClick={() => setDrawerOpen(true)}
+                                                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                                                >
+                                                    <Grid3x3 className="w-5 h-5" />
+                                                    Browse All
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                    {channels.length === 0 && (
-                                        <div className="mt-8 p-4 bg-white/5 rounded-xl border border-white/10 max-w-md mx-auto text-left">
-                                            <p className="text-sm text-text-tertiary mb-2">
-                                                💡 <span className="font-semibold">Quick Tip:</span>
-                                            </p>
-                                            <p className="text-sm text-text-secondary">
-                                                Press <kbd className="px-2 py-1 bg-white/10 rounded text-xs">⌘K</kbd> or <kbd className="px-2 py-1 bg-white/10 rounded text-xs">/</kbd> anywhere to open command palette
-                                            </p>
-                                        </div>
-                                    )}
+
+                                    {/* Content Discovery Rows */}
+                                    <div className="-mt-10 relative z-20 space-y-2">
+                                        <ContentRow
+                                            title="Continue Watching"
+                                            channels={continueWatching}
+                                            onChannelSelect={handleChannelSelect}
+                                        />
+                                        <ContentRow
+                                            title="Trending Now"
+                                            channels={trending}
+                                            onChannelSelect={handleChannelSelect}
+                                        />
+                                        <ContentRow
+                                            title="Recommended for You"
+                                            channels={recommendations}
+                                            onChannelSelect={handleChannelSelect}
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </div>
