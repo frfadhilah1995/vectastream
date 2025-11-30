@@ -1,3 +1,18 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    Play,
+    Pause,
+    Volume2,
+    VolumeX,
+    SkipBack,
+    SkipForward,
+    Settings,
+    PictureInPicture,
+    Maximize
+} from 'lucide-react';
+import { cn } from '../../utils/cn';
+
 /**
  * 🎮 FLOATING CONTROLS - Player controls (auto-hide)
  * 
