@@ -6,6 +6,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Player from './components/Player';
+import EPGOverlay from './components/EPGOverlay';
 import StreamDebugger from './pages/StreamDebugger';
 import ErrorAnalytics from './pages/ErrorAnalytics';
 import useStreamStatus from './hooks/useStreamStatus';
@@ -26,6 +27,95 @@ function AppContent() {
     const [playlistUrl, setPlaylistUrl] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    // Player-First Layout: Auto-hide sidebar state
+    const [sidebarVisible, setSidebarVisible] = useState(true);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+    // EPG Overlay state
+    const [epgVisible, setEpgVisible] = useState(false);
+
+    // Player-First Layout: Auto-hide sidebar on inactivity (Desktop only)
+    useEffect(() => {
+        if (isMobile || isTablet) return; // Skip auto-hide on mobile/tablet
+
+        let inactivityTimer;
+
+        const resetIdleTimer = () => {
+            if (!sidebarVisible) {
+                setSidebarVisible(true); // Show on activity
+                setSidebarCollapsed(false);
+            }
+
+            clearTimeout(inactivityTimer);
+
+            inactivityTimer = setTimeout(() => {
+                setSidebarCollapsed(true); // Collapse to icon-only after 5s inactivity
+            }, 5000); // 5 seconds
+        };
+
+        // Trigger on user activity
+        window.addEventListener('mousemove', resetIdleTimer);
+        window.addEventListener('keydown', resetIdleTimer);
+        window.addEventListener('touchstart', resetIdleTimer);
+        window.addEventListener('click', resetIdleTimer);
+
+        resetIdleTimer(); // Initial call
+
+        return () => {
+            clearTimeout(inactivityTimer);
+            window.removeEventListener('mousemove', resetIdleTimer);
+            window.removeEventListener('keydown', resetIdleTimer);
+            window.removeEventListener('touchstart', resetIdleTimer);
+            window.removeEventListener('click', resetIdleTimer);
+        };
+    }, [isMobile, isTablet, sidebarVisible]);
+
+    // Keyboard Shortcuts for Player-First UX
+    useEffect(() => {
+        const handleKeyboardShortcuts = (e) => {
+            // Ignore if user is typing in input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            switch (e.key.toLowerCase()) {
+                case 's':
+                    // Toggle sidebar visibility
+                    e.preventDefault();
+                    setSidebarCollapsed(prev => !prev);
+                    setSidebarVisible(true);
+                    break;
+                case 'f':
+                    // Fullscreen toggle
+                    if (!e.ctrlKey) {
+                        e.preventDefault();
+                        if (document.fullscreenElement) {
+                            document.exitFullscreen();
+                        } else {
+                            document.documentElement.requestFullscreen();
+                        }
+                    }
+                    break;
+                case 'escape':
+                    // Show sidebar / exit fullscreen / close EPG
+                    if (epgVisible) {
+                        setEpgVisible(false);
+                    } else if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else if (sidebarCollapsed) {
+                        setSidebarCollapsed(false);
+                    }
+                    break;
+                case 'e':
+                    // Toggle EPG overlay
+                    e.preventDefault();
+                    setEpgVisible(prev => !prev);
+                    break;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyboardShortcuts);
+        return () => window.removeEventListener('keydown', handleKeyboardShortcuts);
+    }, [sidebarCollapsed]);
 
     // Load last URL and Channel from localStorage
     useEffect(() => {
@@ -157,16 +247,23 @@ function AppContent() {
             )}
 
             <div className="flex flex-1 overflow-hidden relative">
-                {/* Sidebar Logic - Hide on tool pages */}
+                {/* Sidebar Logic - Player-First Layout with Auto-hide */}
                 {!isToolPage && (
-                    <div className={`
-                        z-40 h-full transition-transform duration-300 ease-in-out
-                        ${(isMobile || isTablet) ? 'absolute inset-y-0 left-0' : 'relative'}
-                        ${(isMobile || isTablet) && !isMobileMenuOpen ? '-translate-x-full' : 'translate-x-0'}
-                    `}>
-                        <div className="h-full flex flex-col w-80 md:w-96 lg:w-80 bg-background border-r border-glass-border shadow-2xl md:shadow-none">
+                    <aside
+                        className={`
+                            h-full flex-shrink-0 sidebar-transition
+                            ${(isMobile || isTablet) ? 'absolute inset-y-0 left-0 z-50' : 'relative z-40'}
+                            ${(isMobile || isTablet) && !isMobileMenuOpen ? '-translate-x-full' : ''}
+                            ${!(isMobile || isTablet) && sidebarCollapsed ? 'w-[var(--sidebar-width-collapsed)]' : 'w-[var(--sidebar-width-full)]'}
+                        `}
+                        style={{
+                            width: (isMobile || isTablet) ? '320px' : undefined,
+                        }}
+                    >
+                        <div className="h-full flex flex-col bg-background border-r border-glass-border shadow-2xl md:shadow-none">
                             <Header />
                             <Sidebar
+                                collapsed={!(isMobile || isTablet) && sidebarCollapsed}
                                 channels={channels}
                                 currentChannel={currentChannel}
                                 onChannelSelect={(channel) => {
@@ -187,11 +284,23 @@ function AppContent() {
                                 }}
                             />
                         </div>
-                    </div>
+                    </aside>
                 )}
 
-                {/* Main Content (Player / Analytics / Debugger) */}
-                <main className="flex-1 relative bg-black w-full h-full">
+                {/* Main Content (Player / Analytics / Debugger) - Player-First Layout */}
+                <main
+                    className={`
+                        flex-1 relative bg-black h-full
+                        player-area-transition
+                    `}
+                    style={{
+                        marginLeft: (isMobile || isTablet)
+                            ? 0
+                            : sidebarCollapsed
+                                ? 'var(--sidebar-width-collapsed)'
+                                : 'var(--sidebar-width-full)'
+                    }}
+                >
                     <Routes>
                         <Route path="/debug" element={<StreamDebugger />} />
                         <Route path="/analytics" element={<ErrorAnalytics />} />
@@ -201,6 +310,18 @@ function AppContent() {
                     </Routes>
                 </main>
             </div>
+
+            {/* EPG Overlay (Full Screen) */}
+            <EPGOverlay
+                visible={epgVisible}
+                onClose={() => setEpgVisible(false)}
+                channels={channels}
+                currentChannel={currentChannel}
+                onChannelSelect={(channel) => {
+                    setCurrentChannel(channel);
+                    addToHistory(channel);
+                }}
+            />
         </div>
     );
 }

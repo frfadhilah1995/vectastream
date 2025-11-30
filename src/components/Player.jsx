@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
-import { Tv, AlertTriangle, Loader2, Activity, CheckCircle, XCircle } from 'lucide-react';
+import { Tv, AlertTriangle, Loader2, Activity, CheckCircle, XCircle, PictureInPicture } from 'lucide-react';
 import { healStream } from '../utils/smartHealer';
 import FetchLoader from '../utils/fetchLoader';
 import backgroundPlayback from '../utils/backgroundPlayback';
@@ -12,6 +12,75 @@ const Player = ({ channel }) => {
     const [healingProgress, setHealingProgress] = useState(null);
     const [healingResult, setHealingResult] = useState(null);
     const hlsRef = useRef(null);
+
+    // Player-First: Auto-hide controls
+    const [controlsVisible, setControlsVisible] = useState(true);
+    const controlsTimeoutRef = useRef(null);
+
+    // PIP Support
+    const [pipSupported, setPipSupported] = useState(false);
+    const [isPipActive, setIsPipActive] = useState(false);
+
+    // Check PIP support on mount
+    useEffect(() => {
+        setPipSupported(document.pictureInPictureEnabled);
+
+        // Listen for PIP state changes
+        const handlePipChange = () => {
+            setIsPipActive(document.pictureInPictureElement === videoRef.current);
+        };
+
+        videoRef.current?.addEventListener('enterpictureinpicture', handlePipChange);
+        videoRef.current?.addEventListener('leavepictureinpicture', handlePipChange);
+
+        return () => {
+            videoRef.current?.removeEventListener('enterpictureinpicture', handlePipChange);
+            videoRef.current?.removeEventListener('leavepictureinpicture', handlePipChange);
+        };
+    }, []);
+
+    // Auto-hide controls after 3s inactivity
+    const showControls = () => {
+        setControlsVisible(true);
+        clearTimeout(controlsTimeoutRef.current);
+
+        controlsTimeoutRef.current = setTimeout(() => {
+            setControlsVisible(false);
+        }, 3000); // Hide after 3s
+    };
+
+    useEffect(() => {
+        const handleActivity = () => showControls();
+
+        const playerElement = videoRef.current?.parentElement;
+        if (playerElement) {
+            playerElement.addEventListener('mousemove', handleActivity);
+            playerElement.addEventListener('touchstart', handleActivity);
+            playerElement.addEventListener('click', handleActivity);
+        }
+
+        return () => {
+            if (playerElement) {
+                playerElement.removeEventListener('mousemove', handleActivity);
+                playerElement.removeEventListener('touchstart', handleActivity);
+                playerElement.removeEventListener('click', handleActivity);
+            }
+            clearTimeout(controlsTimeoutRef.current);
+        };
+    }, []);
+
+    // PIP toggle function
+    const togglePIP = async () => {
+        try {
+            if (document.pictureInPictureElement) {
+                await document.exitPictureInPicture();
+            } else {
+                await videoRef.current.requestPictureInPicture();
+            }
+        } catch (error) {
+            console.warn('[Player] PIP not available:', error);
+        }
+    };
 
     // 🔧 FIX: Track player active state to prevent background interference
     const isPlayerActiveRef = useRef(true);
@@ -310,12 +379,65 @@ const Player = ({ channel }) => {
 
             <video
                 ref={videoRef}
-                controls
+                controls={false}
                 className="w-full h-full max-h-[100dvh] object-contain focus:outline-none"
                 poster={channel.logo || ""}
             />
 
-            <div className="absolute top-0 left-0 w-full p-6 bg-gradient-to-b from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            {/* Custom Controls Overlay (Auto-hide after 3s) */}
+            <div className={`
+                absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent
+                transition-all duration-300
+                ${controlsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}
+            `}>
+                <div className="flex items-center gap-3 mb-2">
+                    {/* Native Controls Toggle */}
+                    <button
+                        onClick={() => {
+                            const video = videoRef.current;
+                            video.controls = !video.controls;
+                        }}
+                        className="px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-xs font-medium transition-all"
+                        title="Toggle controls"
+                    >
+                        Controls
+                    </button>
+
+                    {/* PIP Button */}
+                    {pipSupported && (
+                        <button
+                            onClick={togglePIP}
+                            className={`
+                                px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2
+                                ${isPipActive
+                                    ? 'bg-accent text-white'
+                                    : 'bg-white/10 hover:bg-white/20 text-white'
+                                }
+                            `}
+                            title="Picture in Picture"
+                        >
+                            <PictureInPicture size={16} />
+                            PIP
+                        </button>
+                    )}
+
+                    <div className="flex-1"></div>
+
+                    {/* Healing Badge */}
+                    {healingResult?.workingStrategy && (
+                        <span className="px-2 py-1 bg-green-500/20 text-green-400 text-[10px] font-mono rounded border border-green-500/30">
+                            ✓ {healingResult.workingStrategy}
+                        </span>
+                    )}
+                </div>
+            </div>
+
+            {/* Channel Info Overlay (Auto-hide) */}
+            <div className={`
+                absolute top-0 left-0 w-full p-6 bg-gradient-to-b from-black/80 to-transparent
+                transition-all duration-300
+                ${controlsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}
+            `}>
                 <h2 className="text-2xl font-bold text-white drop-shadow-md">{channel.name}</h2>
                 <p className="text-accent text-sm font-medium">{channel.group}</p>
                 {healingResult?.workingStrategy && (
