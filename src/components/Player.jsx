@@ -13,75 +13,6 @@ const Player = ({ channel }) => {
     const [healingResult, setHealingResult] = useState(null);
     const hlsRef = useRef(null);
 
-    // Player-First: Auto-hide controls
-    const [controlsVisible, setControlsVisible] = useState(true);
-    const controlsTimeoutRef = useRef(null);
-
-    // PIP Support
-    const [pipSupported, setPipSupported] = useState(false);
-    const [isPipActive, setIsPipActive] = useState(false);
-
-    // Check PIP support on mount
-    useEffect(() => {
-        setPipSupported(document.pictureInPictureEnabled);
-
-        // Listen for PIP state changes
-        const handlePipChange = () => {
-            setIsPipActive(document.pictureInPictureElement === videoRef.current);
-        };
-
-        videoRef.current?.addEventListener('enterpictureinpicture', handlePipChange);
-        videoRef.current?.addEventListener('leavepictureinpicture', handlePipChange);
-
-        return () => {
-            videoRef.current?.removeEventListener('enterpictureinpicture', handlePipChange);
-            videoRef.current?.removeEventListener('leavepictureinpicture', handlePipChange);
-        };
-    }, []);
-
-    // Auto-hide controls after 3s inactivity
-    const showControls = () => {
-        setControlsVisible(true);
-        clearTimeout(controlsTimeoutRef.current);
-
-        controlsTimeoutRef.current = setTimeout(() => {
-            setControlsVisible(false);
-        }, 3000); // Hide after 3s
-    };
-
-    useEffect(() => {
-        const handleActivity = () => showControls();
-
-        const playerElement = videoRef.current?.parentElement;
-        if (playerElement) {
-            playerElement.addEventListener('mousemove', handleActivity);
-            playerElement.addEventListener('touchstart', handleActivity);
-            playerElement.addEventListener('click', handleActivity);
-        }
-
-        return () => {
-            if (playerElement) {
-                playerElement.removeEventListener('mousemove', handleActivity);
-                playerElement.removeEventListener('touchstart', handleActivity);
-                playerElement.removeEventListener('click', handleActivity);
-            }
-            clearTimeout(controlsTimeoutRef.current);
-        };
-    }, []);
-
-    // PIP toggle function
-    const togglePIP = async () => {
-        try {
-            if (document.pictureInPictureElement) {
-                await document.exitPictureInPicture();
-            } else {
-                await videoRef.current.requestPictureInPicture();
-            }
-        } catch (error) {
-            console.warn('[Player] PIP not available:', error);
-        }
-    };
-
     // 🔧 FIX: Track player active state to prevent background interference
     const isPlayerActiveRef = useRef(true);
     const healingAbortControllerRef = useRef(null);
@@ -384,20 +315,7 @@ const Player = ({ channel }) => {
                 poster={channel.logo || ""}
             />
 
-            {/* Channel Info Overlay (Auto-hide) */}
-            <div className={`
-                absolute top-0 left-0 w-full p-6 bg-gradient-to-b from-black/80 to-transparent
-                transition-all duration-300
-                ${controlsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}
-            `}>
-                <h2 className="text-2xl font-bold text-white drop-shadow-md">{channel.name}</h2>
-                <p className="text-accent text-sm font-medium">{channel.group}</p>
-                {healingResult?.workingStrategy && (
-                    <p className="text-xs text-green-400 mt-1">
-                        ✓ Auto-healed via {healingResult.workingStrategy}
-                    </p>
-                )}
-            </div>
+
         </div>
     );
 };

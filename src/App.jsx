@@ -13,9 +13,7 @@ import {
     CommandPalette,
     BottomDrawer,
     FloatingHeader,
-    FloatingControls,
     useGestures,
-    useVoiceControl,
 } from './components/shell';
 
 import useStreamStatus from './hooks/useStreamStatus';
@@ -45,12 +43,6 @@ function AppContent() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [epgVisible, setEpgVisible] = useState(false);
 
-    // Player State
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [volume, setVolume] = useState(1);
-    const [isMuted, setIsMuted] = useState(false);
-    const [quality, setQuality] = useState('Auto');
-
     // Content Discovery (Phase 3)
     const { continueWatching, trending, recommendations } = useContentDiscovery(channels);
 
@@ -63,24 +55,7 @@ function AppContent() {
         },
         onSwipeLeft: () => handleNextChannel(),
         onSwipeRight: () => handlePreviousChannel(),
-        onDoubleTap: () => handlePlayPause(),
         enabled: location.pathname === '/', // Only on home page
-    });
-
-    // Voice Control Integration
-    const voiceControl = useVoiceControl({
-        channels,
-        onChannelSelect: handleChannelSelect,
-        onPlayPause: handlePlayPause,
-        onNext: handleNextChannel,
-        onPrevious: handlePreviousChannel,
-        onVolumeChange: handleVolumeChange,
-        onMuteToggle: handleMuteToggle,
-        onFullscreen: handleFullscreen,
-        onSearch: (query) => {
-            setCommandPaletteOpen(true);
-        },
-        enabled: location.pathname === '/',
     });
 
     // Check if we're on a tool page
@@ -189,52 +164,6 @@ function AppContent() {
         handleChannelSelect(channels[prevIndex]);
     }
 
-    // Player Controls
-    function handlePlayPause(shouldPlay) {
-        const newState = shouldPlay !== undefined ? shouldPlay : !isPlaying;
-        setIsPlaying(newState);
-    }
-
-    function handleVolumeChange(newVolume, mode) {
-        if (mode === 'increase') {
-            setVolume(prev => Math.min(1, prev + 0.1));
-        } else if (mode === 'decrease') {
-            setVolume(prev => Math.max(0, prev - 0.1));
-        } else {
-            setVolume(newVolume);
-        }
-        setIsMuted(false);
-    }
-
-    function handleMuteToggle(shouldMute) {
-        const newState = shouldMute !== undefined ? shouldMute : !isMuted;
-        setIsMuted(newState);
-    }
-
-    function handleQualityChange(newQuality) {
-        setQuality(newQuality);
-        toast.info(`Quality: ${newQuality}`);
-    }
-
-    function handleFullscreen() {
-        if (document.fullscreenElement) {
-            document.exitFullscreen();
-        } else {
-            document.documentElement.requestFullscreen();
-        }
-    }
-
-    function handlePip() {
-        const videoElement = document.querySelector('video');
-        if (videoElement) {
-            if (document.pictureInPictureElement) {
-                document.exitPictureInPicture();
-            } else {
-                videoElement.requestPictureInPicture();
-            }
-        }
-    }
-
     // Channel Refresh
     async function handleRefreshChannel(channel) {
         if (!channel) return;
@@ -281,24 +210,6 @@ function AppContent() {
                         onChannelSelect={handleChannelSelect}
                     />
 
-                    {/* Floating Controls (Auto-hide) */}
-                    {currentChannel && (
-                        <FloatingControls
-                            isPlaying={isPlaying}
-                            onPlayPause={() => handlePlayPause()}
-                            volume={volume}
-                            onVolumeChange={handleVolumeChange}
-                            isMuted={isMuted}
-                            onMuteToggle={() => handleMuteToggle()}
-                            onFullscreen={handleFullscreen}
-                            onPip={handlePip}
-                            onPrevious={channels.length > 0 ? handlePreviousChannel : null}
-                            onNext={channels.length > 0 ? handleNextChannel : null}
-                            onQualityChange={handleQualityChange}
-                            currentQuality={quality}
-                        />
-                    )}
-
                     {/* EPG Overlay */}
                     <EPGOverlay
                         visible={epgVisible}
@@ -321,10 +232,6 @@ function AppContent() {
                                 <div className="h-full flex items-center justify-center">
                                     <Player
                                         channel={currentChannel}
-                                        isPlaying={isPlaying}
-                                        onPlayingChange={setIsPlaying}
-                                        volume={volume}
-                                        isMuted={isMuted}
                                     />
                                 </div>
                             ) : (

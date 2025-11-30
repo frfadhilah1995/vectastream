@@ -1,4 +1,4 @@
-import Parser from 'm3u8-parser';
+import { Parser } from 'm3u8-parser';
 
 /**
  * Parse M3U playlist using m3u8-parser (60% faster than regex)
