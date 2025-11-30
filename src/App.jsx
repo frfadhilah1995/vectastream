@@ -156,6 +156,15 @@ function AppContent() {
         }
     }, [playlistUrl, currentChannel]);
 
+    // 🔥 AUTO-LOAD: Load playlist on first mount
+    useEffect(() => {
+        // Only auto-load if we have a URL but no channels yet
+        if (playlistUrl && channels.length === 0 && !isLoading) {
+            console.log('[App V2] 🚀 Auto-loading default playlist on mount');
+            handleLoadPlaylist();
+        }
+    }, []); // Run once on mount
+
     // Channel Selection
     function handleChannelSelect(channel) {
         if (!channel) return;
