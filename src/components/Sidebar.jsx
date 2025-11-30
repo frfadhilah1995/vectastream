@@ -1,13 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Search, Satellite, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X, Bookmark, Trash2, BarChart3, Tv } from 'lucide-react';
+import { Search, List, Loader2, ChevronLeft, ChevronRight, Globe, Link, X, Bookmark, Trash2, BarChart3, Tv } from 'lucide-react';
 import ChannelItem from './ChannelItem';
 import { statusRefreshService } from '../utils/statusRefresh.js';
 import { getSavedUrls, savePlaylistUrl, deletePlaylistUrl, updateChannelCount } from '../utils/savedPlaylists.js';
 
 const CHANNELS_PER_PAGE = 50;
 
-// IPTV.org repository URLs - Validated from official repo
+// IPTV.org repository URLs
 const DEFAULT_PLAYLISTS = {
     all: 'https://iptv-org.github.io/iptv/index.m3u',
     categories: 'https://iptv-org.github.io/iptv/index.category.m3u',
@@ -24,11 +24,11 @@ const Sidebar = ({
     playlistUrl,
     setPlaylistUrl,
     getChannelStatus,
-    checkStreamStatus, // Received from App
+    checkStreamStatus,
     onRefreshChannel,
     onClearChannels,
-    collapsed = false, // Collapsed mode prop
-    onToggleCollapsed // NEW: Callback to expand/collapse sidebar
+    collapsed = false,
+    onToggleCollapsed
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -36,60 +36,39 @@ const Sidebar = ({
     const [currentPage, setCurrentPage] = useState(1);
     const [savedPlaylists, setSavedPlaylists] = useState([]);
     const [showSavedList, setShowSavedList] = useState(false);
-
-    // Initialize state from localStorage
     const [sourceMode, setSourceMode] = useState(() => localStorage.getItem('vectastream_source_mode') || 'default');
     const [selectedDefault, setSelectedDefault] = useState(() => localStorage.getItem('vectastream_selected_default') || 'all');
 
-    // 🚀 NEW: Debounced search to prevent UI freeze with 9000+ channels
+    // Debounced search
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearchTerm(searchTerm);
-        }, 300); // 300ms delay
-
+        const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 300);
         return () => clearTimeout(timer);
     }, [searchTerm]);
 
-    // Load saved playlists on mount
-    useEffect(() => {
-        setSavedPlaylists(getSavedUrls());
-    }, []);
+    // Load saved playlists
+    useEffect(() => setSavedPlaylists(getSavedUrls()), []);
 
-    // Persist state changes
-    useEffect(() => {
-        localStorage.setItem('vectastream_source_mode', sourceMode);
-    }, [sourceMode]);
+    // Persist state
+    useEffect(() => localStorage.setItem('vectastream_source_mode', sourceMode), [sourceMode]);
+    useEffect(() => localStorage.setItem('vectastream_selected_default', selectedDefault), [selectedDefault]);
 
-    useEffect(() => {
-        localStorage.setItem('vectastream_selected_default', selectedDefault);
-    }, [selectedDefault]);
-
-    // Auto-load default playlist on mount if in default mode
+    // Auto-load default playlist
     useEffect(() => {
         if (sourceMode === 'default') {
-            // Small delay to ensure App is ready
-            const timer = setTimeout(() => {
-                onLoadPlaylist(DEFAULT_PLAYLISTS[selectedDefault]);
-            }, 100);
+            const timer = setTimeout(() => onLoadPlaylist(DEFAULT_PLAYLISTS[selectedDefault]), 100);
             return () => clearTimeout(timer);
         }
     }, [sourceMode, selectedDefault]);
 
-    // BACKGROUND REFRESH: Start service when channels load
+    // Background refresh
     const [, setRefreshTrigger] = useState(0);
-
     useEffect(() => {
         if (channels.length > 0) {
-            // Start background refresh with callback to trigger re-render
             statusRefreshService.start(channels, (url, newStatus) => {
                 console.log(`[Sidebar] Status updated: ${url} → ${newStatus}`);
-                // Force re-render to update badges
                 setRefreshTrigger(prev => prev + 1);
             });
-
-            return () => {
-                statusRefreshService.stop();
-            };
+            return () => statusRefreshService.stop();
         }
     }, [channels]);
 
@@ -99,26 +78,22 @@ const Sidebar = ({
     }, [channels]);
 
     const filteredChannels = useMemo(() => {
-        const filtered = channels.filter(c => {
+        return channels.filter(c => {
             const matchesSearch = c.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
                 c.group.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
             const matchesCategory = selectedCategory === 'All' || c.group === selectedCategory;
             return matchesSearch && matchesCategory;
         });
-        return filtered;
     }, [channels, debouncedSearchTerm, selectedCategory]);
 
-    // Reset to first page when filters change
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [debouncedSearchTerm, selectedCategory]);
+    useEffect(() => setCurrentPage(1), [debouncedSearchTerm, selectedCategory]);
 
     const totalPages = Math.ceil(filteredChannels.length / CHANNELS_PER_PAGE);
-    const startIndex = (currentPage - 1) * CHANNELS_PER_PAGE;
-    const endIndex = startIndex + CHANNELS_PER_PAGE;
-    const paginatedChannels = filteredChannels.slice(startIndex, endIndex);
+    const paginatedChannels = filteredChannels.slice(
+        (currentPage - 1) * CHANNELS_PER_PAGE,
+        currentPage * CHANNELS_PER_PAGE
+    );
 
-    // Saved Playlist Handlers
     const handleLoadSaved = (url) => {
         setPlaylistUrl(url);
         onLoadPlaylist(url);
@@ -131,7 +106,6 @@ const Sidebar = ({
         setSavedPlaylists(getSavedUrls());
     };
 
-    // Auto-save after successful load
     useEffect(() => {
         if (channels.length > 0 && playlistUrl && sourceMode === 'custom') {
             savePlaylistUrl(playlistUrl, channels.length);
@@ -140,107 +114,110 @@ const Sidebar = ({
         }
     }, [channels.length, playlistUrl, sourceMode]);
 
-    // COLLAPSED MODE: Icon-only sidebar (60px width)
+    // ==========================================
+    // COLLAPSED MODE - Refined UI/UX
+    // ==========================================
     if (collapsed) {
         return (
-            <aside className="w-full h-full flex flex-col items-center gap-4 py-4 bg-glass-bg backdrop-blur-xl overflow-hidden">
-                {/* Collapsed Header Icon */}
-                <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
-                    <Tv size={24} className="text-accent" />
+            <aside className="w-16 h-full flex flex-col items-center gap-3 py-5 bg-glass-bg backdrop-blur-xl overflow-hidden">
+                {/* Logo - Refined with gradient */}
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/20 flex items-center justify-center shadow-lg shadow-accent/10">
+                    <Tv size={26} className="text-accent drop-shadow-sm" />
                 </div>
 
-                {/* Icon Buttons with Tooltips */}
-                <div className="flex-1 flex flex-col gap-3 items-center">
-                    {/* Live TV / Channel Count */}
+                {/* Divider */}
+                <div className="w-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+                {/* Main Icons */}
+                <div className="flex-1 flex flex-col gap-2 items-center">
+                    {/* Channels */}
                     {channels.length > 0 && (
                         <div className="group relative">
                             <button
                                 onClick={() => onToggleCollapsed?.(false)}
-                                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all relative cursor-pointer"
-                                title="Click to expand channels"
+                                className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/15 flex items-center justify-center transition-all relative cursor-pointer hover:scale-105"
                                 aria-label="Expand sidebar to view all channels"
                             >
-                                <List size={20} className="text-gray-400" />
-                                {/* Removed duplicate condition check */}
-                                <span className="absolute -top-1 -right-1 bg-accent text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                <List size={24} className="text-gray-300" />
+                                <span className="absolute -top-1 -right-1 bg-accent text-black text-[9px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-accent/30">
                                     {channels.length > 99 ? '99+' : channels.length}
                                 </span>
                             </button>
-                            {/* Tooltip */}
-                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300">
-                                {channels.length} Channels • Click to expand
+                            <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900/95 backdrop-blur-sm text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-all duration-200 delay-300 shadow-xl border border-white/10">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-accent font-bold">{channels.length}</span>
+                                    <span className="text-gray-300">Channels</span>
+                                </div>
+                                <div className="text-[10px] text-gray-500 mt-0.5">Click to expand</div>
                             </div>
                         </div>
                     )}
 
-                    {/* Now Playing Indicator */}
+                    {/* Now Playing */}
                     {currentChannel && (
                         <div className="group relative">
                             <button
                                 onClick={() => onToggleCollapsed?.(false)}
-                                className="w-10 h-10 rounded-lg bg-green-500/20 border border-green-500/30 flex items-center justify-center relative cursor-pointer hover:bg-green-500/30 transition-all"
-                                title="Click to view in channel list"
+                                className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/30 flex items-center justify-center relative cursor-pointer hover:from-green-500/30 hover:to-green-600/20 transition-all hover:scale-105 shadow-lg shadow-green-500/10"
                                 aria-label={`Now playing: ${currentChannel.name}. Click to expand.`}
                             >
                                 {currentChannel.logo ? (
-                                    <img src={currentChannel.logo} alt="" className="w-6 h-6 object-cover rounded" />
+                                    <img src={currentChannel.logo} alt="" className="w-7 h-7 object-cover rounded-lg" />
                                 ) : (
-                                    <Tv size={18} className="text-green-500" />
+                                    <Tv size={22} className="text-green-400" />
                                 )}
-                                <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50">
+                                    <div className="absolute inset-0 bg-green-400 rounded-full animate-ping"></div>
+                                </div>
                             </button>
-                            {/* Tooltip */}
-                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300 max-w-[200px]">
-                                <div className="font-medium">Now Playing • Click to expand</div>
-                                <div className="text-gray-400 truncate">{currentChannel.name}</div>
+                            <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900/95 backdrop-blur-sm text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none z-[60] transition-all duration-200 delay-300 max-w-[220px] shadow-xl border border-white/10">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                                    <span className="font-semibold text-green-400">Now Playing</span>
+                                </div>
+                                <div className="text-gray-200 truncate font-medium">{currentChannel.name}</div>
+                                <div className="text-[10px] text-gray-500 mt-1">Click to expand</div>
                             </div>
                         </div>
                     )}
 
-                    {/* Search Icon */}
+                    {/* Search */}
                     {channels.length > 0 && (
                         <div className="group relative">
                             <button
                                 onClick={() => onToggleCollapsed?.(false)}
-                                className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all cursor-pointer"
-                                title="Click to search channels"
+                                className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/15 flex items-center justify-center transition-all cursor-pointer hover:scale-105"
                                 aria-label="Expand sidebar and search channels"
                             >
-                                <Search size={20} className="text-gray-400" />
+                                <Search size={24} className="text-gray-300" />
                             </button>
-                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300">
-                                Search • Click to expand
+                            <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900/95 backdrop-blur-sm text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-all duration-200 delay-300 shadow-xl border border-white/10">
+                                Search Channels
+                                <div className="text-[10px] text-gray-500 mt-0.5">Click to expand</div>
                             </div>
                         </div>
                     )}
                 </div>
 
-                {/* Bottom Icons */}
+                {/* Divider */}
+                <div className="w-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+                {/* Footer Icons */}
                 <div className="flex flex-col gap-2 items-center">
-                    {/* Analytics */}
-                    <RouterLink
-                        to="/analytics"
-                        className="group relative"
-                        aria-label="View analytics dashboard"
-                    >
-                        <div className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all">
-                            <BarChart3 size={20} className="text-gray-400" />
+                    <RouterLink to="/analytics" className="group relative" aria-label="View analytics dashboard">
+                        <div className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all hover:scale-105">
+                            <BarChart3 size={22} className="text-gray-300" />
                         </div>
-                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300">
+                        <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-900/95 backdrop-blur-sm text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-all duration-200 delay-300 shadow-xl border border-white/10">
                             Analytics
                         </div>
                     </RouterLink>
 
-                    {/* Debugger */}
-                    <RouterLink
-                        to="/debug"
-                        className="group relative"
-                        aria-label="Open stream debugger"
-                    >
-                        <div className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all">
-                            <Globe size={20} className="text-gray-400" />
+                    <RouterLink to="/debug" className="group relative" aria-label="Open stream debugger">
+                        <div className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all hover:scale-105">
+                            <Globe size={22} className="text-gray-300" />
                         </div>
-                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-opacity delay-300">
+                        <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-900/95 backdrop-blur-sm text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[60] transition-all duration-200 delay-300 shadow-xl border border-white/10">
                             Debug
                         </div>
                     </RouterLink>
@@ -249,10 +226,12 @@ const Sidebar = ({
         );
     }
 
-    // EXPANDED MODE: Full sidebar (280px width)
+    // ==========================================
+    // EXPANDED MODE - Full sidebar
+    // ==========================================
     return (
         <aside className="w-full h-full flex flex-col overflow-hidden bg-glass-bg backdrop-blur-xl">
-            {/* 🆕 Now Playing Card */}
+            {/* Now Playing Card */}
             {currentChannel && (
                 <div className="p-4 pb-0">
                     <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 flex items-center gap-3 shadow-[0_0_15px_rgba(0,242,255,0.1)]">
@@ -276,21 +255,21 @@ const Sidebar = ({
             <div className="p-4 pb-0">
                 <div className="flex gap-2 mb-3">
                     <button
-                        onClick={() => {
-                            setSourceMode('default');
-                            // onClearChannels(); // REMOVED: Don't clear player when switching tabs
-                        }}
-                        className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'default' ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
+                        onClick={() => setSourceMode('default')}
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'default'
+                                ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]'
+                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                            }`}
                     >
                         <Globe size={14} />
                         Default
                     </button>
                     <button
-                        onClick={() => {
-                            setSourceMode('custom');
-                            // onClearChannels(); // REMOVED: Don't clear player when switching tabs
-                        }}
-                        className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'custom' ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
+                        onClick={() => setSourceMode('custom')}
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 ${sourceMode === 'custom'
+                                ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]'
+                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                            }`}
                     >
                         <Link size={14} />
                         Custom
@@ -346,7 +325,7 @@ const Sidebar = ({
                     {sourceMode === 'default' ? 'Load Default Channels' : 'Load Playlist'}
                 </button>
 
-                {/* Saved Playlists Section (Custom mode only) */}
+                {/* Saved Playlists */}
                 {sourceMode === 'custom' && savedPlaylists.length > 0 && (
                     <div className="mt-3 border-t border-glass-border/50 pt-3">
                         <button
@@ -357,27 +336,21 @@ const Sidebar = ({
                                 <Bookmark size={12} />
                                 Recent Playlists ({savedPlaylists.length})
                             </span>
-                            <span className={`transform transition-transform ${showSavedList ? 'rotate-180' : ''}`}>
-                                ▼
-                            </span>
+                            <span className={`transform transition-transform ${showSavedList ? 'rotate-180' : ''}`}>▼</span>
                         </button>
 
                         {showSavedList && (
                             <div className="space-y-1 max-h-48 overflow-y-auto custom-scrollbar">
-                                {savedPlaylists.map((item, idx) => (
+                                {savedPlaylists.map((item) => (
                                     <div
                                         key={item.url}
                                         onClick={() => handleLoadSaved(item.url)}
                                         className="group flex items-center gap-2 p-2 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer transition-all"
                                     >
                                         <div className="flex-1 min-w-0">
-                                            <div className="text-xs font-medium text-white truncate">
-                                                {item.name}
-                                            </div>
+                                            <div className="text-xs font-medium text-white truncate">{item.name}</div>
                                             {item.channelCount && (
-                                                <div className="text-[10px] text-gray-500">
-                                                    {item.channelCount} channels
-                                                </div>
+                                                <div className="text-[10px] text-gray-500">{item.channelCount} channels</div>
                                             )}
                                         </div>
                                         <button
@@ -396,7 +369,9 @@ const Sidebar = ({
 
                 {sourceMode === 'default' && (
                     <p className="text-[10px] text-gray-500 text-center">
-                        <a href="https://github.com/iptv-org/iptv" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Powered by IPTV.org</a> • Free & Open Source
+                        <a href="https://github.com/iptv-org/iptv" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                            Powered by IPTV.org
+                        </a> • Free & Open Source
                     </p>
                 )}
             </div>
@@ -409,7 +384,10 @@ const Sidebar = ({
                             <button
                                 key={category}
                                 onClick={() => setSelectedCategory(category)}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex-shrink-0 ${selectedCategory === category ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex-shrink-0 ${selectedCategory === category
+                                        ? 'bg-accent text-white shadow-[0_0_10px_rgba(0,242,255,0.3)]'
+                                        : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                                    }`}
                             >
                                 {category}
                                 {category !== 'All' && (
@@ -423,123 +401,97 @@ const Sidebar = ({
                 </div>
             )}
 
-            {/* Search */}
+            {/* Search Bar */}
             {channels.length > 0 && (
-                <div className="px-4 py-3">
+                <div className="p-4 border-b border-glass-border">
                     <div className="relative">
-                        <Search className="absolute left-3 top-2.5 text-gray-500" size={16} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
                         <input
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search channels..."
-                            className="w-full bg-white/5 border border-transparent rounded-lg py-2 pl-9 pr-3 text-sm text-white focus:bg-black/40 focus:border-glass-border outline-none transition-all"
-                            aria-label="Search channels"
+                            className="w-full bg-black/40 border border-glass-border rounded-lg py-2 pl-10 pr-3 text-sm text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all placeholder:text-gray-600"
                         />
-                        {searchTerm && selectedCategory !== 'All' && (
-                            <span className="text-accent font-normal normal-case absolute right-3 top-1/2 -translate-y-1/2 text-xs">in {selectedCategory}</span>
-                        )}
                     </div>
-
-                    {/* Search Result Counter */}
-                    {searchTerm && (
-                        <div className="text-xs text-gray-400 px-1 mt-2" role="status" aria-live="polite">
-                            Found {filteredChannels.length} {filteredChannels.length === 1 ? 'channel' : 'channels'}
-                        </div>
-                    )}
                 </div>
             )}
 
             {/* Channel List */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="flex-1 overflow-y-auto p-2 custom-scrollbar">
-                    {channels.length === 0 ? (
-                        <div className="h-full flex flex-col items-center justify-center text-gray-500 p-6 text-center">
-                            <Satellite size={48} className="mb-4 opacity-20" />
-                            <p className="text-sm">Choose a source above to start watching</p>
-                        </div>
-                    ) : (
-                        <>
-                            <div className="px-2 pb-2 text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center justify-between">
-                                <span>{filteredChannels.length} Channels</span>
-                                {selectedCategory !== 'All' && (
-                                    <span className="text-accent font-normal normal-case">in {selectedCategory}</span>
-                                )}
-                            </div>
-                            {paginatedChannels.map((channel, idx) => (
-                                <ChannelItem
-                                    key={`${channel.url}-${startIndex + idx}`}
-                                    channel={channel}
-                                    isActive={currentChannel === channel}
-                                    onClick={() => onChannelSelect(channel)}
-                                    status={getChannelStatus ? getChannelStatus(`${channel.url}-${channels.indexOf(channel)}`) : null}
-                                    onRefresh={onRefreshChannel}
-                                />
-                            ))}
-                            {filteredChannels.length === 0 && (
-                                <div className="text-center py-10 text-gray-500 text-sm">
-                                    {searchTerm ? `No channels match "${searchTerm}"` : `No channels in "${selectedCategory}"`}
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                    <div className="px-4 py-2.5 border-t border-glass-border bg-black/20">
-                        <div className="flex items-center justify-between text-xs">
-                            <button
-                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                disabled={currentPage === 1}
-                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
-                            >
-                                <ChevronLeft size={14} />
-                                Prev
-                            </button>
-
-                            <div className="flex flex-col items-center gap-0.5">
-                                <span className="text-gray-400">
-                                    Page <span className="text-accent font-medium">{currentPage}</span> / {totalPages}
-                                </span>
-                                <span className="text-gray-600 text-[10px]">
-                                    {startIndex + 1}-{Math.min(endIndex, filteredChannels.length)} of {filteredChannels.length}
-                                </span>
-                            </div>
-
-                            <button
-                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                disabled={currentPage === totalPages}
-                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-white"
-                            >
-                                Next
-                                <ChevronRight size={14} />
-                            </button>
-                        </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+                {paginatedChannels.length > 0 ? (
+                    <div className="p-3 space-y-1">
+                        {paginatedChannels.map((channel) => (
+                            <ChannelItem
+                                key={channel.url}
+                                channel={channel}
+                                isPlaying={currentChannel?.url === channel.url}
+                                status={getChannelStatus(channel.url)}
+                                onClick={() => onChannelSelect(channel)}
+                                onRefresh={() => {
+                                    onRefreshChannel(channel);
+                                    checkStreamStatus(channel.url);
+                                }}
+                            />
+                        ))}
                     </div>
-                )}
+                ) : channels.length > 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-gray-500 p-8">
+                        <Search size={48} className="mb-4 opacity-50" />
+                        <p className="text-sm">No channels found</p>
+                        <p className="text-xs mt-1">Try a different search term</p>
+                    </div>
+                ) : null}
             </div>
 
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="p-3 border-t border-glass-border bg-black/20">
+                    <div className="flex items-center justify-between text-xs">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        >
+                            <ChevronLeft size={14} />
+                            Prev
+                        </button>
+
+                        <span className="text-gray-400 font-medium">
+                            Page {currentPage} / {totalPages}
+                        </span>
+
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        >
+                            Next
+                            <ChevronRight size={14} />
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Footer */}
-            <div className="p-4 border-t border-glass-border text-center text-xs text-gray-600 bg-black/20">
-                <div className="flex justify-center gap-4 mb-2">
-                    <RouterLink to="/debug" className="flex items-center gap-2 text-accent hover:text-white transition-colors">
-                        <Globe size={12} />
-                        <span>Debugger</span>
-                    </RouterLink>
-                    <RouterLink to="/analytics" className="flex items-center gap-2 text-accent hover:text-white transition-colors">
+            <div className="p-3 border-t border-glass-border bg-black/10">
+                <div className="flex items-center justify-between text-[10px] text-gray-500">
+                    <RouterLink to="/analytics" className="hover:text-accent transition-all flex items-center gap-1">
                         <BarChart3 size={12} />
-                        <span>Analytics</span>
+                        Debugger
+                    </RouterLink>
+                    <span className="text-center">
+                        <a href="https://rmdtech.id" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-all">
+                            © 2025 VectaStream
+                        </a>
+                        <br />
+                        Developed by RMD TECH
+                    </span>
+                    <RouterLink to="/debug" className="hover:text-accent transition-all flex items-center gap-1">
+                        <Globe size={12} />
+                        Analytics
                     </RouterLink>
                 </div>
-                <button
-                    onClick={() => import('../utils/consoleCollector').then(m => m.consoleCollector.downloadLogs())}
-                    className="mb-2 text-[10px] text-gray-500 hover:text-accent underline decoration-dotted"
-                >
-                    Download Debug Logs
-                </button>
-                <p>&copy; {new Date().getFullYear()} VectaStream</p>
-                <p className="mt-1 font-medium text-gray-500">Developed by RMD TECH</p>
             </div>
         </aside>
     );
