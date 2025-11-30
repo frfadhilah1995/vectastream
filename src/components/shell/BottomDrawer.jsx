@@ -300,7 +300,7 @@ const BottomDrawer = ({
         );
     }
 
-    // Landscape/Desktop: Use Centered Modal
+    // Landscape/Desktop: Use Centered Modal with Drag-to-Dismiss
     return (
         <div className="fixed inset-0 z-[var(--z-drawer)] flex items-center justify-center p-4 sm:p-6">
             <motion.div
@@ -311,12 +311,24 @@ const BottomDrawer = ({
                 onClick={() => onOpenChange(false)}
             />
             <motion.div
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={{ top: 0, bottom: 0.2 }}
+                onDragEnd={(e, { offset, velocity }) => {
+                    if (offset.y > 100 || velocity.y > 500) {
+                        onOpenChange(false);
+                    }
+                }}
                 initial={{ scale: 0.95, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                className="relative z-10 w-full max-w-5xl"
+                className="relative z-10 w-[95vw] sm:w-[85vw] md:w-full max-w-5xl"
                 onClick={(e) => e.stopPropagation()}
             >
+                {/* Visual Drag Handle for Modal */}
+                <div className="absolute -top-5 left-0 right-0 flex justify-center sm:hidden">
+                    <div className="w-12 h-1.5 bg-white/20 rounded-full" />
+                </div>
                 {content}
             </motion.div>
         </div>
