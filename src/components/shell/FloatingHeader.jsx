@@ -61,12 +61,12 @@ const FloatingHeader = ({
                     )}
                 >
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex items-center justify-between h-16">
+                        <div className="flex items-center justify-between h-14">
                             {/* Left: Logo */}
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-2 cursor-pointer group">
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500/30 to-accent-600/10 border border-accent-500/20 flex items-center justify-center shadow-lg shadow-accent-500/10 group-hover:shadow-accent-500/30 transition-all">
-                                        <Tv size={24} className="text-accent-500" />
+                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-500/30 to-accent-600/10 border border-accent-500/20 flex items-center justify-center shadow-lg shadow-accent-500/10 group-hover:shadow-accent-500/30 transition-all">
+                                        <Tv size={18} className="text-accent-500" />
                                     </div>
                                     <div className="hidden sm:block">
                                         <div className="text-lg font-bold text-text-primary">
@@ -84,19 +84,19 @@ const FloatingHeader = ({
                                 <button
                                     onClick={onOpenCommandPalette}
                                     className={cn(
-                                        'w-full flex items-center gap-3 px-4 py-2.5 rounded-xl',
+                                        'w-full flex items-center gap-2 px-3 py-2 rounded-lg',
                                         'bg-app-surface/50 border border-glass-border',
                                         'hover:bg-app-surface hover:border-accent-500/30',
                                         'transition-all duration-200',
                                         'group'
                                     )}
                                 >
-                                    <Search size={18} className="text-text-tertiary group-hover:text-accent-500 transition-colors" />
-                                    <span className="flex-1 text-left text-sm text-text-tertiary group-hover:text-text-secondary">
-                                        Search channels, actions...
+                                    <Search size={16} className="text-text-tertiary group-hover:text-accent-500 transition-colors" />
+                                    <span className="flex-1 text-left text-xs text-text-tertiary group-hover:text-text-secondary">
+                                        Search channels...
                                     </span>
-                                    <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-text-tertiary bg-white/5 border border-glass-border rounded group-hover:border-accent-500/30 transition-colors">
-                                        <span className="text-xs">⌘K</span>
+                                    <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] text-text-tertiary bg-white/5 border border-glass-border rounded group-hover:border-accent-500/30 transition-colors">
+                                        <span className="text-[10px]">⌘K</span>
                                     </kbd>
                                 </button>
                             </div>
@@ -142,7 +142,7 @@ const FloatingHeader = ({
                                 {/* User Menu */}
                                 <button
                                     className={cn(
-                                        'hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl',
+                                        'hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-lg',
                                         'bg-app-surface/50 hover:bg-app-surface',
                                         'border border-glass-border hover:border-accent-500/30',
                                         'text-text-tertiary hover:text-text-primary',
@@ -150,8 +150,8 @@ const FloatingHeader = ({
                                     )}
                                     aria-label="User menu"
                                 >
-                                    <User size={18} />
-                                    <span className="text-sm font-medium">Guest</span>
+                                    <User size={16} />
+                                    <span className="text-xs font-medium">Guest</span>
                                 </button>
                             </div>
                         </div>

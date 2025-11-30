@@ -248,16 +248,16 @@ function AppContent() {
                             ) : (
                                 <div className="min-h-full pb-20">
                                     {/* Hero Section */}
-                                    <div className="relative h-[50vh] flex items-center justify-center bg-gradient-to-b from-accent-900/20 to-background">
-                                        <div className="text-center space-y-6 px-4 z-10">
-                                            <div className="w-20 h-20 mx-auto bg-accent-500/10 rounded-full flex items-center justify-center mb-4">
-                                                <Tv className="w-10 h-10 text-accent-500" />
+                                    <div className="relative h-[40vh] flex items-center justify-center bg-gradient-to-b from-accent-900/20 to-background">
+                                        <div className="text-center space-y-4 px-4 z-10">
+                                            <div className="w-16 h-16 mx-auto bg-accent-500/10 rounded-full flex items-center justify-center mb-3">
+                                                <Tv className="w-8 h-8 text-accent-500" />
                                             </div>
                                             <div>
-                                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                                                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
                                                     Welcome to VectaStream V2.0
                                                 </h2>
-                                                <p className="text-white/60 max-w-md mx-auto">
+                                                <p className="text-white/60 max-w-md mx-auto text-sm">
                                                     Revolutionary IPTV with command palette, gestures, and voice control.
                                                     <br />
                                                     <span className="text-accent-400 text-sm mt-2 block">
@@ -265,19 +265,19 @@ function AppContent() {
                                                     </span>
                                                 </p>
                                             </div>
-                                            <div className="flex flex-wrap gap-3 justify-center">
+                                            <div className="flex flex-wrap gap-2 justify-center">
                                                 <button
                                                     onClick={() => setCommandPaletteOpen(true)}
-                                                    className="px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                                                    className="px-5 py-2.5 bg-accent-500 hover:bg-accent-600 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 text-sm"
                                                 >
-                                                    <Search className="w-5 h-5" />
+                                                    <Search className="w-4 h-4" />
                                                     Search (⌘K)
                                                 </button>
                                                 <button
                                                     onClick={() => setDrawerOpen(true)}
-                                                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                                                    className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 text-sm"
                                                 >
-                                                    <Grid3x3 className="w-5 h-5" />
+                                                    <Grid3x3 className="w-4 h-4" />
                                                     Browse All
                                                 </button>
                                             </div>
