@@ -6,7 +6,7 @@ import Player from './components/Player';
 import EPGOverlay from './components/EPGOverlay';
 import StreamDebugger from './pages/StreamDebugger';
 import ErrorAnalytics from './pages/ErrorAnalytics';
-import { Tv, Search, Grid3x3 } from 'lucide-react';
+import { Tv, Search, Grid3x3, ArrowLeft } from 'lucide-react';
 
 // V2.0 Revolutionary Shell Components
 import {
@@ -184,13 +184,15 @@ function AppContent() {
             {/* V2.0 Revolutionary UI - Only on Home Page */}
             {!isToolPage && (
                 <>
-                    {/* Floating Header (Auto-hide) */}
-                    <FloatingHeader
-                        onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-                        onOpenDrawer={() => setDrawerOpen(true)}
-                        showNotifications={false}
-                        notificationCount={0}
-                    />
+                    {/* Floating Header (Auto-hide) - Only show when NOT playing */}
+                    {!currentChannel && (
+                        <FloatingHeader
+                            onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+                            onOpenDrawer={() => setDrawerOpen(true)}
+                            showNotifications={false}
+                            notificationCount={0}
+                        />
+                    )}
 
                     {/* Command Palette (⌘K) */}
                     <CommandPalette
@@ -230,7 +232,15 @@ function AppContent() {
                     <Route path="/" element={
                         <div className="h-full w-full overflow-y-auto bg-background">
                             {currentChannel ? (
-                                <div className="h-full flex items-center justify-center">
+                                <div className="h-full flex items-center justify-center relative group">
+                                    {/* Back Button (Navigation) */}
+                                    <button
+                                        onClick={() => setCurrentChannel(null)}
+                                        className="absolute top-4 left-4 z-50 p-3 bg-black/50 hover:bg-accent-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm"
+                                        title="Back to Home"
+                                    >
+                                        <ArrowLeft className="w-6 h-6" />
+                                    </button>
                                     <Player
                                         channel={currentChannel}
                                     />
