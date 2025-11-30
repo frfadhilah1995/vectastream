@@ -8,7 +8,7 @@ export default function ContentRow({ title, channels, onChannelSelect }) {
     if (!channels || channels.length === 0) return null;
 
     return (
-        <div className="py-6 space-y-4">
+        <div className="py-3 space-y-2">
             <div className="flex items-center justify-between px-4 md:px-8">
                 <h3 className="text-lg font-semibold text-white/90">{title}</h3>
                 {/* Future: Add 'See All' button here */}
@@ -16,13 +16,13 @@ export default function ContentRow({ title, channels, onChannelSelect }) {
 
             <div
                 ref={scrollRef}
-                className="flex overflow-x-auto gap-4 px-4 md:px-8 pb-4 snap-x snap-mandatory hide-scrollbar"
+                className="flex overflow-x-auto gap-3 px-4 md:px-8 pb-2 snap-x snap-mandatory hide-scrollbar"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {channels.map((channel, idx) => (
                     <motion.div
                         key={idx}
-                        className="flex-none w-48 aspect-video relative group rounded-lg overflow-hidden bg-white/5 border border-white/10 cursor-pointer snap-start"
+                        className="flex-none w-40 aspect-video relative group rounded-lg overflow-hidden bg-white/5 border border-white/10 cursor-pointer snap-start"
                         whileHover={{ scale: 1.05, zIndex: 10 }}
                         transition={{ duration: 0.2 }}
                         onClick={() => onChannelSelect(channel)}

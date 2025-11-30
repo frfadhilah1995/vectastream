@@ -230,7 +230,8 @@ function AppContent() {
                     <Route path="/debug" element={<StreamDebugger />} />
                     <Route path="/analytics" element={<ErrorAnalytics />} />
                     <Route path="/" element={
-                        <div className="h-full w-full overflow-y-auto bg-background">
+                    <Route path="/" element={
+                        <div className="h-full w-full overflow-y-auto bg-background pt-16">
                             {currentChannel ? (
                                 <div className="h-full flex items-center justify-center relative group">
                                     {/* Back Button (Navigation) */}
@@ -248,16 +249,16 @@ function AppContent() {
                             ) : (
                                 <div className="min-h-full pb-20">
                                     {/* Hero Section */}
-                                    <div className="relative h-[40vh] flex items-center justify-center bg-gradient-to-b from-accent-900/20 to-background">
-                                        <div className="text-center space-y-4 px-4 z-10">
-                                            <div className="w-16 h-16 mx-auto bg-accent-500/10 rounded-full flex items-center justify-center mb-3">
-                                                <Tv className="w-8 h-8 text-accent-500" />
+                                    <div className="relative h-[30vh] flex items-center justify-center bg-gradient-to-b from-accent-900/20 to-background">
+                                        <div className="text-center space-y-3 px-4 z-10">
+                                            <div className="w-12 h-12 mx-auto bg-accent-500/10 rounded-full flex items-center justify-center mb-2">
+                                                <Tv className="w-6 h-6 text-accent-500" />
                                             </div>
                                             <div>
-                                                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                                                <h2 className="text-xl md:text-2xl font-bold text-white mb-1">
                                                     Welcome to VectaStream V2.0
                                                 </h2>
-                                                <p className="text-white/60 max-w-md mx-auto text-sm">
+                                                <p className="text-white/60 max-w-md mx-auto text-xs">
                                                     Revolutionary IPTV with command palette, gestures, and voice control.
                                                     <br />
                                                     <span className="text-accent-400 text-sm mt-2 block">
