@@ -1,0 +1,52 @@
+{
+    "name": "VectaStream",
+    "short_name": "VectaStream",
+    "description": "Professional IPTV Streaming Platform - Watch live TV channels from around the world",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#0a0a0a",
+    "theme_color": "#00f2ff",
+    "orientation": "any",
+    "scope": "./",
+    "icons": [
+        {
+            "src": "icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "categories": [
+        "entertainment",
+        "video",
+        "streaming"
+    ],
+    "shortcuts": [
+        {
+            "name": "Load IPTV Channels",
+            "short_name": "Channels",
+            "description": "Load default IPTV channel list",
+            "url": "./?action=load",
+            "icons": [
+                {
+                    "src": "./icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "screenshots": [],
+    "prefer_related_applications": false
+}
