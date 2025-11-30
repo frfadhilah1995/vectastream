@@ -132,8 +132,7 @@ function AppContent() {
             } else {
                 // Fetch and parse
                 console.log('[App V2] 📡 Fetching playlist...');
-                const response = await fetchWithCorsProxy(urlToLoad);
-                const m3uText = await response.text();
+                const m3uText = await fetchWithCorsProxy(urlToLoad);
                 loadedChannels = parseM3U(m3uText);
 
                 // Cache for future
