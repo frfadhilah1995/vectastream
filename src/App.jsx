@@ -68,14 +68,15 @@ function AppContent() {
             setPlaylistUrl(lastUrl);
         }
 
-        const lastChannel = localStorage.getItem('vectastream_last_channel');
-        if (lastChannel) {
-            try {
-                setCurrentChannel(JSON.parse(lastChannel));
-            } catch (e) {
-                console.error('Failed to parse last channel:', e);
-            }
-        }
+        // REMOVED: Do not auto-load last channel on startup per user request
+        // const lastChannel = localStorage.getItem('vectastream_last_channel');
+        // if (lastChannel) {
+        //     try {
+        //         setCurrentChannel(JSON.parse(lastChannel));
+        //     } catch (e) {
+        //         console.error('Failed to parse last channel:', e);
+        //     }
+        // }
     }, []);
 
     // Save current channel to localStorage
@@ -118,10 +119,10 @@ function AppContent() {
             localStorage.setItem('vectastream_last_url', urlToLoad);
             toast.success(`Loaded ${loadedChannels.length} channels`);
 
-            // Auto-select first channel if none selected
-            if (!currentChannel && loadedChannels.length > 0) {
-                setCurrentChannel(loadedChannels[0]);
-            }
+            // REMOVED: Do not auto-select first channel
+            // if (!currentChannel && loadedChannels.length > 0) {
+            //     setCurrentChannel(loadedChannels[0]);
+            // }
         } catch (error) {
             console.error('[App V2] ❌ Playlist load error:', error);
             toast.error(`Failed to load playlist: ${error.message}`);
